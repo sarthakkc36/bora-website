@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobs - B&H Employment & Consultancy Inc</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/jobs.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+</head>
+<body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="logo-container">
+            <img src="images/logo.png" alt="B&H Employment Logo">
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="B&H Employment Logo">
+                </a>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="jobs.html" class="active">Jobs</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <!-- Mobile Auth Buttons (only visible in mobile menu) -->
+                    <div class="mobile-auth-buttons">
+                        <a href="login.html" class="btn btn-outline">Login</a>
+                        <a href="register.html" class="btn btn-primary">Register</a>
+                    </div>
+                </ul>
+                <!-- Desktop Auth Buttons (hidden on mobile) -->
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn btn-outline">Login</a>
+                    <a href="register.html" class="btn btn-primary">Register</a>
+                </div>
+                <div class="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Banner -->
+    <section class="page-banner">
+        <div class="container">
+            <h1>Find Your Dream Job</h1>
+            <div class="breadcrumbs">
+                <a href="index.html">Home</a>
+                <span><i class="fas fa-angle-right"></i></span>
+                <span>Jobs</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Job Search Section -->
+    <section class="job-search section-padding">
+        <div class="container">
+            <div class="search-container" data-aos="fade-up">
+                <form class="search-form">
+                    <div class="search-row">
+                        <div class="search-group">
+                            <span class="search-icon"><i class="fas fa-search"></i></span>
+                            <input type="text" placeholder="Job title, keywords..." name="keywords">
+                        </div>
+                        <div class="search-group">
+                            <span class="search-icon"><i class="fas fa-map-marker-alt"></i></span>
+                            <input type="text" placeholder="Location" name="location">
+                        </div>
+                        <div class="search-group">
+                            <span class="search-icon"><i class="fas fa-briefcase"></i></span>
+                            <select name="category">
+                                <option value="">All Categories</option>
+                                <option value="it">Information Technology</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="finance">Finance & Accounting</option>
+                                <option value="marketing">Marketing & Sales</option>
+                                <option value="education">Education & Training</option>
+                                <option value="engineering">Engineering</option>
+                                <option value="administrative">Administrative</option>
+                                <option value="customer-service">Customer Service</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Search Jobs</button>
+                    </div>
+                    <div class="advanced-search">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label>Job Type</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="job_type[]" value="full-time">
+                                        <span class="checkmark"></span>
+                                        <span>Full Time</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="job_type[]" value="part-time">
+                                        <span class="checkmark"></span>
+                                        <span>Part Time</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="job_type[]" value="contract">
+                                        <span class="checkmark"></span>
+                                        <span>Contract</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="job_type[]" value="temporary">
+                                        <span class="checkmark"></span>
+                                        <span>Temporary</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <label>Experience Level</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="experience[]" value="entry">
+                                        <span class="checkmark"></span>
+                                        <span>Entry Level</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="experience[]" value="mid">
+                                        <span class="checkmark"></span>
+                                        <span>Mid Level</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="experience[]" value="senior">
+                                        <span class="checkmark"></span>
+                                        <span>Senior Level</span>
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="experience[]" value="executive">
+                                        <span class="checkmark"></span>
+                                        <span>Executive</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="filter-group">
+                                <label>Salary Range</label>
+                                <div class="range-slider">
+                                    <div class="slider-values">
+                                        <span class="min-value">$0</span>
+                                        <span class="max-value">$150,000+</span>
+                                    </div>
+                                    <div class="slider-container">
+                                        <input type="range" min="0" max="150000" step="5000" class="range-min" value="0">
+                                        <input type="range" min="0" max="150000" step="5000" class="range-max" value="150000">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filter-actions">
+                            <button type="reset" class="btn btn-outline btn-sm">Reset Filters</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Apply Filters</button>
+                        </div>
+                    </div>
+                    <div class="search-toggle">
+                        <span class="toggle-text">Advanced Search</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="job-results" data-aos="fade-up">
+                <div class="results-header">
+                    <div class="results-count">
+                        <span>254 Jobs Found</span>
+                    </div>
+                    <div class="results-sorting">
+                        <span>Sort By:</span>
+                        <select id="sort-jobs">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="salary-high">Salary: High to Low</option>
+                            <option value="salary-low">Salary: Low to High</option>
+                            <option value="relevance">Relevance</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="job-listings">
+                    <!-- Job Listing 1 -->
+                    <div class="job-card">
+                        <div class="job-card-header">
+                            <div class="company-logo">
+                                <img src="images/placeholder-logo.png" alt="Company Logo">
+                            </div>
+                            <div class="job-details">
+                                <h3><a href="job-details.html">Senior Software Developer</a></h3>
+                                <div class="company-name">
+                                    <i class="fas fa-building"></i>
+                                    <span>Tech Solutions Inc.</span>
+                                </div>
+                                <div class="job-meta">
+                                    <span class="job-location"><i class="fas fa-map-marker-alt"></i> New York, NY</span>
+                                    <span class="job-type full-time"><i class="fas fa-briefcase"></i> Full Time</span>
+                                    <span class="job-salary"><i class="fas fa-dollar-sign"></i> $90,000 - $120,000</span>
+                                </div>
+                            </div>
+                            <div class="job-actions">
+                                <button class="btn-save" aria-label="Save job"><i class="far fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                        <div class="job-card-body">
+                            <p>We're looking for an experienced software developer with expertise in JavaScript, React, and Node.js to join our growing tech team.</p>
+                            <div class="job-skills">
+                                <span class="skill-tag">JavaScript</span>
+                                <span class="skill-tag">React.js</span>
+                                <span class="skill-tag">Node.js</span>
+                                <span class="skill-tag">MongoDB</span>
+                                <span class="skill-tag">AWS</span>
+                            </div>
+                        </div>
+                        <div class="job-card-footer">
+                            <div class="job-posted">
+                                <i class="far fa-clock"></i> Posted 2 days ago
+                            </div>
+                            <a href="job-details.html" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Job Listing 2 -->
+                    <div class="job-card">
+                        <div class="job-card-header">
+                            <div class="company-logo">
+                                <img src="images/placeholder-logo.png" alt="Company Logo">
+                            </div>
+                            <div class="job-details">
+                                <h3><a href="job-details.html">Marketing Manager</a></h3>
+                                <div class="company-name">
+                                    <i class="fas fa-building"></i>
+                                    <span>Global Marketing Group</span>
+                                </div>
+                                <div class="job-meta">
+                                    <span class="job-location"><i class="fas fa-map-marker-alt"></i> Remote</span>
+                                    <span class="job-type part-time"><i class="fas fa-briefcase"></i> Part Time</span>
+                                    <span class="job-salary"><i class="fas fa-dollar-sign"></i> $45,000 - $55,000</span>
+                                </div>
+                            </div>
+                            <div class="job-actions">
+                                <button class="btn-save" aria-label="Save job"><i class="far fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                        <div class="job-card-body">
+                            <p>A leading e-commerce company is seeking a talented Marketing Manager to develop and implement comprehensive marketing strategies.</p>
+                            <div class="job-skills">
+                                <span class="skill-tag">Digital Marketing</span>
+                                <span class="skill-tag">Social Media</span>
+                                <span class="skill-tag">SEO</span>
+                                <span class="skill-tag">Content Strategy</span>
+                                <span class="skill-tag">Analytics</span>
+                            </div>
+                        </div>
+                        <div class="job-card-footer">
+                            <div class="job-posted">
+                                <i class="far fa-clock"></i> Posted 1 week ago
+                            </div>
+                            <a href="job-details.html" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Job Listing 3 -->
+                    <div class="job-card">
+                        <div class="job-card-header">
+                            <div class="company-logo">
+                                <img src="images/placeholder-logo.png" alt="Company Logo">
+                            </div>
+                            <div class="job-details">
+                                <h3><a href="job-details.html">Project Manager</a></h3>
+                                <div class="company-name">
+                                    <i class="fas fa-building"></i>
+                                    <span>Construct Builders LLC</span>
+                                </div>
+                                <div class="job-meta">
+                                    <span class="job-location"><i class="fas fa-map-marker-alt"></i> Chicago, IL</span>
+                                    <span class="job-type contract"><i class="fas fa-briefcase"></i> Contract</span>
+                                    <span class="job-salary"><i class="fas fa-dollar-sign"></i> $75,000 - $95,000</span>
+                                </div>
+                            </div>
+                            <div class="job-actions">
+                                <button class="btn-save" aria-label="Save job"><i class="far fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                        <div class="job-card-body">
+                            <p>Our client is seeking an experienced Project Manager to oversee construction projects from initiation to completion, ensuring they are delivered on time and within budget.</p>
+                            <div class="job-skills">
+                                <span class="skill-tag">Project Management</span>
+                                <span class="skill-tag">Construction</span>
+                                <span class="skill-tag">Budgeting</span>
+                                <span class="skill-tag">Client Relations</span>
+                                <span class="skill-tag">Microsoft Project</span>
+                            </div>
+                        </div>
+                        <div class="job-card-footer">
+                            <div class="job-posted">
+                                <i class="far fa-clock"></i> Posted 3 days ago
+                            </div>
+                            <a href="job-details.html" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Job Listing 4 -->
+                    <div class="job-card">
+                        <div class="job-card-header">
+                            <div class="company-logo">
+                                <img src="images/placeholder-logo.png" alt="Company Logo">
+                            </div>
+                            <div class="job-details">
+                                <h3><a href="job-details.html">Administrative Assistant</a></h3>
+                                <div class="company-name">
+                                    <i class="fas fa-building"></i>
+                                    <span>Executive Office Services</span>
+                                </div>
+                                <div class="job-meta">
+                                    <span class="job-location"><i class="fas fa-map-marker-alt"></i> Jackson Heights, NY</span>
+                                    <span class="job-type full-time"><i class="fas fa-briefcase"></i> Full Time</span>
+                                    <span class="job-salary"><i class="fas fa-dollar-sign"></i> $45,000 - $55,000</span>
+                                </div>
+                            </div>
+                            <div class="job-actions">
+                                <button class="btn-save" aria-label="Save job"><i class="far fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                        <div class="job-card-body">
+                            <p>Our client is looking for an organized and efficient Administrative Assistant to support their office operations and executive team.</p>
+                            <div class="job-skills">
+                                <span class="skill-tag">Microsoft Office</span>
+                                <span class="skill-tag">Scheduling</span>
+                                <span class="skill-tag">Communication</span>
+                                <span class="skill-tag">Organization</span>
+                                <span class="skill-tag">Customer Service</span>
+                            </div>
+                        </div>
+                        <div class="job-card-footer">
+                            <div class="job-posted">
+                                <i class="far fa-clock"></i> Posted 5 days ago
+                            </div>
+                            <a href="job-details.html" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Job Listing 5 -->
+                    <div class="job-card">
+                        <div class="job-card-header">
+                            <div class="company-logo">
+                                <img src="images/placeholder-logo.png" alt="Company Logo">
+                            </div>
+                            <div class="job-details">
+                                <h3><a href="job-details.html">Financial Analyst</a></h3>
+                                <div class="company-name">
+                                    <i class="fas fa-building"></i>
+                                    <span>Global Investment Partners</span>
+                                </div>
+                                <div class="job-meta">
+                                    <span class="job-location"><i class="fas fa-map-marker-alt"></i> Boston, MA</span>
+                                    <span class="job-type full-time"><i class="fas fa-briefcase"></i> Full Time</span>
+                                    <span class="job-salary"><i class="fas fa-dollar-sign"></i> $70,000 - $85,000</span>
+                                </div>
+                            </div>
+                            <div class="job-actions">
+                                <button class="btn-save" aria-label="Save job"><i class="far fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                        <div class="job-card-body">
+                            <p>We are seeking a Financial Analyst to join our team. The ideal candidate will analyze financial data, prepare reports, and provide strategic recommendations to improve financial performance.</p>
+                            <div class="job-skills">
+                                <span class="skill-tag">Financial Analysis</span>
+                                <span class="skill-tag">Excel</span>
+                                <span class="skill-tag">Financial Modeling</span>
+                                <span class="skill-tag">Forecasting</span>
+                                <span class="skill-tag">Data Visualization</span>
+                            </div>
+                        </div>
+                        <div class="job-card-footer">
+                            <div class="job-posted">
+                                <i class="far fa-clock"></i> Posted 1 day ago
+                            </div>
+                            <a href="job-details.html" class="btn btn-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination">
+                    <a href="#" class="page-link disabled"><i class="fas fa-chevron-left"></i></a>
+                    <a href="#" class="page-link active">1</a>
+                    <a href="#" class="page-link">2</a>
+                    <a href="#" class="page-link">3</a>
+                    <a href="#" class="page-link">4</a>
+                    <a href="#" class="page-link">5</a>
+                    <a href="#" class="page-link"><i class="fas fa-chevron-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Employers -->
+    <section class="featured-employers section-padding bg-light">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2>Featured Employers</h2>
+                <p>Top companies hiring on our platform</p>
+            </div>
+            
+            <div class="employers-grid" data-aos="fade-up">
+                <div class="employer-card">
+                    <div class="employer-logo">
+                        <img src="images/placeholder-logo.png" alt="Employer Logo">
+                    </div>
+                    <div class="employer-info">
+                        <h3>Tech Solutions Inc.</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> New York, NY</p>
+                        <p><i class="fas fa-briefcase"></i> 12 Open Positions</p>
+                    </div>
+                </div>
+                
+                <div class="employer-card">
+                    <div class="employer-logo">
+                        <img src="images/placeholder-logo.png" alt="Employer Logo">
+                    </div>
+                    <div class="employer-info">
+                        <h3>Global Marketing Group</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> Remote</p>
+                        <p><i class="fas fa-briefcase"></i> 8 Open Positions</p>
+                    </div>
+                </div>
+                
+                <div class="employer-card">
+                    <div class="employer-logo">
+                        <img src="images/placeholder-logo.png" alt="Employer Logo">
+                    </div>
+                    <div class="employer-info">
+                        <h3>Construct Builders LLC</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> Chicago, IL</p>
+                        <p><i class="fas fa-briefcase"></i> 5 Open Positions</p>
+                    </div>
+                </div>
+                
+                <div class="employer-card">
+                    <div class="employer-logo">
+                        <img src="images/placeholder-logo.png" alt="Employer Logo">
+                    </div>
+                    <div class="employer-info">
+                        <h3>Executive Office Services</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> Jackson Heights, NY</p>
+                        <p><i class="fas fa-briefcase"></i> 3 Open Positions</p>
+                    </div>
+                </div>
+                
+                <div class="employer-card">
+                    <div class="employer-logo">
+                        <img src="images/placeholder-logo.png" alt="Employer Logo">
+                    </div>
+                    <div class="employer-info">
+                        <h3>Global Investment Partners</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> Boston, MA</p>
+                        <p><i class="fas fa-briefcase"></i> 7 Open Positions</p>
+                    </div>
+                </div>
+                
+                <div class="employer-card">
+                    <div class="employer-logo">
+                        <img src="images/placeholder-logo.png" alt="Employer Logo">
+                    </div>
+                    <div class="employer-info">
+                        <h3>Healthcare Solutions</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> San Francisco, CA</p>
+                        <p><i class="fas fa-briefcase"></i> 10 Open Positions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter section-padding">
+        <div class="container">
+            <div class="newsletter-wrapper" data-aos="fade-up">
+                <div class="newsletter-content">
+                    <h2>Subscribe to Job Alerts</h2>
+                    <p>Stay updated with the latest job opportunities matching your skills and preferences</p>
+                </div>
+                <form class="newsletter-form">
+                    <div class="form-group">
+                        <input type="email" placeholder="Your Email Address" required>
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </div>
+                    <p class="form-note">We respect your privacy and will never share your information</p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-top">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-about">
+                        <div class="footer-logo">
+                            <img src="images/logo-white.png" alt="B&H Employment Logo">
+                        </div>
+                        <p>B&H Employment & Consultancy Inc is a leading job placement agency dedicated to connecting talented professionals with top employers across various industries.</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-links">
+                        <h3>Quick Links</h3>
+                        <ul>
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="jobs.html">Jobs</a></li>
+                            <li><a href="services.html">Services</a></li>
+                            <li><a href="about.html">About Us</a></li>
+                            <li><a href="contact.html">Contact</a></li>
+                            <li><a href="post-job.html">Post a Job</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links">
+                        <h3>Services</h3>
+                        <ul>
+                            <li><a href="services.html">Job Placement</a></li>
+                            <li><a href="services.html">Career Counseling</a></li>
+                            <li><a href="services.html">Resume Building</a></li>
+                            <li><a href="services.html">Interview Preparation</a></li>
+                            <li><a href="services.html">Employer Services</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-contact">
+                        <h3>Contact Info</h3>
+                        <ul>
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>37-51 75th St.1A<br>Jackson Heights, NY 11372</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-phone-alt"></i>
+                                <span>(1) 347-680-2869<br>(929) 823-7040</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                <span>bh.jobagency@gmail.com</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-globe"></i>
+                                <span>www.bh.com</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2025 B&H Employment & Consultancy Inc. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/jobs.js"></script>
+</body>
+</html>
