@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a Job - B&H Employment & Consultancy Inc</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base styles and variables */
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #003d80;
+            --accent-color: #e9f2ff;
+            --text-color: #333;
+            --light-color: #fff;
+            --dark-color: #001f40;
+            --transition: all 0.3s ease;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--secondary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
+            color: var(--light-color);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: var(--light-color);
+        }
+
+        /* Header and Navigation */
+        .header {
+            background-color: var(--light-color);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .header.scrolled {
+            padding: 10px 0;
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 60px;
+            transition: var(--transition);
+        }
+
+        .header.scrolled .logo {
+            height: 50px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            font-size: 16px;
+            text-transform: uppercase;
+            padding: 10px;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: 0;
+            left: 50%;
+            transition: var(--transition);
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after {
+            width: 80%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+
+        /* Page Banner */
+        .page-banner {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: var(--light-color);
+            padding: 80px 0;
+            text-align: center;
+            margin-top: 90px;
+        }
+
+        .page-banner h1 {
+            font-size: 2.5rem;
+            color: var(--light-color);
+            margin-bottom: 20px;
+        }
+
+        .breadcrumbs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .breadcrumbs a {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .breadcrumbs a:hover {
+            color: var(--light-color);
+        }
+
+        /* Form Styles */
+        .form-container {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 40px;
+            margin: 50px 0;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .form-section-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+        }
+
+        .required::after {
+            content: '*';
+            color: #e74c3c;
+            margin-left: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+        }
+
+        .checkbox-group {
+            margin-top: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-label input {
+            margin-right: 10px;
+        }
+
+        .file-upload {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .file-upload-btn {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 1px dashed #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-upload-btn:hover {
+            background-color: #e8e8e8;
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .form-note {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .form-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 30px 0;
+        }
+
+        /* Job Preview Styles */
+        .preview-container {
+            background-color: var(--accent-color);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin: 40px 0;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .preview-title {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+        }
+
+        .preview-toggle {
+            color: var(--primary-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .preview-content {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+
+        .preview-content.active {
+            display: block;
+        }
+
+        .preview-job-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .preview-company {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .preview-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .preview-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preview-detail i {
+            color: var(--primary-color);
+        }
+
+        .preview-section {
+            margin-bottom: 25px;
+        }
+
+        .preview-section-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        /* Pricing Plans Section */
+        .pricing-section {
+            padding: 80px 0;
+            background-color: var(--accent-color);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .pricing-plans {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .pricing-plan {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .pricing-plan:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .plan-header {
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            padding: 25px 20px;
+        }
+
+        .plan-name {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .plan-duration {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .plan-features {
+            padding: 30px;
+            list-style: none;
+        }
+
+        .plan-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-cta {
+            padding: 0 30px 30px;
+        }
+
+        .recommended {
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--primary-color);
+        }
+
+        .recommended::before {
+            content: 'RECOMMENDED';
+            position: absolute;
+            top: 30px;
+            right: -35px;
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            padding: 5px 40px;
+            font-size: 0.8rem;
+            transform: rotate(45deg);
+            z-index: 1;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            position: relative;
+            transform: translateY(-50px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--primary-color);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            color: #2ecc71;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            padding: 70px 0 0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-logo {
+            max-width: 180px;
+            margin-bottom: 20px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .footer-social a:hover {
+            background-color: var(--primary-color);
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            color: var(--light-color);
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: 0;
+            left: 0;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--light-color);
+            padding-left: 5px;
+        }
+
+        .footer-contact li {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .footer-contact-icon {
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .nav-links {
+                position: fixed;
+                top: 90px;
+                left: -100%;
+                flex-direction: column;
+                background-color: var(--light-color);
+                width: 80%;
+                max-width: 350px;
+                height: calc(100vh - 90px);
+                padding: 50px 30px;
+                box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+                transition: var(--transition);
+                gap: 20px;
+                z-index: 999;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-banner h1 {
+                font-size: 2rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .page-banner {
+                padding: 60px 0;
+            }
+
+            .page-banner h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-section-title {
+                font-size: 1.2rem;
+            }
+
+            .pricing-plans {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container nav-container">
+            <div class="logo-container">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMTUwIj4KICA8cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2ZmZiIgcng9IjEwIiByeT0iMTAiLz4KICA8dGV4dCB4PSIxMzAiIHk9IjcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMDA1NmIzIj5CJmFtcDtIPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTEwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjIiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMDA1NmIzIj5FTVBMT1lNRU5UPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTMwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMwMDU2YjMiPiZhbXA7IENPTlNVTFRBTkNZIElOQzwvdGV4dD4KPC9zdmc+" alt="B&H Employment & Consultancy Inc" class="logo">
+            </div>
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#services">Services</a></li>
+                    <li><a href="index.html#jobs">Jobs</a></li>
+                    <li><a href="index.html#testimonials">Testimonials</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Banner -->
+    <section class="page-banner">
+        <div class="container">
+            <h1>Post a Job</h1>
+            <div class="breadcrumbs">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <span>Post a Job</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Post a Job Form -->
+    <section>
+        <div class="container">
+            <div class="form-container">
+                <h2 class="form-title">Post Your Job Vacancy</h2>
+                
+                <!-- Job Details Section -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Job Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="job-title" class="form-label required">Job Title</label>
+                            <input type="text" id="job-title" class="form-control" placeholder="e.g., Senior Software Developer" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-category" class="form-label required">Job Category</label>
+                            <select id="job-category" class="form-control form-select" required>
+                                <option value="" selected disabled>Select a category</option>
+                                <option value="it">Information Technology</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="finance">Finance & Accounting</option>
+                                <option value="marketing">Marketing & Sales</option>
+                                <option value="education">Education & Training</option>
+                                <option value="engineering">Engineering</option>
+                                <option value="admin">Administrative</option>
+                                <option value="customer-service">Customer Service</option>
+                                <option value="hospitality">Hospitality</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="job-type" class="form-label required">Job Type</label>
+                            <select id="job-type" class="form-control form-select" required>
+                                <option value="" selected disabled>Select job type</option>
+                                <option value="full-time">Full-time</option>
+                                <option value="part-time">Part-time</option>
+                                <option value="contract">Contract</option>
+                                <option value="freelance">Freelance</option>
+                                <option value="internship">Internship</option>
+                                <option value="temporary">Temporary</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="work-arrangement" class="form-label required">Work Arrangement</label>
+                            <select id="work-arrangement" class="form-control form-select" required>
+                                <option value="" selected disabled>Select arrangement</option>
+                                <option value="on-site">On-site</option>
+                                <option value="remote">Remote</option>
+                                <option value="hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="job-description" class="form-label required">Job Description</label>
+                        <textarea id="job-description" class="form-control" placeholder="Describe the responsibilities, day-to-day activities, and expectations for this role..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="requirements" class="form-label required">Requirements & Qualifications</label>
+                        <textarea id="requirements" class="form-control" placeholder="List the skills, experience, education, and qualifications needed for this position..." required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="min-salary" class="form-label">Minimum Salary (Optional)</label>
+                            <input type="number" id="min-salary" class="form-control" placeholder="e.g., 50000">
+                        </div>
+                        <div class="form-group">
+                            <label for="max-salary" class="form-label">Maximum Salary (Optional)</label>
+                            <input type="number" id="max-salary" class="form-control" placeholder="e.g., 80000">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Salary Visibility</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="radio" name="salary-visibility" value="public" checked>
+                                Display salary range publicly
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="radio" name="salary-visibility" value="private">
+                                Keep salary private
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="benefits" class="form-label">Benefits (Optional)</label>
+                        <textarea id="benefits" class="form-control" placeholder="List any benefits, perks, or additional compensation..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-divider"></div>
+
+                <!-- Company Details Section -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Company Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="company-name" class="form-label required">Company Name</label>
+                            <input type="text" id="company-name" class="form-control" placeholder="Your company name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="company-website" class="form-label">Company Website (Optional)</label>
+                            <input type="url" id="company-website" class="form-control" placeholder="https://www.yourcompany.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="company-description" class="form-label">Company Description (Optional)</label>
+                        <textarea id="company-description" class="form-control" placeholder="Tell potential candidates about your company, culture, and mission..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="company-logo" class="form-label">Company Logo (Optional)</label>
+                        <div class="file-upload">
+                            <label for="company-logo" class="file-upload-btn">
+                                <i class="fas fa-upload"></i> Choose File
+                            </label>
+                            <input type="file" id="company-logo" style="display: none;" accept="image/*">
+                            <span class="file-name">No file chosen</span>
+                        </div>
+                        <p class="form-note">Recommended size: 200x200 pixels. Max file size: 2MB.</p>
+                    </div>
+                </div>
+
+                <div class="form-divider"></div>
+
+                <!-- Location & Contact Section -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Location & Contact Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="job-location" class="form-label required">Job Location</label>
+                            <input type="text" id="job-location" class="form-control" placeholder="City, State, Country" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postal-code" class="form-label">Postal Code (Optional)</label>
+                            <input type="text" id="postal-code" class="form-control" placeholder="e.g., 10001">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-name" class="form-label required">Contact Person</label>
+                            <input type="text" id="contact-name" class="form-control" placeholder="Name of the person to contact" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email" class="form-label required">Contact Email</label>
+                            <input type="email" id="contact-email" class="form-control" placeholder="email@example.com" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact-phone" class="form-label">Contact Phone (Optional)</label>
+                            <input type="tel" id="contact-phone" class="form-control" placeholder="e.g., (123) 456-7890">
+                        </div>
+                        <div class="form-group">
+                            <label for="application-deadline" class="form-label">Application Deadline (Optional)</label>
+                            <input type="date" id="application-deadline" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="application-url" class="form-label">Application URL (Optional)</label>
+                        <input type="url" id="application-url" class="form-control" placeholder="https://www.yourcompany.com/careers/apply">
+                        <p class="form-note">If left blank, applications will be sent to the contact email provided above.</p>
+                    </div>
+                </div>
+
+                <!-- Job Preview -->
+                <div class="preview-container">
+                    <div class="preview-header">
+                        <h3 class="preview-title">Job Listing Preview</h3>
+                        <div class="preview-toggle">
+                            <span>Show Preview</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="preview-content">
+                        <h2 class="preview-job-title">Job Title</h2>
+                        <p class="preview-company">Company Name</p>
+                        
+                        <div class="preview-details">
+                            <div class="preview-detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span id="preview-location">Location</span>
+                            </div>
+                            <div class="preview-detail">
+                                <i class="fas fa-briefcase"></i>
+                                <span id="preview-job-type">Job Type</span>
+                            </div>
+                            <div class="preview-detail">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span id="preview-salary">Salary Range</span>
+                            </div>
+                            <div class="preview-detail">
+                                <i class="fas fa-clock"></i>
+                                <span id="preview-deadline">Application Deadline</span>
+                            </div>
+                        </div>
+                        
+                        <div class="preview-section">
+                            <h4 class="preview-section-title">Job Description</h4>
+                            <div id="preview-description">Job description will appear here...</div>
+                        </div>
+                        
+                        <div class="preview-section">
+                            <h4 class="preview-section-title">Requirements & Qualifications</h4>
+                            <div id="preview-requirements">Requirements will appear here...</div>
+                        </div>
+                        
+                        <div class="preview-section">
+                            <h4 class="preview-section-title">Benefits</h4>
+                            <div id="preview-benefits">Benefits will appear here...</div>
+                        </div>
+                        
+                        <div class="preview-section">
+                            <h4 class="preview-section-title">About the Company</h4>
+                            <div id="preview-company-desc">Company description will appear here...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="terms-checkbox" required>
+                        I agree to the <a href="#" id="terms-link">Terms and Conditions</a> and confirm that this job posting complies with all applicable laws and regulations.
+                    </label>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline">Save as Draft</button>
+                    <button type="button" id="submit-job" class="btn">Post Job Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Plans Section -->
+    <section class="pricing-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Job Posting Plans</h2>
+                <p>Choose the right plan for your hiring needs</p>
+            </div>
+            <div class="pricing-plans">
+                <div class="pricing-plan">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Basic</h3>
+                        <div class="plan-price">$199</div>
+                        <div class="plan-duration">per job / 30 days</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>Single job posting</li>
+                        <li>30 days visibility</li>
+                        <li>Featured in category</li>
+                        <li>Email support</li>
+                        <li>Basic analytics</li>
+                    </ul>
+                    <div class="plan-cta">
+                        <a href="#" class="btn btn-outline">Select Plan</a>
+                    </div>
+                </div>
+                <div class="pricing-plan recommended">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Premium</h3>
+                        <div class="plan-price">$399</div>
+                        <div class="plan-duration">per job / 60 days</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>Single job posting</li>
+                        <li>60 days visibility</li>
+                        <li>Featured on homepage</li>
+                        <li>Social media promotion</li>
+                        <li>Priority in search results</li>
+                        <li>Premium analytics</li>
+                        <li>Priority support</li>
+                    </ul>
+                    <div class="plan-cta">
+                        <a href="#" class="btn">Select Plan</a>
+                    </div>
+                </div>
+                <div class="pricing-plan">
+                    <div class="plan-header">
+                        <h3 class="plan-name">Enterprise</h3>
+                        <div class="plan-price">$899</div>
+                        <div class="plan-duration">5 jobs / 90 days</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>5 job postings</li>
+                        <li>90 days visibility</li>
+                        <li>Featured on homepage</li>
+                        <li>Social media promotion</li>
+                        <li>Priority in search results</li>
+                        <li>Advanced analytics dashboard</li>
+                        <li>Dedicated account manager</li>
+                        <li>Candidate screening assistance</li>
+                    </ul>
+                    <div class="plan-cta">
+                        <a href="#" class="btn btn-outline">Select Plan</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Modal -->
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="modal-title">Job Posted Successfully!</h2>
+            </div>
+            <div class="modal-body">
+                <p>Your job has been submitted successfully and is now pending review. Once approved, it will be visible on our job board.</p>
+                <p>You will receive a confirmation email with more details.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="modal-ok-btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms Modal -->
+    <div class="modal" id="terms-modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <span class="modal-close">&times;</span>
+            <div class="modal-header">
+                <h2 class="modal-title">Terms and Conditions</h2>
+            </div>
+            <div class="modal-body" style="text-align: left; max-height: 400px; overflow-y: auto;">
+                <h4>1. Job Posting Guidelines</h4>
+                <p>All job postings must comply with applicable laws and regulations, including equal employment opportunity laws. Jobs must be legitimate employment opportunities. We reserve the right to reject any job posting that doesn't meet our standards or appears to be fraudulent.</p>
+                
+                <h4>2. Posting Duration and Fees</h4>
+                <p>Job postings will remain active for the duration specified in the selected plan. Fees are non-refundable once a job has been posted, regardless of whether it is filled before the end of the posting period.</p>
+                
+                <h4>3. Content Accuracy</h4>
+                <p>You are responsible for ensuring that all information provided in your job posting is accurate, complete, and up-to-date. B&H Employment & Consultancy Inc is not responsible for any errors or omissions in job postings.</p>
+                
+                <h4>4. Intellectual Property</h4>
+                <p>By submitting a job posting, you grant B&H Employment & Consultancy Inc a non-exclusive, royalty-free license to display, reproduce, and distribute the content of your job posting through our services.</p>
+                
+                <h4>5. Privacy Policy</h4>
+                <p>Information collected through job postings is subject to our Privacy Policy. We use this information to provide and improve our services, and we do not sell or rent this information to third parties.</p>
+                
+                <h4>6. Modifications</h4>
+                <p>B&H Employment & Consultancy Inc reserves the right to modify or terminate any aspect of the job posting service at any time. We may also update these terms and conditions periodically.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="terms-ok-btn">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-about">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMTUwIj4KICA8cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iIzAwMWY0MCIgcng9IjEwIiByeT0iMTAiLz4KICA8dGV4dCB4PSIxMzAiIHk9IjcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZmZmIj5CJmFtcDtIPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTEwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjIiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZmZmIj5FTVBMT1lNRU5UPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTMwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNmZmYiPiZhbXA7IENPTlNVTFRBTkNZIElOQzwvdGV4dD4KPC9zdmc+" alt="B&H Employment & Consultancy Inc" class="footer-logo">
+                <p>B&H Employment & Consultancy Inc is a leading job placement agency dedicated to connecting talented professionals with top employers across various industries.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-links-container">
+                <h3 class="footer-title">Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About Us</a></li>
+                    <li><a href="index.html#services">Services</a></li>
+                    <li><a href="index.html#jobs">Job Listings</a></li>
+                    <li><a href="index.html#testimonials">Testimonials</a></li>
+                    <li><a href="index.html#contact">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-services">
+                <h3 class="footer-title">Services</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Job Placement</a></li>
+                    <li><a href="#">Career Counseling</a></li>
+                    <li><a href="#">Resume Building</a></li>
+                    <li><a href="#">Interview Preparation</a></li>
+                    <li><a href="#">Employer Services</a></li>
+                    <li><a href="#">International Recruitment</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact-info">
+                <h3 class="footer-title">Contact Info</h3>
+                <ul class="footer-contact">
+                    <li>
+                        <span class="footer-contact-icon"><i class="fas fa-map-marker-alt"></i></span>
+                        <span>37-51 75th St.1A<br>Jackson Heights, NY 11372</span>
+                    </li>
+                    <li>
+                        <span class="footer-contact-icon"><i class="fas fa-phone-alt"></i></span>
+                        <span>(1) 347-680-2869<br>(929) 823-7040</span>
+                    </li>
+                    <li>
+                        <span class="footer-contact-icon"><i class="fas fa-envelope"></i></span>
+                        <span>bh.jobagency@gmail.com</span>
+                    </li>
+                    <li>
+                        <span class="footer-contact-icon"><i class="fas fa-globe"></i></span>
+                        <span>www.bh.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <p>&copy; 2025 B&H Employment & Consultancy Inc. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Sticky Header
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // File Upload
+        const fileInput = document.getElementById('company-logo');
+        const fileName = document.querySelector('.file-name');
+
+        fileInput?.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileName.textContent = fileInput.files[0].name;
+            } else {
+                fileName.textContent = 'No file chosen';
+            }
+        });
+
+        // Preview Toggle
+        const previewToggle = document.querySelector('.preview-toggle');
+        const previewContent = document.querySelector('.preview-content');
+
+        previewToggle?.addEventListener('click', () => {
+            previewContent.classList.toggle('active');
+            const icon = previewToggle.querySelector('i');
+            const text = previewToggle.querySelector('span');
+            
+            if (previewContent.classList.contains('active')) {
+                icon.className = 'fas fa-chevron-up';
+                text.textContent = 'Hide Preview';
+                updatePreview();
+            } else {
+                icon.className = 'fas fa-chevron-down';
+                text.textContent = 'Show Preview';
+            }
+        });
+
+        // Update Preview Content
+        function updatePreview() {
+            // Job Title
+            const jobTitle = document.getElementById('job-title').value || 'Job Title';
+            document.querySelector('.preview-job-title').textContent = jobTitle;
+            
+            // Company Name
+            const companyName = document.getElementById('company-name').value || 'Company Name';
+            document.querySelector('.preview-company').textContent = companyName;
+            
+            // Location
+            const location = document.getElementById('job-location').value || 'Location';
+            document.getElementById('preview-location').textContent = location;
+            
+            // Job Type
+            const jobTypeSelect = document.getElementById('job-type');
+            const jobType = jobTypeSelect.options[jobTypeSelect.selectedIndex]?.text || 'Job Type';
+            document.getElementById('preview-job-type').textContent = jobType;
+            
+            // Salary
+            const minSalary = document.getElementById('min-salary').value;
+            const maxSalary = document.getElementById('max-salary').value;
+            let salaryText = 'Competitive';
+            
+            if (minSalary && maxSalary) {
+                salaryText = `$${Number(minSalary).toLocaleString()} - $${Number(maxSalary).toLocaleString()}`;
+            } else if (minSalary) {
+                salaryText = `From $${Number(minSalary).toLocaleString()}`;
+            } else if (maxSalary) {
+                salaryText = `Up to $${Number(maxSalary).toLocaleString()}`;
+            }
+            
+            document.getElementById('preview-salary').textContent = salaryText;
+            
+            // Deadline
+            const deadline = document.getElementById('application-deadline').value;
+            document.getElementById('preview-deadline').textContent = deadline ? new Date(deadline).toLocaleDateString() : 'Open until filled';
+            
+            // Description
+            const description = document.getElementById('job-description').value || 'Job description will appear here...';
+            document.getElementById('preview-description').textContent = description;
+            
+            // Requirements
+            const requirements = document.getElementById('requirements').value || 'Requirements will appear here...';
+            document.getElementById('preview-requirements').textContent = requirements;
+            
+            // Benefits
+            const benefits = document.getElementById('benefits').value || 'No benefits specified';
+            document.getElementById('preview-benefits').textContent = benefits;
+            
+            // Company Description
+            const companyDesc = document.getElementById('company-description').value || 'No company description provided';
+            document.getElementById('preview-company-desc').textContent = companyDesc;
+        }
+
+        // Live preview update on input
+        const formInputs = document.querySelectorAll('.form-control');
+        formInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (previewContent.classList.contains('active')) {
+                    updatePreview();
+                }
+            });
+        });
+
+        // Success Modal
+        const successModal = document.getElementById('success-modal');
+        const modalCloseBtn = document.querySelector('.modal-close');
+        const modalOkBtn = document.getElementById('modal-ok-btn');
+        const submitJobBtn = document.getElementById('submit-job');
+
+        submitJobBtn?.addEventListener('click', () => {
+            // Check if form is valid (basic validation)
+            const requiredInputs = document.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredInputs.forEach(input => {
+                if (!input.value) {
+                    isValid = false;
+                    input.style.borderColor = '#e74c3c';
+                } else {
+                    input.style.borderColor = '#ddd';
+                }
+            });
+            
+            if (isValid) {
+                successModal.classList.add('active');
+            } else {
+                alert('Please fill in all required fields.');
+            }
+        });
+
+        modalCloseBtn?.addEventListener('click', () => {
+            successModal.classList.remove('active');
+        });
+
+        modalOkBtn?.addEventListener('click', () => {
+            successModal.classList.remove('active');
+            window.location.href = 'index.html';
+        });
+
+        // Terms Modal
+        const termsModal = document.getElementById('terms-modal');
+        const termsLink = document.getElementById('terms-link');
+        const termsCloseBtn = termsModal.querySelector('.modal-close');
+        const termsOkBtn = document.getElementById('terms-ok-btn');
+
+        termsLink?.addEventListener('click', (e) => {
+            e.preventDefault();
+            termsModal.classList.add('active');
+        });
+
+        termsCloseBtn?.addEventListener('click', () => {
+            termsModal.classList.remove('active');
+        });
+
+        termsOkBtn?.addEventListener('click', () => {
+            termsModal.classList.remove('active');
+            document.getElementById('terms-checkbox').checked = true;
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === successModal) {
+                successModal.classList.remove('active');
+            }
+            if (e.target === termsModal) {
+                termsModal.classList.remove('active');
+            }
+        });
+
+        // Form input animations
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('focused');
+            });
+        });
+    </script>
+</body>
+</html>
