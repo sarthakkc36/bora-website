@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B&H Employment & Consultancy Inc</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        /* Base styles and variables */
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #003d80;
+            --accent-color: #e9f2ff;
+            --text-color: #333;
+            --light-color: #fff;
+            --dark-color: #001f40;
+            --transition: all 0.3s ease;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--secondary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
+            color: var(--light-color);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: var(--light-color);
+        }
+
+        /* Header and Navigation */
+        .header {
+            background-color: var(--light-color);
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .header.scrolled {
+            padding: 10px 0;
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 60px;
+            transition: var(--transition);
+        }
+
+        .header.scrolled .logo {
+            height: 50px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            font-size: 16px;
+            text-transform: uppercase;
+            padding: 10px;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: 0;
+            left: 50%;
+            transition: var(--transition);
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after {
+            width: 80%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            margin-top: 90px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('/api/placeholder/1920/1080') center/cover no-repeat;
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: var(--light-color);
+            max-width: 600px;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--light-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hero-img {
+            position: absolute;
+            right: 5%;
+            bottom: 0;
+            max-height: 80%;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease;
+        }
+
+        /* Features Section */
+        .section {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 3px;
+            background-color: var(--primary-color);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Services Section */
+        .services {
+            background-color: var(--accent-color);
+        }
+
+        .service-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .service-content {
+            padding: 25px;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: var(--light-color);
+            position: relative;
+        }
+
+        .testimonials .section-title {
+            color: var(--light-color);
+        }
+
+        .testimonial-slider {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .testimonial-slide {
+            text-align: center;
+            padding: 20px;
+            display: none;
+            animation: fadeIn 1s ease;
+        }
+
+        .testimonial-slide.active {
+            display: block;
+        }
+
+        .testimonial-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-bottom: 25px;
+            position: relative;
+            padding: 0 40px;
+        }
+
+        .testimonial-text::before,
+        .testimonial-text::after {
+            content: '"';
+            font-size: 3rem;
+            position: absolute;
+            opacity: 0.3;
+            line-height: 1;
+        }
+
+        .testimonial-text::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .testimonial-text::after {
+            bottom: -30px;
+            right: 0;
+        }
+
+        .testimonial-author {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .testimonial-position {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .testimonial-controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            gap: 15px;
+        }
+
+        .testimonial-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .testimonial-btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Team Section */
+        .team-members {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .team-card {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .team-img-container {
+            position: relative;
+            overflow: hidden;
+            height: 300px;
+        }
+
+        .team-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .team-card:hover .team-img {
+            transform: scale(1.1);
+        }
+
+        .team-social {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            transition: var(--transition);
+        }
+
+        .team-card:hover .team-social {
+            bottom: 0;
+        }
+
+        .team-social a {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: var(--light-color);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .team-social a:hover {
+            background-color: var(--primary-color);
+            color: var(--light-color);
+        }
+
+        .team-content {
+            padding: 25px;
+        }
+
+        .team-name {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .team-position {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        /* Contact Section */
+        .contact {
+            background-color: var(--accent-color);
+        }
+
+        .contact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+        }
+
+        .contact-info {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .contact-method {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .contact-form {
+            background-color: var(--light-color);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--box-shadow);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            padding: 70px 0 0;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-logo {
+            max-width: 180px;
+            margin-bottom: 20px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .footer-social a:hover {
+            background-color: var(--primary-color);
+        }
+
+        .footer-title {
+            font-size: 1.2rem;
+            color: var(--light-color);
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--primary-color);
+            bottom: 0;
+            left: 0;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--light-color);
+            padding-left: 5px;
+        }
+
+        .footer-contact li {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .footer-contact-icon {
+            margin-right: 15px;
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 1s ease forwards;
+        }
+
+        .animate-slideInLeft {
+            animation: slideInLeft 1s ease forwards;
+        }
+
+        .animate-slideInRight {
+            animation: slideInRight 1s ease forwards;
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 99;
+        }
+
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .nav-links {
+                position: fixed;
+                top: 90px;
+                left: -100%;
+                flex-direction: column;
+                background-color: var(--light-color);
+                width: 80%;
+                max-width: 350px;
+                height: calc(100vh - 90px);
+                padding: 50px 30px;
+                box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+                transition: var(--transition);
+                gap: 20px;
+                z-index: 999;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-img {
+                opacity: 0.3;
+                right: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 70px 0;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .hero {
+                height: auto;
+                padding: 100px 0;
+            }
+
+            .hero-content {
+                text-align: center;
+                margin: 0 auto;
+            }
+
+            .hero-btns {
+                justify-content: center;
+            }
+
+            .feature-card,
+            .service-card,
+            .team-card,
+            .contact-info,
+            .contact-form {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                width: 95%;
+                padding: 0 10px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .contact-form {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container nav-container">
+            <div class="logo-container">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMTUwIj4KICA8cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iI2ZmZiIgcng9IjEwIiByeT0iMTAiLz4KICA8dGV4dCB4PSIxMzAiIHk9IjcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMDA1NmIzIj5CJmFtcDtIPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTEwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjIiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMDA1NmIzIj5FTVBMT1lNRU5UPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTMwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMwMDU2YjMiPiZhbXA7IENPTlNVTFRBTkNZIElOQzwvdGV4dD4KPC9zdmc+" alt="B&H Employment & Consultancy Inc" class="logo">
+            </div>
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#jobs">Jobs</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content animate-slideInLeft">
+                <h1>Find Your Dream Job with B&H Employment</h1>
+                <p>We connect talented professionals with top employers across various industries. Let us help you take the next step in your career journey.</p>
+                <div class="hero-btns">
+                    <a href="#jobs" class="btn">Browse Jobs</a>
+                    <a href="#contact" class="btn btn-outline">Contact Us</a>
+                </div>
+            </div>
+            <img src="/api/placeholder/600/700" alt="Job Search" class="hero-img animate-slideInRight">
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose Us</h2>
+                <p>B&H Employment & Consultancy Inc is your trusted partner in employment solutions.</p>
+            </div>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3 class="feature-title">Personalized Service</h3>
+                    <p>We provide tailored job matching services that consider your skills, experience, and career goals to find the perfect opportunity for you.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="feature-title">Extensive Network</h3>
+                    <p>Our broad network of employers across various industries gives you access to exclusive job opportunities not advertised elsewhere.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3 class="feature-title">Industry Expertise</h3>
+                    <p>With years of experience in the recruitment industry, our team understands the job market and can guide you toward success.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section services">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Services</h2>
+                <p>We offer comprehensive employment solutions for both job seekers and employers.</p>
+            </div>
+            <div class="service-list">
+                <div class="service-card">
+                    <img src="/api/placeholder/400/300" alt="Job Placement" class="service-img">
+                    <div class="service-content">
+                        <h3 class="service-title">Job Placement</h3>
+                        <p>We match qualified candidates with suitable positions in their field of expertise, ensuring a perfect fit for both parties.</p>
+                        <a href="#" class="btn">Learn More</a>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <img src="/api/placeholder/400/300" alt="Career Counseling" class="service-img">
+                    <div class="service-content">
+                        <h3 class="service-title">Career Counseling</h3>
+                        <p>Our expert advisors provide guidance on career paths, skill development, and professional growth strategies.</p>
+                        <a href="#" class="btn">Learn More</a>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <img src="/api/placeholder/400/300" alt="Resume Building" class="service-img">
+                    <div class="service-content">
+                        <h3 class="service-title">Resume Building</h3>
+                        <p>We help craft compelling resumes and cover letters that highlight your strengths and capture employers' attention.</p>
+                        <a href="#" class="btn">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Jobs Section -->
+    <section id="jobs" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Latest Job Openings</h2>
+                <p>Explore our current job opportunities across various industries.</p>
+            </div>
+            <div class="service-list">
+                <div class="service-card">
+                    <div class="service-content">
+                        <h3 class="service-title">Senior Software Developer</h3>
+                        <p><strong>Location:</strong> New York, NY</p>
+                        <p><strong>Type:</strong> Full-time</p>
+                        <p>We're looking for an experienced software developer with expertise in JavaScript, React, and Node.js to join our client's growing tech team.</p>
+                        <a href="#contact" class="btn">Apply Now</a>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="service-content">
+                        <h3 class="service-title">Marketing Manager</h3>
+                        <p><strong>Location:</strong> Remote</p>
+                        <p><strong>Type:</strong> Full-time</p>
+                        <p>A leading e-commerce company is seeking a talented Marketing Manager to develop and implement comprehensive marketing strategies.</p>
+                        <a href="#contact" class="btn">Apply Now</a>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <div class="service-content">
+                        <h3 class="service-title">Administrative Assistant</h3>
+                        <p><strong>Location:</strong> Jackson Heights, NY</p>
+                        <p><strong>Type:</strong> Part-time</p>
+                        <p>Our client is looking for an organized and efficient Administrative Assistant to support their office operations and executive team.</p>
+                        <a href="#contact" class="btn">Apply Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center" style="text-align: center; margin-top: 40px;">
+                <a href="#" class="btn btn-outline">View All Jobs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="section testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What Our Clients Say</h2>
+            </div>
+            <div class="testimonial-slider">
+                <div class="testimonial-slide active">
+                    <p class="testimonial-text">B&H Employment helped me land my dream job in just two weeks! Their personalized approach and industry connections made all the difference in my job search.</p>
+                    <div class="testimonial-author">Sarah Johnson</div>
+                    <div class="testimonial-position">Software Engineer</div>
+                </div>
+                <div class="testimonial-slide">
+                    <p class="testimonial-text">As an employer, I've worked with B&H for years to find qualified candidates. Their attention to detail and understanding of our company culture has made them an invaluable partner.</p>
+                    <div class="testimonial-author">Michael Rodriguez</div>
+                    <div class="testimonial-position">HR Director</div>
+                </div>
+                <div class="testimonial-slide">
+                    <p class="testimonial-text">The career counseling services at B&H gave me the confidence and direction I needed to make a successful career change after 10 years in the same industry.</p>
+                    <div class="testimonial-author">Jennifer Lee</div>
+                    <div class="testimonial-position">Marketing Specialist</div>
+                </div>
+                <div class="testimonial-controls">
+                    <div class="testimonial-btn prev-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="testimonial-btn next-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Contact Us</h2>
+                <p>Get in touch with our team for any inquiries or to discuss job opportunities.</p>
+            </div>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <div class="contact-method">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <h3>Our Office</h3>
+                            <p>37-51 75th St.1A<br>Jackson Heights, NY 11372</p>
+                        </div>
+                    </div>
+                    <div class="contact-method">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div>
+                            <h3>Phone</h3>
+                            <p>Office: (1) 347-680-2869<br>Mobile: (929) 823-7040</p>
+                        </div>
+                    </div>
+                    <div class="contact-method">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <h3>Email</h3>
+                            <p>bh.jobagency@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-method">
+                        <div class="contact-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <h3>Working Hours</h3>
+                            <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 2:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>Send us a Message</h3>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label class="form-label" for="name">Full Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="phone">Phone</label>
+                            <input type="tel" class="form-control" id="phone" placeholder="Your Phone">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="subject">Subject</label>
+                            <input type="text" class="form-control" id="subject" placeholder="Subject">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="message">Message</label>
+                            <textarea class="form-control" id="message" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-about">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgMTUwIj4KICA8cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1MCIgZmlsbD0iIzAwMWY0MCIgcng9IjEwIiByeT0iMTAiLz4KICA8dGV4dCB4PSIxMzAiIHk9IjcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZmZmIj5CJmFtcDtIPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTEwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjIiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZmZmIj5FTVBMT1lNRU5UPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTMwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiNmZmYiPiZhbXA7IENPTlNVTFRBTkNZIElOQzwvdGV4dD4KPC9zdmc+" alt="B&H Employment & Consultancy Inc" class="footer-logo">
+                <p>B&H Employment & Consultancy Inc is a leading job placement agency dedicated to connecting talented professionals with top employers across various industries.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-links-container">
+                <h3 class="footer-title">Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#jobs">Job Listings</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-services">
+                <h3 class="footer-title">Services</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Job Placement</a></li>
+                    <li><a href="#">Career Counseling</a></li>
+                    <li><a href="#">Resume Building</a></li>
+                    <li><a href="#">Interview Preparation</a></li>
+                    <li><a href="#">Employer Services</a></li>
+                    <li><a href="#">International Recruitment</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact-info">
+                <h3 class="footer-title">Contact Info</h3>
+                <ul class="footer-contact">
+                    <li>
+                        <span class="footer-contact-icon"><i class="fas fa-map-marker-alt"></i></span>
+                        <span>37-51 75th St.1A<br>Jackson Heights, NY 11372</span>
+                    </li>
+                    <li>
+                        <span class="footer-contact-icon"><i class="fas fa-phone-alt"></i></span>
+                        <span>(1) 347-680-2869<br>(929) 823-7040</span>
+                    </li>
+                    <li>
+                        <span class="footer-contact-icon"><i class="fas fa-envelope"></i></span>
+                        <span>bh.jobagency@gmail.com</span>
+                    </li>
+                    <li>
+                        <span class="footer-contact-icon"><i class="fas fa-globe"></i></span>
+                        <span>www.bh.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <p>&copy; 2025 B&H Employment & Consultancy Inc. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <div class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Job Search Section -->
+    <section class="section" style="background-color: #f0f7ff;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Find Your Perfect Job</h2>
+                <p>Use our advanced search tools to find opportunities that match your skills and preferences.</p>
+            </div>
+            <div class="job-search-container" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label for="job-search" style="display: block; margin-bottom: 8px; font-weight: 600;">Keywords</label>
+                        <input type="text" id="job-search" placeholder="Job title, skills, or keywords" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <div>
+                        <label for="job-location" style="display: block; margin-bottom: 8px; font-weight: 600;">Location</label>
+                        <input type="text" id="job-location" placeholder="City or zip code" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <div>
+                        <label for="job-category" style="display: block; margin-bottom: 8px; font-weight: 600;">Category</label>
+                        <select id="job-category" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px;">
+                            <option value="">All Categories</option>
+                            <option value="it">Information Technology</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="finance">Finance</option>
+                            <option value="education">Education</option>
+                            <option value="marketing">Marketing</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="job-type" style="display: block; margin-bottom: 8px; font-weight: 600;">Job Type</label>
+                        <select id="job-type" style="width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px;">
+                            <option value="">All Types</option>
+                            <option value="full-time">Full Time</option>
+                            <option value="part-time">Part Time</option>
+                            <option value="contract">Contract</option>
+                            <option value="remote">Remote</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn" style="width: 100%;">Search Jobs</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="section stats" style="background: linear-gradient(135deg, var(--primary-color), var(--dark-color)); color: white; padding: 80px 0;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" style="color: white;">Our Impact in Numbers</h2>
+                <p>We've made a difference in thousands of careers.</p>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; text-align: center;">
+                <div class="stat-item">
+                    <div class="stat-number" style="font-size: 3rem; font-weight: 700; margin-bottom: 10px;">5000+</div>
+                    <div class="stat-label" style="font-size: 1.2rem; opacity: 0.9;">Successful Placements</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" style="font-size: 3rem; font-weight: 700; margin-bottom: 10px;">850+</div>
+                    <div class="stat-label" style="font-size: 1.2rem; opacity: 0.9;">Corporate Partners</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" style="font-size: 3rem; font-weight: 700; margin-bottom: 10px;">15+</div>
+                    <div class="stat-label" style="font-size: 1.2rem; opacity: 0.9;">Years of Experience</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" style="font-size: 3rem; font-weight: 700; margin-bottom: 10px;">98%</div>
+                    <div class="stat-label" style="font-size: 1.2rem; opacity: 0.9;">Client Satisfaction</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Meet Our Team</h2>
+                <p>Our experienced recruitment professionals are here to help you succeed.</p>
+            </div>
+            <div class="team-members">
+                <div class="team-card">
+                    <div class="team-img-container">
+                        <img src="/api/placeholder/400/400" alt="Team Member" class="team-img">
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-content">
+                        <h3 class="team-name">John Smith</h3>
+                        <div class="team-position">Founder & CEO</div>
+                        <p>Over 15 years of experience in recruitment and career counseling.</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-img-container">
+                        <img src="/api/placeholder/400/400" alt="Team Member" class="team-img">
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-content">
+                        <h3 class="team-name">Lisa Johnson</h3>
+                        <div class="team-position">Senior Recruiter</div>
+                        <p>Specializes in IT and technical recruitment with 8+ years of experience.</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-img-container">
+                        <img src="/api/placeholder/400/400" alt="Team Member" class="team-img">
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-content">
+                        <h3 class="team-name">Michael Wong</h3>
+                        <div class="team-position">Career Counselor</div>
+                        <p>Helps candidates navigate career transitions and professional development.</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-img-container">
+                        <img src="/api/placeholder/400/400" alt="Team Member" class="team-img">
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                    <div class="team-content">
+                        <h3 class="team-name">Sarah Chen</h3>
+                        <div class="team-position">Client Relations</div>
+                        <p>Manages relationships with corporate clients and ensures satisfaction.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section" style="background-color: #f0f7ff;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <p>Find answers to common questions about our services.</p>
+            </div>
+            <div class="faq-container" style="max-width: 800px; margin: 0 auto;">
+                <div class="faq-item" style="margin-bottom: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+                    <div class="faq-question" style="padding: 20px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span>How does your job placement process work?</span>
+                        <i class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
+                    </div>
+                    <div class="faq-answer" style="padding: 0 20px; max-height: 0; overflow: hidden; transition: all 0.3s ease;">
+                        <p style="padding-bottom: 20px;">Our job placement process begins with an initial consultation to understand your skills, experience, and career goals. We then match you with suitable opportunities from our extensive job database. Once we find potential matches, we'll prepare you for interviews and provide support throughout the hiring process until you secure the right position.</p>
+                    </div>
+                </div>
+                <div class="faq-item" style="margin-bottom: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+                    <div class="faq-question" style="padding: 20px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span>Is there a fee for job seekers?</span>
+                        <i class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
+                    </div>
+                    <div class="faq-answer" style="padding: 0 20px; max-height: 0; overflow: hidden; transition: all 0.3s ease;">
+                        <p style="padding-bottom: 20px;">No, our job placement services are completely free for job seekers. Our fees are covered by the hiring companies that partner with us to find qualified candidates.</p>
+                    </div>
+                </div>
+                <div class="faq-item" style="margin-bottom: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+                    <div class="faq-question" style="padding: 20px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span>What types of positions do you fill?</span>
+                        <i class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
+                    </div>
+                    <div class="faq-answer" style="padding: 0 20px; max-height: 0; overflow: hidden; transition: all 0.3s ease;">
+                        <p style="padding-bottom: 20px;">We work across multiple industries including IT, healthcare, finance, education, marketing, and administrative roles. We place candidates in positions ranging from entry-level to executive roles, both permanent and contract-based.</p>
+                    </div>
+                </div>
+                <div class="faq-item" style="margin-bottom: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+                    <div class="faq-question" style="padding: 20px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span>How long does it typically take to find a job?</span>
+                        <i class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
+                    </div>
+                    <div class="faq-answer" style="padding: 0 20px; max-height: 0; overflow: hidden; transition: all 0.3s ease;">
+                        <p style="padding-bottom: 20px;">The timeline varies depending on factors such as your skills, experience, industry, and current market conditions. Some candidates are placed within days, while others may take a few weeks or months. We work diligently to find opportunities that match your qualifications as quickly as possible.</p>
+                    </div>
+                </div>
+                <div class="faq-item" style="margin-bottom: 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.05);">
+                    <div class="faq-question" style="padding: 20px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                        <span>How can employers partner with B&H Employment?</span>
+                        <i class="fas fa-chevron-down" style="transition: transform 0.3s;"></i>
+                    </div>
+                    <div class="faq-answer" style="padding: 0 20px; max-height: 0; overflow: hidden; transition: all 0.3s ease;">
+                        <p style="padding-bottom: 20px;">Employers can contact us through our website or directly via phone or email. We'll schedule a consultation to understand your hiring needs, company culture, and recruitment challenges. From there, we'll develop a customized recruitment strategy and present you with pre-screened, qualified candidates that match your requirements.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Preview Section -->
+    <section id="blog" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Career Resources</h2>
+                <p>Latest insights and advice to help you advance in your career.</p>
+            </div>
+            <div class="service-list">
+                <div class="service-card">
+                    <img src="/api/placeholder/400/300" alt="Blog Post" class="service-img">
+                    <div class="service-content">
+                        <div style="color: var(--primary-color); margin-bottom: 10px;">February 25, 2025</div>
+                        <h3 class="service-title">10 Resume Tips That Will Get You Noticed</h3>
+                        <p>Learn how to craft a resume that stands out from the competition and catches recruiters' attention.</p>
+                        <a href="#" class="btn">Read More</a>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <img src="/api/placeholder/400/300" alt="Blog Post" class="service-img">
+                    <div class="service-content">
+                        <div style="color: var(--primary-color); margin-bottom: 10px;">February 18, 2025</div>
+                        <h3 class="service-title">How to Ace Your Job Interview</h3>
+                        <p>Practical strategies and tips to help you prepare for and excel in your next job interview.</p>
+                        <a href="#" class="btn">Read More</a>
+                    </div>
+                </div>
+                <div class="service-card">
+                    <img src="/api/placeholder/400/300" alt="Blog Post" class="service-img">
+                    <div class="service-content">
+                        <div style="color: var(--primary-color); margin-bottom: 10px;">February 12, 2025</div>
+                        <h3 class="service-title">Navigating Career Changes Successfully</h3>
+                        <p>Advice on how to transition to a new career path while leveraging your existing skills and experience.</p>
+                        <a href="#" class="btn">Read More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center" style="text-align: center; margin-top: 40px;">
+                <a href="#" class="btn btn-outline">View All Resources</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="section" style="background-color: var(--accent-color); padding: 60px 0;">
+        <div class="container">
+            <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+                <h2 style="margin-bottom: 20px;">Subscribe to Job Alerts</h2>
+                <p style="margin-bottom: 30px;">Stay updated with the latest job opportunities matching your skills and preferences.</p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="email" placeholder="Your Email Address" style="flex: 1; min-width: 250px; padding: 15px; border: none; border-radius: var(--border-radius); box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <button class="btn" style="white-space: nowrap;">Subscribe Now</button>
+                </div>
+                <p style="font-size: 0.9rem; margin-top: 15px; opacity: 0.8;">We respect your privacy and will never share your information.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Client Logos -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Trusted Partners</h2>
+                <p>We work with leading companies across various industries.</p>
+            </div>
+            <div class="client-logos" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; margin-top: 30px;">
+                <div class="client-logo" style="opacity: 0.7; transition: opacity 0.3s; filter: grayscale(100%);">
+                    <img src="/api/placeholder/150/80" alt="Client Logo" style="max-width: 150px; max-height: 80px;">
+                </div>
+                <div class="client-logo" style="opacity: 0.7; transition: opacity 0.3s; filter: grayscale(100%);">
+                    <img src="/api/placeholder/150/80" alt="Client Logo" style="max-width: 150px; max-height: 80px;">
+                </div>
+                <div class="client-logo" style="opacity: 0.7; transition: opacity 0.3s; filter: grayscale(100%);">
+                    <img src="/api/placeholder/150/80" alt="Client Logo" style="max-width: 150px; max-height: 80px;">
+                </div>
+                <div class="client-logo" style="opacity: 0.7; transition: opacity 0.3s; filter: grayscale(100%);">
+                    <img src="/api/placeholder/150/80" alt="Client Logo" style="max-width: 150px; max-height: 80px;">
+                </div>
+                <div class="client-logo" style="opacity: 0.7; transition: opacity 0.3s; filter: grayscale(100%);">
+                    <img src="/api/placeholder/150/80" alt="Client Logo" style="max-width: 150px; max-height: 80px;">
+                </div>
+                <div class="client-logo" style="opacity: 0.7; transition: opacity 0.3s; filter: grayscale(100%);">
+                    <img src="/api/placeholder/150/80" alt="Client Logo" style="max-width: 150px; max-height: 80px;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="cookie-banner" style="position: fixed; bottom: -100px; left: 0; right: 0; background-color: white; padding: 15px 20px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 1000; transition: bottom 0.5s ease;">
+        <p style="margin: 0; flex: 1;">We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.</p>
+        <div style="display: flex; gap: 10px;">
+            <button id="accept-cookies" class="btn" style="padding: 8px 15px; white-space: nowrap;">Accept</button>
+            <button id="decline-cookies" style="padding: 8px 15px; background: none; border: 1px solid #ddd; border-radius: var(--border-radius); cursor: pointer; white-space: nowrap;">Decline</button>
+        </div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <div id="theme-toggle" style="position: fixed; top: 150px; right: 30px; z-index: 99; width: 50px; height: 50px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+        <i class="fas fa-moon" style="font-size: 1.2rem; color: var(--primary-color);"></i>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Sticky Header
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth Scrolling for Anchor Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                navLinks.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 90,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Back to Top Button
+        const backToTopBtn = document.querySelector('.back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTopBtn.classList.add('active');
+            } else {
+                backToTopBtn.classList.remove('active');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Testimonial Slider
+        const testimonialSlides = document.querySelectorAll('.testimonial-slide');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        let currentSlide = 0;
+
+        function showSlide(n) {
+            testimonialSlides.forEach(slide => slide.classList.remove('active'));
+            currentSlide = (n + testimonialSlides.length) % testimonialSlides.length;
+            testimonialSlides[currentSlide].classList.add('active');
+        }
+
+        prevBtn.addEventListener('click', () => {
+            showSlide(currentSlide - 1);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            showSlide(currentSlide + 1);
+        });
+
+        // Auto-rotate testimonials
+        setInterval(() => {
+            showSlide(currentSlide + 1);
+        }, 5000);
+
+        // Animate Elements on Scroll
+        const animateElements = () => {
+            const featureCards = document.querySelectorAll('.feature-card');
+            const serviceCards = document.querySelectorAll('.service-card');
+            const teamCards = document.querySelectorAll('.team-card');
+            const contactInfo = document.querySelector('.contact-info');
+            const contactForm = document.querySelector('.contact-form');
+            const heroImg = document.querySelector('.hero-img');
+            
+            const triggerAnimation = (elements, className) => {
+                elements.forEach((element, index) => {
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.2;
+                    
+                    if (elementPosition < screenPosition) {
+                        setTimeout(() => {
+                            element.style.opacity = '1';
+                            element.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            };
+            
+            triggerAnimation(featureCards);
+            triggerAnimation(serviceCards);
+            triggerAnimation(teamCards);
+            
+            if (contactInfo && contactForm) {
+                const contactInfoPosition = contactInfo.getBoundingClientRect().top;
+                const contactFormPosition = contactForm.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.2;
+                
+                if (contactInfoPosition < screenPosition) {
+                    contactInfo.style.opacity = '1';
+                    contactInfo.style.transform = 'translateY(0)';
+                }
+                
+                if (contactFormPosition < screenPosition) {
+                    contactForm.style.opacity = '1';
+                    contactForm.style.transform = 'translateY(0)';
+                }
+            }
+            
+            if (heroImg) {
+                setTimeout(() => {
+                    heroImg.style.opacity = '1';
+                    heroImg.style.transform = 'translateY(0)';
+                }, 500);
+            }
+        };
+
+        // Initial animation on page load
+        window.addEventListener('load', () => {
+            setTimeout(animateElements, 500);
+        });
+
+        // Animation on scroll
+        window.addEventListener('scroll', animateElements);
+
+        // Form Submission
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Thank you for your message! We will get back to you soon.');
+                contactForm.reset();
+            });
+        }
+
+        // FAQ Accordion
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('.fa-chevron-down');
+                
+                if (answer.style.maxHeight) {
+                    answer.style.maxHeight = null;
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+
+        // Client Logo Hover Effect
+        const clientLogos = document.querySelectorAll('.client-logo');
+        
+        clientLogos.forEach(logo => {
+            logo.addEventListener('mouseenter', () => {
+                logo.style.opacity = '1';
+                logo.style.filter = 'grayscale(0%)';
+            });
+            
+            logo.addEventListener('mouseleave', () => {
+                logo.style.opacity = '0.7';
+                logo.style.filter = 'grayscale(100%)';
+            });
+        });
+
+        // Cookie Banner
+        setTimeout(() => {
+            const cookieBanner = document.getElementById('cookie-banner');
+            if (cookieBanner) {
+                cookieBanner.style.bottom = '0';
+            }
+        }, 2000);
+        
+        document.getElementById('accept-cookies')?.addEventListener('click', () => {
+            document.getElementById('cookie-banner').style.bottom = '-100px';
+        });
+        
+        document.getElementById('decline-cookies')?.addEventListener('click', () => {
+            document.getElementById('cookie-banner').style.bottom = '-100px';
+        });
+
+        // Dark Mode Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+        let isDarkMode = false;
+        
+        themeToggle.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            
+            if (isDarkMode) {
+                root.style.setProperty('--primary-color', '#3b82f6');
+                root.style.setProperty('--secondary-color', '#1d4ed8');
+                root.style.setProperty('--accent-color', '#1e293b');
+                root.style.setProperty('--text-color', '#e2e8f0');
+                root.style.setProperty('--light-color', '#0f172a');
+                root.style.setProperty('--dark-color', '#64748b');
+                document.body.style.backgroundColor = '#0f172a';
+                themeToggle.innerHTML = '<i class="fas fa-sun" style="font-size: 1.2rem; color: #3b82f6;"></i>';
+                themeToggle.style.backgroundColor = '#1e293b';
+            } else {
+                root.style.setProperty('--primary-color', '#0056b3');
+                root.style.setProperty('--secondary-color', '#003d80');
+                root.style.setProperty('--accent-color', '#e9f2ff');
+                root.style.setProperty('--text-color', '#333');
+                root.style.setProperty('--light-color', '#fff');
+                root.style.setProperty('--dark-color', '#001f40');
+                document.body.style.backgroundColor = '#f8f9fa';
+                themeToggle.innerHTML = '<i class="fas fa-moon" style="font-size: 1.2rem; color: var(--primary-color);"></i>';
+                themeToggle.style.backgroundColor = 'white';
+            }
+        });
+
+        // Animated Counter for Stats
+        function animateCounter(el) {
+            const target = parseInt(el.innerText.replace(/[^\d]/g, ''));
+            const suffix = el.innerText.replace(/[\d]/g, '');
+            let current = 0;
+            const increment = target / 100;
+            const duration = 2000;
+            const step = duration / 100;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                el.innerText = Math.floor(current) + suffix;
+                
+                if (current >= target) {
+                    el.innerText = target + suffix;
+                    clearInterval(timer);
+                }
+            }, step);
+        }
+        
+        // Intersection Observer for Stats Animation
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumbers = entry.target.querySelectorAll('.stat-number');
+                    statNumbers.forEach(stat => {
+                        animateCounter(stat);
+                    });
+                    statObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        const statsSection = document.querySelector('.stats');
+        if (statsSection) {
+            statObserver.observe(statsSection);
+        }
+        
+        // Typing Animation for Hero
+        function typeWriter(element, text, speed = 50, startDelay = 500) {
+            setTimeout(() => {
+                let i = 0;
+                element.textContent = '';
+                
+                const timer = setInterval(() => {
+                    if (i < text.length) {
+                        element.textContent += text.charAt(i);
+                        i++;
+                    } else {
+                        clearInterval(timer);
+                    }
+                }, speed);
+            }, startDelay);
+        }
+        
+        const heroTitle = document.querySelector('.hero h1');
+        if (heroTitle) {
+            const originalText = heroTitle.textContent;
+            heroTitle.textContent = '';
+            typeWriter(heroTitle, originalText);
+        }
+
+        // Floating Animation for Hero CTA
+        const heroBtns = document.querySelector('.hero-btns');
+        if (heroBtns) {
+            setInterval(() => {
+                heroBtns.style.transform = 'translateY(-5px)';
+                setTimeout(() => {
+                    heroBtns.style.transform = 'translateY(0)';
+                }, 500);
+            }, 3000);
+        }
+
+        // Parallax Effect for Hero
+        const hero = document.querySelector('.hero');
+        if (hero) {
+            window.addEventListener('scroll', () => {
+                const scrollPosition = window.scrollY;
+                hero.style.backgroundPosition = `center ${scrollPosition * 0.5}px`;
+            });
+        }
+
+        // Live Chat Widget
+        setTimeout(() => {
+            const chatWidget = document.createElement('div');
+            chatWidget.innerHTML = `
+                <div id="chat-widget" style="position: fixed; bottom: 30px; right: 30px; z-index: 999;">
+                    <div id="chat-bubble" style="width: 60px; height: 60px; background-color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                        <i class="fas fa-comments" style="color: white; font-size: 24px;"></i>
+                    </div>
+                    <div id="chat-box" style="position: absolute; bottom: 70px; right: 0; width: 300px; height: 400px; background-color: white; border-radius: 10px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); display: none; overflow: hidden;">
+                        <div style="background-color: var(--primary-color); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: bold;">Chat with Us</div>
+                                <div style="font-size: 0.8rem;">We're online</div>
+                            </div>
+                            <i id="close-chat" class="fas fa-times" style="cursor: pointer;"></i>
+                        </div>
+                        <div style="height: 290px; padding: 15px; overflow-y: auto;">
+                            <div style="background-color: #f0f7ff; padding: 10px; border-radius: 10px; margin-bottom: 10px; max-width: 80%;">
+                                <div style="font-weight: bold; margin-bottom: 5px;">Support Team</div>
+                                <div>Hello! How can we help you today?</div>
+                            </div>
+                        </div>
+                        <div style="padding: 10px; border-top: 1px solid #eee; display: flex; gap: 10px;">
+                            <input type="text" placeholder="Type your message..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <button style="background-color: var(--primary-color); color: white; border: none; border-radius: 5px; padding: 10px 15px; cursor: pointer;">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(chatWidget);
+            
+            const chatBubble = document.getElementById('chat-bubble');
+            const chatBox = document.getElementById('chat-box');
+            const closeChat = document.getElementById('close-chat');
+            
+            chatBubble.addEventListener('click', () => {
+                chatBox.style.display = 'block';
+                chatBubble.style.display = 'none';
+            });
+            
+            closeChat.addEventListener('click', () => {
+                chatBox.style.display = 'none';
+                chatBubble.style.display = 'flex';
+            });
+        }, 3000);
+
+        // App notification
+        setTimeout(() => {
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.left = '20px';
+            notification.style.backgroundColor = 'white';
+            notification.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+            notification.style.borderRadius = '10px';
+            notification.style.padding = '15px 20px';
+            notification.style.display = 'flex';
+            notification.style.alignItems = 'center';
+            notification.style.gap = '15px';
+            notification.style.width = '300px';
+            notification.style.zIndex = '9999';
+            notification.style.transform = 'translateY(150%)';
+            notification.style.transition = 'transform 0.5s ease';
+            
+            notification.innerHTML = `
+                <div style="width: 40px; height: 40px; border-radius: 50%; background-color: var(--primary-color); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-bell" style="color: white; font-size: 18px;"></i>
+                </div>
+                <div>
+                    <div style="font-weight: bold; margin-bottom: 5px;">New job alert!</div>
+                    <div style="font-size: 0.9rem;">20 new jobs matching your profile</div>
+                </div>
+                <button id="close-notification" style="background: none; border: none; cursor: pointer; margin-left: auto;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateY(0)';
+            }, 500);
+            
+            document.getElementById('close-notification').addEventListener('click', () => {
+                notification.style.transform = 'translateY(150%)';
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            });
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateY(150%)';
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 8000);
+        }, 5000);
+
+        // Preloader
+        window.addEventListener('load', function() {
+            const preloader = document.createElement('div');
+            preloader.style.position = 'fixed';
+            preloader.style.top = '0';
+            preloader.style.left = '0';
+            preloader.style.width = '100%';
+            preloader.style.height = '100%';
+            preloader.style.backgroundColor = 'var(--primary-color)';
+            preloader.style.display = 'flex';
+            preloader.style.flexDirection = 'column';
+            preloader.style.alignItems = 'center';
+            preloader.style.justifyContent = 'center';
+            preloader.style.zIndex = '9999';
+            preloader.style.transition = 'opacity 0.5s ease, visibility 0.5s ease';
+            
+            preloader.innerHTML = `
+                <div style="width: 100px; height: 100px; border: 5px solid white; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite;"></div>
+                <div style="color: white; font-size: 24px; font-weight: bold; margin-top: 20px;">B&H Employment</div>
+            `;
+            
+            document.body.appendChild(preloader);
+            
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+                setTimeout(() => {
+                    preloader.remove();
+                }, 500);
+            }, 1500);
+        });
+
+        // Add animation keyframes
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+            
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            
+            .animate-float {
+                animation: float 3s ease-in-out infinite;
+            }
+            
+            .animate-pulse {
+                animation: pulse 2s ease-in-out infinite;
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>
