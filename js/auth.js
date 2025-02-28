@@ -519,3 +519,182 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+// Fix for the register page terms and conditions modal display
+document.addEventListener('DOMContentLoaded', function() {
+    'use strict';
+    
+    // Terms Modal Functionality
+    const termsLink = document.getElementById('termsLink');
+    const privacyLink = document.getElementById('privacyLink');
+    const termsModal = document.getElementById('termsModal');
+    const privacyModal = document.getElementById('privacyModal');
+    const closeModalBtns = document.querySelectorAll('.close-modal');
+    const acceptTermsBtn = document.getElementById('acceptTerms');
+    const acceptPrivacyBtn = document.getElementById('acceptPrivacy');
+    const termsCheck = document.getElementById('termsCheck');
+    
+    // Function to open modal
+    function openModal(modal) {
+        if (modal) {
+            // Make sure modal has proper styles
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+            
+            // Add necessary styles if not already set by CSS
+            if (!modal.style.alignItems) {
+                modal.style.alignItems = 'center';
+                modal.style.justifyContent = 'center';
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                modal.style.zIndex = '1000';
+            }
+        }
+    }
+    
+    // Function to close modal
+    function closeModal(modal) {
+        if (modal) {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+    }
+    
+    // Terms link click handler
+    if (termsLink) {
+        termsLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal(termsModal);
+        });
+    }
+    
+    // Privacy link click handler
+    if (privacyLink) {
+        privacyLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal(privacyModal);
+        });
+    }
+    
+    // Close buttons click handlers
+    closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            closeModal(modal);
+        });
+    });
+    
+    // Accept terms button
+    if (acceptTermsBtn) {
+        acceptTermsBtn.addEventListener('click', function() {
+            if (termsCheck) {
+                termsCheck.checked = true;
+            }
+            closeModal(termsModal);
+        });
+    }
+    
+    // Accept privacy button
+    if (acceptPrivacyBtn) {
+        acceptPrivacyBtn.addEventListener('click', function() {
+            if (termsCheck) {
+                termsCheck.checked = true;
+            }
+            closeModal(privacyModal);
+        });
+    }
+    
+    // Close modal when clicking outside content
+    window.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal')) {
+            closeModal(e.target);
+        }
+    });
+    
+    // Add extra CSS for modals if needed
+    const modalStyle = document.createElement('style');
+    modalStyle.textContent = `
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            animation: modalFadeIn 0.3s ease;
+            position: relative;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin-bottom: 0;
+            font-size: 1.5rem;
+        }
+        
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+            transition: color 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            color: #0056b3;
+        }
+        
+        .modal-body {
+            padding: 15px;
+        }
+        
+        .modal-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            text-align: right;
+        }
+    `;
+    document.head.appendChild(modalStyle);
+});
