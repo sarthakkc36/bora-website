@@ -772,8 +772,8 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
+    <!-- Hero Section with Background Image -->
+    <section class="hero" style="background: linear-gradient(rgba(0, 86, 179, 0.85), rgba(0, 86, 179, 0.85)), url('images/hero-bg.jpg'); background-size: cover; background-position: center;">
         <div class="container">
             <div class="hero-content">
                 <h1>Your Gateway to Career Opportunities in USA</h1>
@@ -787,13 +787,26 @@
         </div>
     </section>
 
-    <!-- Services Section -->
-    <section class="services">
+    <!-- Services Section with Image Side-by-Side -->
+    <section class="services" style="padding: 80px 0;">
         <div class="container">
             <div class="section-title" data-aos="fade-up">
                 <h2>Our Services</h2>
                 <p>Professional employment solutions for job seekers and employers</p>
             </div>
+            
+            <!-- Image and Services Row -->
+            <div style="display: flex; flex-wrap: wrap; gap: 30px; align-items: center; margin: 30px 0 50px;" data-aos="fade-up">
+                <div style="flex: 1; min-width: 300px;">
+                    <img src="images/services-main.jpg" alt="Professional Services" style="width: 100%; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                </div>
+                <div style="flex: 1; min-width: 300px;">
+                    <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 24px;">Comprehensive Employment Solutions</h3>
+                    <p>At B&H Employment & Consultancy Inc, we offer a wide range of professional services designed to help both job seekers and employers achieve their goals. Our experienced team provides personalized support throughout the employment process.</p>
+                    <p>Whether you're looking for your next career opportunity or seeking to hire qualified professionals, we have the expertise and resources to meet your needs.</p>
+                </div>
+            </div>
+            
             <div class="services-list" data-aos="fade-up" style="max-width: 900px; margin: 0 auto;">
                 <div class="services-column" style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: space-between;">
                     <div class="service-item" style="flex: 0 0 calc(50% - 15px); background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; transition: all 0.3s ease;">
@@ -893,13 +906,25 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
+    <!-- Contact Section with Image Integration -->
     <section class="contact">
         <div class="container">
             <div class="section-title" data-aos="fade-up">
                 <h2>Contact Us</h2>
                 <p>Get in touch with our team for any inquiries</p>
             </div>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 40px;" data-aos="fade-up">
+                <div style="flex: 1; min-width: 300px;">
+                    <img src="images/office-photo.jpg" alt="Our Office" style="width: 100%; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                </div>
+                <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="color: var(--primary); margin-bottom: 20px;">Visit Our Office</h3>
+                    <p>Our team is ready to assist you with all your employment needs. Visit us at our office in Jackson Heights, NY, or contact us by phone or email for personalized service.</p>
+                    <p>We're available Monday through Saturday to answer your questions and provide guidance on your job search or recruitment needs.</p>
+                </div>
+            </div>
+            
             <div class="contact-grid">
                 <div class="contact-card" data-aos="fade-up">
                     <div class="contact-icon">
