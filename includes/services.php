@@ -28,15 +28,22 @@ $services = getServices();
             <p>We provide comprehensive employment and consultancy services to both job seekers and employers.</p>
         </div>
         <div class="services-grid">
-            <?php foreach ($services as $service): ?>
-                <div class="service-card fade-in">
-                    <div class="service-icon">
-                        <i class="<?php echo htmlspecialchars($service['icon']); ?>"></i>
-                    </div>
-                    <h3><?php echo htmlspecialchars($service['title']); ?></h3>
-                    <p><?php echo htmlspecialchars($service['description']); ?></p>
+            <?php if (empty($services)): ?>
+                <div class="empty-state">
+                    <i class="fas fa-cogs"></i>
+                    <p>Our services are currently being updated. Please check back soon.</p>
                 </div>
-            <?php endforeach; ?>
+            <?php else: ?>
+                <?php foreach ($services as $service): ?>
+                    <div class="service-card fade-in">
+                        <div class="service-icon">
+                            <i class="<?php echo htmlspecialchars($service['icon']); ?>"></i>
+                        </div>
+                        <h3><?php echo htmlspecialchars($service['title']); ?></h3>
+                        <p><?php echo htmlspecialchars($service['description']); ?></p>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 </section>

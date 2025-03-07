@@ -2,14 +2,15 @@
 require_once 'config.php';
 
 $errors = [];
+$login_identifier = '';  // Store the username or email
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = sanitizeInput($_POST['email']);
+    $login_identifier = sanitizeInput($_POST['login_identifier']);
     $password = $_POST['password'];
     
     // Validate inputs
-    if (empty($email)) {
-        $errors[] = "Email is required";
+    if (empty($login_identifier)) {
+        $errors[] = "Username or Email is required";
     }
     
     if (empty($password)) {
@@ -19,8 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // If no validation errors, proceed with login
     if (empty($errors)) {
         try {
-            $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email LIMIT 1");
-            $stmt->bindParam(':email', $email);
+            // Check if login_identifier is username or email
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :identifier OR email = :identifier LIMIT 1");
+            $stmt->bindParam(':identifier', $login_identifier);
             $stmt->execute();
             
             if ($stmt->rowCount() > 0) {
@@ -28,26 +30,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Verify password
                 if (password_verify($password, $user['password'])) {
-                    // Set session variables
-                    $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['username'] = $user['username'];
-                    $_SESSION['user_email'] = $user['email'];
-                    $_SESSION['user_role'] = $user['role'];
-                    $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
-                    
-                    // Redirect based on role
-                    if ($user['role'] === 'admin') {
-                        redirect('admin/dashboard.php');
-                    } elseif ($user['role'] === 'employer') {
-                        redirect('employer/dashboard.php');
+                    // If employer, check verification status
+                    if ($user['role'] === 'employer' && $user['is_verified'] != 1) {
+                        $errors[] = "Your account is pending verification by an administrator. Please check back later or contact support.";
                     } else {
-                        redirect('job-seeker/dashboard.php');
+                        // Check subscription for employers
+                        if ($user['role'] === 'employer') {
+                            // If subscription has expired, note it but still allow login
+                            $subscription_warning = '';
+                            if (!empty($user['subscription_end']) && new DateTime() > new DateTime($user['subscription_end'])) {
+                                $subscription_warning = "Your subscription has expired. Please contact an administrator to renew.";
+                            }
+                        }
+                        
+                        // Set session variables
+                        $_SESSION['user_id'] = $user['id'];
+                        $_SESSION['username'] = $user['username'];
+                        $_SESSION['user_email'] = $user['email'];
+                        $_SESSION['user_role'] = $user['role'];
+                        $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
+                        
+                        // Add verification and subscription data to session
+                        $_SESSION['is_verified'] = $user['is_verified'];
+                        $_SESSION['subscription_start'] = $user['subscription_start'] ?? null;
+                        $_SESSION['subscription_end'] = $user['subscription_end'] ?? null;
+                        
+                        // Set subscription warning if any
+                        if (!empty($subscription_warning)) {
+                            flashMessage($subscription_warning, "warning");
+                        }
+                        
+                        // Redirect based on role
+                        if ($user['role'] === 'admin') {
+                            redirect('admin/dashboard.php');
+                        } elseif ($user['role'] === 'employer') {
+                            redirect('employer/dashboard.php');
+                        } else {
+                            redirect('index.php');
+                        }
                     }
                 } else {
-                    $errors[] = "Invalid email or password";
+                    $errors[] = "Invalid username/email or password";
                 }
             } else {
-                $errors[] = "Invalid email or password";
+                $errors[] = "Invalid username/email or password";
             }
         } catch (PDOException $e) {
             $errors[] = "Error: " . $e->getMessage();
@@ -64,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Login - B&H Employment & Consultancy Inc</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/updated-styles.css">
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -92,8 +119,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <form class="auth-form" action="login.php" method="POST">
                     <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
+                        <label for="login_identifier">Username or Email</label>
+                        <input type="text" id="login_identifier" name="login_identifier" class="form-control" value="<?php echo htmlspecialchars($login_identifier); ?>" required>
                     </div>
                     
                     <div class="form-group">
@@ -113,6 +140,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     <div class="auth-links">
                         <p>Don't have an account? <a href="register.php">Register Now</a></p>
+                    </div>
+
+                    <!-- Admin login reminder -->
+                    <div class="admin-login-note">
+                        <p><small><i class="fas fa-info-circle"></i> Admin login: username <strong>admin</strong>, password <strong>admin123</strong></small></p>
                     </div>
                 </form>
             </div>

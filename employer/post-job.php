@@ -7,6 +7,18 @@ if (!isLoggedIn() || !isEmployer()) {
     redirect('../login.php');
 }
 
+// Check if user is verified
+if (!isVerified()) {
+    flashMessage("Your account is pending verification by an administrator. You cannot post jobs until your account is verified.", "warning");
+    redirect('dashboard.php');
+}
+
+// Check if employer has a valid subscription
+if (!hasValidSubscription()) {
+    flashMessage("Your subscription has expired or is not set. Please contact the administrator to activate your subscription.", "warning");
+    redirect('dashboard.php');
+}
+
 $errors = [];
 $success = '';
 
@@ -122,6 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Post a Job - B&H Employment & Consultancy Inc</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/updated-styles.css">
 </head>
 <body>
     <?php include '../includes/header.php'; ?>
@@ -155,6 +168,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="alert alert-success"><?php echo $success; ?></div>
                     <?php endif; ?>
                     
+                    <?php displayFlashMessage(); ?>
+                    
+                    <?php if (isVerified() && hasValidSubscription()): ?>
+                    <div class="subscription-info">
+                        <div class="alert alert-info">
+                            <p><i class="fas fa-info-circle"></i> <strong>Subscription Status:</strong> 
+                                <?php if (!empty($_SESSION['subscription_end'])): ?>
+                                    Your subscription is active until <?php echo date('F j, Y', strtotime($_SESSION['subscription_end'])); ?>
+                                <?php else: ?>
+                                    Your subscription is active.
+                                <?php endif; ?>
+                            </p>
+                        </div>
+                    </div>
+                    
                     <div class="content-box">
                         <div class="content-header">
                             <h2><i class="fas fa-plus-circle"></i> Create New Job Posting</h2>
@@ -164,17 +192,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <form action="post-job.php" method="POST">
                                 <div class="form-group">
                                     <label for="title">Job Title</label>
-                                    <input type="text" id="title" name="title" class="form-control" value="<?php echo $title ?? ''; ?>" required>
+                                    <input type="text" id="title" name="title" class="form-control" value="<?php echo isset($title) ? htmlspecialchars($title) : ''; ?>" required>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label for="company_name">Company Name</label>
-                                    <input type="text" id="company_name" name="company_name" class="form-control" value="<?php echo $company_name ?? $employer['company_name']; ?>" required>
+                                    <input type="text" id="company_name" name="company_name" class="form-control" value="<?php echo isset($company_name) ? htmlspecialchars($company_name) : htmlspecialchars($employer['company_name']); ?>" required>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label for="location">Location</label>
-                                    <input type="text" id="location" name="location" class="form-control" value="<?php echo $location ?? ''; ?>" required>
+                                    <input type="text" id="location" name="location" class="form-control" value="<?php echo isset($location) ? htmlspecialchars($location) : ''; ?>" required>
                                 </div>
                                 
                                 <div class="form-row">
@@ -205,39 +233,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="form-row">
                                     <div class="form-group half">
                                         <label for="salary_min">Minimum Salary (Optional)</label>
-                                        <input type="number" id="salary_min" name="salary_min" class="form-control" value="<?php echo $salary_min ?? ''; ?>">
+                                        <input type="number" id="salary_min" name="salary_min" class="form-control" value="<?php echo isset($salary_min) ? htmlspecialchars($salary_min) : ''; ?>">
                                     </div>
                                     
                                     <div class="form-group half">
                                         <label for="salary_max">Maximum Salary (Optional)</label>
-                                        <input type="number" id="salary_max" name="salary_max" class="form-control" value="<?php echo $salary_max ?? ''; ?>">
+                                        <input type="number" id="salary_max" name="salary_max" class="form-control" value="<?php echo isset($salary_max) ? htmlspecialchars($salary_max) : ''; ?>">
                                     </div>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label for="description">Job Description</label>
-                                    <textarea id="description" name="description" class="form-control" rows="8" required><?php echo $description ?? ''; ?></textarea>
+                                    <textarea id="description" name="description" class="form-control" rows="8" required><?php echo isset($description) ? htmlspecialchars($description) : ''; ?></textarea>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label for="requirements">Job Requirements</label>
-                                    <textarea id="requirements" name="requirements" class="form-control" rows="6" required><?php echo $requirements ?? ''; ?></textarea>
+                                    <textarea id="requirements" name="requirements" class="form-control" rows="6" required><?php echo isset($requirements) ? htmlspecialchars($requirements) : ''; ?></textarea>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label for="application_instructions">Application Instructions (Optional)</label>
-                                    <textarea id="application_instructions" name="application_instructions" class="form-control" rows="4"><?php echo $application_instructions ?? ''; ?></textarea>
+                                    <textarea id="application_instructions" name="application_instructions" class="form-control" rows="4"><?php echo isset($application_instructions) ? htmlspecialchars($application_instructions) : ''; ?></textarea>
                                 </div>
                                 
                                 <div class="form-row">
                                     <div class="form-group half">
                                         <label for="contact_email">Contact Email</label>
-                                        <input type="email" id="contact_email" name="contact_email" class="form-control" value="<?php echo $contact_email ?? $employer['email']; ?>" required>
+                                        <input type="email" id="contact_email" name="contact_email" class="form-control" value="<?php echo isset($contact_email) ? htmlspecialchars($contact_email) : htmlspecialchars($employer['email']); ?>" required>
                                     </div>
                                     
                                     <div class="form-group half">
                                         <label for="contact_phone">Contact Phone (Optional)</label>
-                                        <input type="tel" id="contact_phone" name="contact_phone" class="form-control" value="<?php echo $contact_phone ?? $employer['phone']; ?>">
+                                        <input type="tel" id="contact_phone" name="contact_phone" class="form-control" value="<?php echo isset($contact_phone) ? htmlspecialchars($contact_phone) : htmlspecialchars($employer['phone']); ?>">
                                     </div>
                                 </div>
                                 
@@ -245,6 +273,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </form>
                         </div>
                     </div>
+                    <?php else: ?>
+                        <div class="content-box">
+                            <div class="content-header">
+                                <h2><i class="fas fa-exclamation-circle"></i> Account Status</h2>
+                            </div>
+                            <div class="content-body">
+                                <?php if (!isVerified()): ?>
+                                    <div class="alert alert-warning">
+                                        <h3><i class="fas fa-clock"></i> Verification Pending</h3>
+                                        <p>Your account is currently pending verification by an administrator. You will be able to post jobs once your account is verified.</p>
+                                        <p>This process typically takes 1-2 business days. If it's been longer, please contact our support team.</p>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if (!hasValidSubscription()): ?>
+                                    <div class="alert alert-warning">
+                                        <h3><i class="fas fa-calendar-times"></i> Subscription Required</h3>
+                                        <p>You currently don't have an active subscription to post jobs.</p>
+                                        <p>Please contact our administrator to activate or renew your subscription.</p>
+                                        <p><strong>Contact:</strong> bh.jobagency@gmail.com | (1)347680-2869</p>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

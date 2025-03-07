@@ -67,4 +67,32 @@ function displayFlashMessage() {
         unset($_SESSION['flash_type']);
     }
 }
+function isJobSeeker() {
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'job_seeker';
+}
+
+function isVerified() {
+    return isset($_SESSION['is_verified']) && $_SESSION['is_verified'] == 1;
+}
+
+function hasValidSubscription() {
+    // Admin always has valid "subscription"
+    if (isAdmin()) {
+        return true;
+    }
+    
+    // If no subscription end date is set but user is verified, consider it valid
+    if (isVerified() && empty($_SESSION['subscription_end'])) {
+        return true;
+    }
+    
+    // If subscription end date is set, check if it's in the future
+    if (isset($_SESSION['subscription_end']) && !empty($_SESSION['subscription_end'])) {
+        $today = new DateTime();
+        $end_date = new DateTime($_SESSION['subscription_end']);
+        return $today <= $end_date;
+    }
+    
+    return false;
+}
 ?>

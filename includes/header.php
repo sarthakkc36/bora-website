@@ -12,7 +12,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <div class="header-content">
             <div class="logo">
                 <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'index.php' : '../index.php'; ?>">
-                    <img src="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'images/logo.png' : '../images/logo.png'; ?>" alt="B&H Employment & Consultancy Logo">
+                    <img src="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'images/logo.png' : '../images/logo.svg'; ?>" alt="B&H Employment & Consultancy Logo">
                 </a>
             </div>
             <ul class="nav-menu">
@@ -62,13 +62,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </ul>
                     </li>
                 <?php else: ?>
-                    <li>
+                    <li class="auth-buttons">
                         <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'login.php' : '../login.php'; ?>" 
-                           class="<?php echo $current_page === 'login.php' ? 'active' : ''; ?>">Login</a>
+                           class="<?php echo $current_page === 'login.php' ? 'active' : ''; ?> login-btn">
+                           <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
                     </li>
                     <li>
                         <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'register.php' : '../register.php'; ?>" 
-                           class="<?php echo $current_page === 'register.php' ? 'active' : ''; ?> highlight-btn">Register</a>
+                           class="<?php echo $current_page === 'register.php' ? 'active' : ''; ?> highlight-btn">
+                           <i class="fas fa-building"></i> Register as Employer
+                        </a>
                     </li>
                 <?php endif; ?>
             </ul>

@@ -89,6 +89,7 @@ function formatDate($date) {
     <title>Employer Dashboard - B&H Employment & Consultancy Inc</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/updated-styles.css">
 </head>
 <body>
     <?php include '../includes/header.php'; ?>
@@ -109,6 +110,31 @@ function formatDate($date) {
                 
                 <div class="dashboard-content">
                     <?php displayFlashMessage(); ?>
+                    
+                    <!-- Account Status Information -->
+                    <div class="account-status">
+                        <?php if (!isVerified()): ?>
+                            <div class="alert alert-warning">
+                                <h3><i class="fas fa-exclamation-circle"></i> Account Verification Pending</h3>
+                                <p>Your account is awaiting verification by our administrators. Once verified, you'll be able to post jobs.</p>
+                                <p>This typically takes 1-2 business days. If you have any questions, please contact us.</p>
+                            </div>
+                        <?php elseif (!hasValidSubscription()): ?>
+                            <div class="alert alert-warning">
+                                <h3><i class="fas fa-calendar-times"></i> Subscription Required</h3>
+                                <p>You don't currently have an active subscription to post jobs. Please contact our administrator to activate your subscription.</p>
+                                <p><strong>Contact:</strong> bh.jobagency@gmail.com | (1)347680-2869</p>
+                            </div>
+                        <?php else: ?>
+                            <div class="alert alert-success">
+                                <h3><i class="fas fa-check-circle"></i> Account Active</h3>
+                                <p>Your account is verified and your subscription is active. You can post jobs and manage applications.</p>
+                                <?php if (!empty($_SESSION['subscription_end'])): ?>
+                                    <p><strong>Subscription valid until:</strong> <?php echo date('F j, Y', strtotime($_SESSION['subscription_end'])); ?></p>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                     
                     <div class="dashboard-stats">
                         <div class="stat-card">
@@ -153,13 +179,18 @@ function formatDate($date) {
                     </div>
                     
                     <div class="dashboard-actions">
-                        <a href="post-job.php" class="action-card">
+                        <a href="post-job.php" class="action-card <?php echo (!isVerified() || !hasValidSubscription()) ? 'disabled' : ''; ?>">
                             <div class="action-icon">
                                 <i class="fas fa-plus-circle"></i>
                             </div>
                             <div class="action-info">
                                 <h3>Post a New Job</h3>
                                 <p>Create a job listing to find qualified candidates</p>
+                                <?php if (!isVerified()): ?>
+                                    <span class="status-note">Requires verification</span>
+                                <?php elseif (!hasValidSubscription()): ?>
+                                    <span class="status-note">Requires active subscription</span>
+                                <?php endif; ?>
                             </div>
                         </a>
                         
@@ -197,7 +228,9 @@ function formatDate($date) {
                                         <div class="empty-state">
                                             <i class="fas fa-briefcase"></i>
                                             <p>You haven't posted any jobs yet.</p>
-                                            <a href="post-job.php" class="btn-small">Post a Job</a>
+                                            <?php if (isVerified() && hasValidSubscription()): ?>
+                                                <a href="post-job.php" class="btn-small">Post a Job</a>
+                                            <?php endif; ?>
                                         </div>
                                     <?php else: ?>
                                         <div class="jobs-list">

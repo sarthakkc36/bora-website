@@ -2297,3 +2297,682 @@ footer {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
 }
+* About Us Section Styles */
+.about-section {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+}
+
+.about-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.about-image {
+    flex: 1;
+    min-width: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.about-image:hover img {
+    transform: scale(1.03);
+}
+
+.about-text {
+    flex: 1.5;
+    min-width: 300px;
+}
+
+.about-text h3 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.about-text h3:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #0066cc, #4da6ff);
+}
+
+.about-text h4 {
+    font-size: 20px;
+    margin: 25px 0 15px;
+    color: #0066cc;
+}
+
+.about-text p {
+    margin-bottom: 15px;
+    line-height: 1.8;
+    color: #666;
+}
+
+.about-list {
+    margin: 15px 0;
+    padding-left: 10px;
+}
+
+.about-list li {
+    list-style: none;
+    margin-bottom: 10px;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.about-list li i {
+    color: #0066cc;
+    margin-right: 10px;
+}
+
+/* Improved Login/Register Button Styles */
+.nav-menu .highlight-btn {
+    background: linear-gradient(135deg, #0066cc, #0052a3);
+    color: white !important;
+    padding: 10px 25px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.nav-menu .highlight-btn:hover {
+    background: linear-gradient(135deg, #0052a3, #0066cc);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+}
+
+.nav-menu .highlight-btn:after {
+    display: none;
+}
+
+.login-btn {
+    background-color: transparent;
+    color: #0066cc !important;
+    border: 2px solid #0066cc;
+    padding: 8px 22px;
+    border-radius: 30px;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: rgba(0, 102, 204, 0.1);
+    transform: translateY(-2px);
+}
+
+.login-btn:after {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .about-content {
+        flex-direction: column;
+    }
+    
+    .about-image {
+        margin-bottom: 20px;
+    }
+}
+/* Import base styles */
+@import url('styles.css');
+
+/* About Us Section Styles */
+.about-section {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+}
+
+.about-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.about-image {
+    flex: 1;
+    min-width: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.about-image:hover img {
+    transform: scale(1.03);
+}
+
+.about-text {
+    flex: 1.5;
+    min-width: 300px;
+}
+
+.about-text h3 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.about-text h3:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #0066cc, #4da6ff);
+}
+
+.about-text h4 {
+    font-size: 20px;
+    margin: 25px 0 15px;
+    color: #0066cc;
+}
+
+.about-text p {
+    margin-bottom: 15px;
+    line-height: 1.8;
+    color: #666;
+}
+
+.about-list {
+    margin: 15px 0;
+    padding-left: 10px;
+}
+
+.about-list li {
+    list-style: none;
+    margin-bottom: 10px;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.about-list li i {
+    color: #0066cc;
+    margin-right: 10px;
+}
+
+/* Improved Login/Register Button Styles */
+.nav-menu .highlight-btn {
+    background: linear-gradient(135deg, #0066cc, #0052a3);
+    color: white !important;
+    padding: 10px 25px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.nav-menu .highlight-btn:hover {
+    background: linear-gradient(135deg, #0052a3, #0066cc);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+}
+
+.nav-menu .highlight-btn:after {
+    display: none;
+}
+
+.login-btn {
+    background-color: transparent;
+    color: #0066cc !important;
+    border: 2px solid #0066cc;
+    padding: 8px 22px;
+    border-radius: 30px;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: rgba(0, 102, 204, 0.1);
+    transform: translateY(-2px);
+}
+
+.login-btn:after {
+    display: none;
+}
+
+.auth-buttons {
+    margin-left: auto;
+}
+
+/* Responsive styles for about section */
+@media (max-width: 768px) {
+    .about-content {
+        flex-direction: column;
+    }
+    
+    .about-image {
+        margin-bottom: 20px;
+    }
+    
+    .login-btn, .highlight-btn {
+        display: block;
+        text-align: center;
+        margin: 10px 0;
+    }
+}
+/* Import base styles */
+@import url('styles.css');
+
+/* About Us Section Styles */
+.about-section {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+}
+
+.about-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.about-image {
+    flex: 1;
+    min-width: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.about-image:hover img {
+    transform: scale(1.03);
+}
+
+.about-text {
+    flex: 1.5;
+    min-width: 300px;
+}
+
+.about-text h3 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.about-text h3:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #0066cc, #4da6ff);
+}
+
+.about-text h4 {
+    font-size: 20px;
+    margin: 25px 0 15px;
+    color: #0066cc;
+}
+
+.about-text p {
+    margin-bottom: 15px;
+    line-height: 1.8;
+    color: #666;
+}
+
+.about-list {
+    margin: 15px 0;
+    padding-left: 10px;
+}
+
+.about-list li {
+    list-style: none;
+    margin-bottom: 10px;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.about-list li i {
+    color: #0066cc;
+    margin-right: 10px;
+}
+
+/* Improved Login/Register Button Styles */
+.nav-menu .highlight-btn {
+    background: linear-gradient(135deg, #0066cc, #0052a3);
+    color: white !important;
+    padding: 10px 25px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.nav-menu .highlight-btn:hover {
+    background: linear-gradient(135deg, #0052a3, #0066cc);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+}
+
+.nav-menu .highlight-btn:after {
+    display: none;
+}
+
+.login-btn {
+    background-color: transparent;
+    color: #0066cc !important;
+    border: 2px solid #0066cc;
+    padding: 8px 22px;
+    border-radius: 30px;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: rgba(0, 102, 204, 0.1);
+    transform: translateY(-2px);
+}
+
+.login-btn:after {
+    display: none;
+}
+
+.auth-buttons {
+    margin-left: auto;
+}
+
+/* Admin login note */
+.admin-login-note {
+    margin-top: 20px;
+    text-align: center;
+    padding: 10px;
+    background-color: #f0f7ff;
+    border-radius: 5px;
+    color: #0066cc;
+}
+
+/* Responsive styles for about section */
+@media (max-width: 768px) {
+    .about-content {
+        flex-direction: column;
+    }
+    
+    .about-image {
+        margin-bottom: 20px;
+    }
+    
+    .login-btn, .highlight-btn {
+        display: block;
+        text-align: center;
+        margin: 10px 0;
+    }
+}
+.admin-login-note {
+    margin-top: 20px;
+    text-align: center;
+    padding: 10px;
+    background-color: #f0f7ff;
+    border-radius: 5px;
+    color: #0066cc;
+}
+
+/* Account status styles */
+.account-status {
+    margin-bottom: 30px;
+}
+
+.account-status h3 {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.account-status h3 i {
+    margin-right: 10px;
+}
+
+.account-status .alert {
+    padding: 20px;
+}
+
+.account-status .alert-success h3 {
+    color: #0f5132;
+}
+
+.account-status .alert-warning h3 {
+    color: #664d03;
+}
+
+.action-card.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background-color: #f9f9f9;
+}
+
+.action-card .status-note {
+    display: block;
+    margin-top: 5px;
+    padding: 3px 8px;
+    background-color: #fff3cd;
+    color: #664d03;
+    border-radius: 4px;
+    font-size: 12px;
+    width: fit-content;
+}
+
+/* Subscription styles */
+.subscription-info {
+    margin-bottom: 20px;
+}
+
+/* Role badges */
+.role-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.role-badge.admin {
+    background-color: #fde8e7;
+    color: #e74c3c;
+}
+
+.role-badge.employer {
+    background-color: #e0f7e0;
+    color: #28a745;
+}
+
+.role-badge.job_seeker {
+    background-color: #e0f0ff;
+    color: #0066cc;
+}
+/* Import base styles */
+@import url('styles.css');
+
+/* About Us Section Styles */
+.about-section {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+}
+
+.about-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+.about-image {
+    flex: 1;
+    min-width: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.about-image:hover img {
+    transform: scale(1.03);
+}
+
+.about-text {
+    flex: 1.5;
+    min-width: 300px;
+}
+
+.about-text h3 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.about-text h3:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #0066cc, #4da6ff);
+}
+
+.about-text h4 {
+    font-size: 20px;
+    margin: 25px 0 15px;
+    color: #0066cc;
+}
+
+.about-text p {
+    margin-bottom: 15px;
+    line-height: 1.8;
+    color: #666;
+}
+
+.about-list {
+    margin: 15px 0;
+    padding-left: 10px;
+}
+
+.about-list li {
+    list-style: none;
+    margin-bottom: 10px;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.about-list li i {
+    color: #0066cc;
+    margin-right: 10px;
+}
+
+/* Improved Login/Register Button Styles */
+.nav-menu .highlight-btn {
+    background: linear-gradient(135deg, #0066cc, #0052a3);
+    color: white !important;
+    padding: 10px 25px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.nav-menu .highlight-btn:hover {
+    background: linear-gradient(135deg, #0052a3, #0066cc);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+}
+
+.nav-menu .highlight-btn:after {
+    display: none;
+}
+
+.login-btn {
+    background-color: transparent;
+    color: #0066cc !important;
+    border: 2px solid #0066cc;
+    padding: 8px 22px;
+    border-radius: 30px;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: rgba(0, 102, 204, 0.1);
+    transform: translateY(-2px);
+}
+
+.login-btn:after {
+    display: none;
+}
+
+.auth-buttons {
+    margin-left: auto;
+}
+
+/* Admin login note */
+.admin-login-note {
+    margin-top: 20px;
+    text-align: center;
+    padding: 10px;
+    background-color: #f0f7ff;
+    border-radius: 5px;
+    color: #0066cc;
+}
+
+/* Responsive styles for about section */
+@media (max-width: 768px) {
+    .about-content {
+        flex-direction: column;
+    }
+    
+    .about-image {
+        margin-bottom: 20px;
+    }
+    
+    .login-btn, .highlight-btn {
+        display: block;
+        text-align: center;
+        margin: 10px 0;
+    }
+}

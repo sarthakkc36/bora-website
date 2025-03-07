@@ -12,8 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $first_name = sanitizeInput($_POST['first_name']);
     $last_name = sanitizeInput($_POST['last_name']);
     $phone = sanitizeInput($_POST['phone']);
-    $role = sanitizeInput($_POST['role']);
-    $company_name = isset($_POST['company_name']) ? sanitizeInput($_POST['company_name']) : null;
+    $company_name = sanitizeInput($_POST['company_name']);
+    
+    // Set role to employer (only option now)
+    $role = 'employer';
     
     // Validate inputs
     if (empty($username)) {
@@ -46,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Last name is required";
     }
     
-    if ($role === 'employer' && empty($company_name)) {
-        $errors[] = "Company name is required for employers";
+    if (empty($company_name)) {
+        $errors[] = "Company name is required";
     }
     
     // Check if username already exists
@@ -104,17 +106,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - B&H Employment & Consultancy Inc</title>
+    <title>Register as Employer - B&H Employment & Consultancy Inc</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/updated-styles.css">
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
 
     <section class="page-title">
         <div class="container">
-            <h1>Create Your Account</h1>
-            <p>Join our platform to access job opportunities or post job listings</p>
+            <h1>Register as an Employer</h1>
+            <p>Create an account to post job listings and find the perfect candidates for your business</p>
         </div>
     </section>
 
@@ -132,44 +135,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
                 
                 <form class="auth-form" action="register.php" method="POST">
-                    <div class="form-group">
-                        <label for="role">Account Type</label>
-                        <select id="role" name="role" class="form-control" required onchange="toggleCompanyField()">
-                            <option value="job_seeker">Job Seeker</option>
-                            <option value="employer">Employer</option>
-                        </select>
-                    </div>
-                    
                     <div class="form-row">
                         <div class="form-group half">
                             <label for="first_name">First Name</label>
-                            <input type="text" id="first_name" name="first_name" class="form-control" required>
+                            <input type="text" id="first_name" name="first_name" class="form-control" value="<?php echo isset($first_name) ? htmlspecialchars($first_name) : ''; ?>" required>
                         </div>
                         
                         <div class="form-group half">
                             <label for="last_name">Last Name</label>
-                            <input type="text" id="last_name" name="last_name" class="form-control" required>
+                            <input type="text" id="last_name" name="last_name" class="form-control" value="<?php echo isset($last_name) ? htmlspecialchars($last_name) : ''; ?>" required>
                         </div>
                     </div>
                     
-                    <div class="form-group" id="company_field" style="display: none;">
+                    <div class="form-group">
                         <label for="company_name">Company Name</label>
-                        <input type="text" id="company_name" name="company_name" class="form-control">
+                        <input type="text" id="company_name" name="company_name" class="form-control" value="<?php echo isset($company_name) ? htmlspecialchars($company_name) : ''; ?>" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
+                        <input type="email" id="email" name="email" class="form-control" value="<?php echo isset($email) ? htmlspecialchars($email) : ''; ?>" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone" class="form-control">
+                        <input type="tel" id="phone" name="phone" class="form-control" value="<?php echo isset($phone) ? htmlspecialchars($phone) : ''; ?>">
                     </div>
                     
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <input type="text" id="username" name="username" class="form-control" required>
+                        <input type="text" id="username" name="username" class="form-control" value="<?php echo isset($username) ? htmlspecialchars($username) : ''; ?>" required>
                     </div>
                     
                     <div class="form-group">
@@ -189,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                     
-                    <button type="submit" class="submit-btn">Register</button>
+                    <button type="submit" class="submit-btn">Register as Employer</button>
                     
                     <div class="auth-links">
                         <p>Already have an account? <a href="login.php">Login</a></p>
@@ -200,21 +195,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </section>
 
     <?php include 'includes/footer.php'; ?>
-    
-    <script>
-        function toggleCompanyField() {
-            const roleSelect = document.getElementById('role');
-            const companyField = document.getElementById('company_field');
-            
-            if (roleSelect.value === 'employer') {
-                companyField.style.display = 'block';
-                document.getElementById('company_name').setAttribute('required', 'required');
-            } else {
-                companyField.style.display = 'none';
-                document.getElementById('company_name').removeAttribute('required');
-            }
-        }
-    </script>
     
     <script src="js/script.js"></script>
 </body>
