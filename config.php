@@ -1,36 +1,9 @@
 <?php
-// Load environment variables from .env file
-if (file_exists(__DIR__ . '/.env')) {
-    $env_lines = file(__DIR__ . '/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    foreach ($env_lines as $line) {
-        // Skip comments
-        if (strpos(trim($line), '#') === 0) {
-            continue;
-        }
-        
-        // Parse key-value pairs
-        $parts = explode('=', $line, 2);
-        if (count($parts) === 2) {
-            $key = trim($parts[0]);
-            $value = trim($parts[1]);
-            
-            // Remove quotes if present
-            $value = trim($value, '"\'');
-            
-            // Set environment variable
-            putenv("$key=$value");
-        }
-    }
-}
-
-// Database configuration from environment variables
-$db_host = getenv('DB_HOST') ?: 'localhost';
-$db_name = getenv('DB_NAME') ?: 'bh_employment';
-$db_user = getenv('DB_USER') ?: 'root';
-$db_pass = getenv('DB_PASS') ?: '';
-
-// Site URL configuration
-$site_url = getenv('SITE_URL') ?: 'http://localhost/';
+// Database configuration
+$db_host = 'bh-employment-skdonplays-b8b1.d.aivencloud.com';
+$db_name = 'defaultdb'; // Change this to your database name
+$db_user = 'avnadmin'; // Change this to your MySQL username
+$db_pass = 'AVNS_7hGdIcd0eYwoWNW9dwB'; // Change this to your MySQL password
 
 // Create database connection
 try {
@@ -42,6 +15,9 @@ try {
 } catch(PDOException $e) {
     die("ERROR: Could not connect. " . $e->getMessage());
 }
+
+// Site URL configuration
+$site_url = "https://bandh123.netlify.app/"; // Change to your actual domain in production
 
 // Session configuration
 session_start();
@@ -90,5 +66,33 @@ function displayFlashMessage() {
         unset($_SESSION['flash_message']);
         unset($_SESSION['flash_type']);
     }
+}
+function isJobSeeker() {
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'job_seeker';
+}
+
+function isVerified() {
+    return isset($_SESSION['is_verified']) && $_SESSION['is_verified'] == 1;
+}
+
+function hasValidSubscription() {
+    // Admin always has valid "subscription"
+    if (isAdmin()) {
+        return true;
+    }
+    
+    // If no subscription end date is set but user is verified, consider it valid
+    if (isVerified() && empty($_SESSION['subscription_end'])) {
+        return true;
+    }
+    
+    // If subscription end date is set, check if it's in the future
+    if (isset($_SESSION['subscription_end']) && !empty($_SESSION['subscription_end'])) {
+        $today = new DateTime();
+        $end_date = new DateTime($_SESSION['subscription_end']);
+        return $today <= $end_date;
+    }
+    
+    return false;
 }
 ?>
