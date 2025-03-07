@@ -4,1062 +4,1040 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>B&H Employment & Consultancy Inc</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     <style>
-        /* Base Styles */
-        :root {
-            --primary: #0056b3;
-            --primary-dark: #004494;
-            --secondary: #27ae60;
-            --light: #ffffff;
-            --gray-light: #f8f9fa;
-            --gray: #6c757d;
-            --dark: #343a40;
-            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--dark);
+            background-color: #f5f5f5;
             overflow-x: hidden;
         }
         
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        .fade-in.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        .slide-in-left.active, .slide-in-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        
+        .scale-in.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
         .container {
-            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
         
-        a {
-            text-decoration: none;
-            color: var(--primary);
-        }
-        
-        ul {
-            list-style: none;
-        }
-        
-        img {
-            max-width: 100%;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 12px 25px;
-            color: var(--light);
-            background-color: var(--primary);
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-        }
-        
-        .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-3px);
-            box-shadow: var(--shadow);
-        }
-        
-        .btn-outline {
-            background-color: transparent;
-            border: 2px solid var(--light);
-            color: var(--light);
-        }
-        
-        .btn-outline:hover {
-            background-color: var(--light);
-            color: var(--primary);
-        }
-        
-        .btn-secondary {
-            background-color: var(--secondary);
-        }
-        
-        .btn-secondary:hover {
-            background-color: #219653;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .section-title h2 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            color: var(--primary);
-            position: relative;
-            display: inline-block;
-        }
-        
-        .section-title h2:after {
-            content: '';
-            position: absolute;
-            width: 50px;
-            height: 3px;
-            background-color: var(--secondary);
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .section-title p {
-            color: var(--gray);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        /* Header */
+        /* Header Styles */
         header {
-            background-color: var(--light);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
             top: 0;
-            left: 0;
-            z-index: 1000;
-            transition: var(--transition);
+            z-index: 100;
         }
         
-        header.scrolled {
-            padding: 5px 0;
-        }
-        
-        .header-container {
+        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px 0;
-            transition: var(--transition);
+            animation: slideDown 0.5s ease-out forwards;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
         }
         
         .logo img {
-            height: 50px;
-            transition: var(--transition);
+            height: 60px;
+            transition: transform 0.3s ease;
         }
         
-        header.scrolled .logo img {
-            height: 45px;
+        .logo img:hover {
+            transform: scale(1.05);
         }
         
-        .nav-links {
+        .nav-menu {
             display: flex;
+            list-style: none;
         }
         
-        .nav-links li {
+        .nav-menu li {
             margin-left: 30px;
         }
         
-        .nav-links a {
-            color: var(--dark);
-            font-weight: 500;
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.3s, transform 0.3s;
             position: relative;
             padding: 5px 0;
         }
         
-        .nav-links a:after {
+        .nav-menu a:after {
             content: '';
             position: absolute;
             width: 0;
             height: 2px;
-            background-color: var(--primary);
             bottom: 0;
             left: 0;
-            transition: var(--transition);
+            background-color: #0066cc;
+            transition: width 0.3s ease;
         }
         
-        .nav-links a:hover:after,
-        .nav-links a.active:after {
+        .nav-menu a:hover, .nav-menu a.active {
+            color: #0066cc;
+        }
+        
+        .nav-menu a:hover:after, .nav-menu a.active:after {
             width: 100%;
         }
         
-        .mobile-toggle {
+        .mobile-menu-btn {
             display: none;
-            background: none;
-            border: none;
-            font-size: 24px;
             cursor: pointer;
-            color: var(--primary);
+            font-size: 24px;
         }
         
         /* Hero Section */
         .hero {
-            height: 100vh;
-            background: linear-gradient(rgba(0, 86, 179, 0.8), rgba(0, 86, 179, 0.8)), url('images/hero-bg.jpg');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            color: var(--light);
-            position: relative;
-        }
-        
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100"><path fill="%23ffffff" d="M0,64L80,58.7C160,53,320,43,480,48C640,53,800,75,960,74.7C1120,75,1280,53,1360,42.7L1440,32L1440,100L1360,100C1280,100,1120,100,960,100C800,100,640,100,480,100C320,100,160,100,80,100L0,100Z"></path></svg>');
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
+            background: linear-gradient(135deg, #0066cc, #0052a3);
+            color: white;
+            padding: 80px 0;
             text-align: center;
-            z-index: 1;
-            padding: 0 20px;
-        }
-        
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            animation: fadeInDown 1s ease-out;
-        }
-        
-        .hero p {
-            font-size: 18px;
-            margin-bottom: 30px;
-            animation: fadeInUp 1s ease-out 0.5s;
-            animation-fill-mode: both;
-        }
-        
-        .hero-buttons {
-            animation: fadeInUp 1s ease-out 1s;
-            animation-fill-mode: both;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        /* Services Section */
-        .services {
-            padding: 100px 0;
-            background-color: var(--light);
             position: relative;
-        }
-        
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-        
-        .service-card {
-            background-color: var(--light);
-            border-radius: 8px;
             overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            position: relative;
-            z-index: 1;
         }
         
-        .service-card:hover {
-            transform: translateY(-10px);
-        }
-        
-        .service-card::before {
+        .hero:before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 0;
-            background-color: var(--primary);
-            transition: var(--transition);
-            z-index: -1;
-            opacity: 0.05;
-        }
-        
-        .service-card:hover::before {
             height: 100%;
+            background: url('/api/placeholder/1200/600') center/cover no-repeat;
+            opacity: 0.1;
+            animation: pulse 15s infinite alternate;
         }
         
-        .service-icon {
-            width: 70px;
-            height: 70px;
-            background-color: var(--primary);
-            color: var(--light);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin: 25px auto 15px;
-            transition: var(--transition);
+        @keyframes pulse {
+            0% {
+                opacity: 0.05;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0.15;
+                transform: scale(1.05);
+            }
         }
         
-        .service-card:hover .service-icon {
-            background-color: var(--secondary);
-            transform: rotateY(360deg);
-            transition: transform 0.8s ease, background-color 0.3s ease;
-        }
-        
-        .service-content {
-            padding: 0 25px 30px;
-            text-align: center;
-        }
-        
-        .service-content h3 {
-            margin-bottom: 15px;
-            color: var(--primary);
-            transition: var(--transition);
-        }
-        
-        .service-card:hover .service-content h3 {
-            color: var(--primary-dark);
-        }
-        
-        /* Featured Jobs Section */
-        .featured-jobs {
-            padding: 80px 0;
-            background-color: var(--gray-light);
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
             position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease-out forwards;
         }
         
-        .jobs-grid {
+        .hero p {
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .cta-btn {
+            display: inline-block;
+            background-color: white;
+            color: #0066cc;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            animation: fadeInUp 0.8s ease-out 0.4s forwards;
+            opacity: 0;
+        }
+        
+        .cta-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .cta-btn:hover {
+            background-color: #f8f8f8;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.2);
+        }
+        
+        .cta-btn:hover:before {
+            left: 100%;
+        }
+        
+        /* Services Section */
+        .services {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
         }
         
-        .job-card {
-            background-color: var(--light);
-            border-radius: 8px;
+        .service-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+            position: relative;
+            z-index: 1;
             overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
+        }
+        
+        .service-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #0066cc, #4da6ff);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease-out;
+            z-index: -1;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .service-card:hover:before {
+            transform: scaleX(1);
+        }
+        
+        .service-icon {
+            font-size: 40px;
+            color: #0066cc;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .service-card:hover .service-icon {
+            transform: rotate(10deg) scale(1.1);
+            color: #0052a3;
+        }
+        
+        .service-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .service-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        /* Contact Form Section */
+        .contact {
+            padding: 80px 0;
+            background-color: #f9f9f9;
+        }
+        
+        .contact-form {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.6s ease-out;
+        }
+        
+        .contact-form.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+        
+        .form-control:focus {
+            border-color: #0066cc;
+            outline: none;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .submit-btn:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+            z-index: -1;
+        }
+        
+        .submit-btn:hover {
+            background-color: #0052a3;
+            box-shadow: 0 6px 15px rgba(0, 102, 204, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        .submit-btn:hover:after {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* Featured Jobs Section */
+        .featured-jobs {
+            padding: 80px 0;
+        }
+        
+        .jobs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .job-card {
+            background-color: white;
+            border-radius: 12px;
             padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-left: 0px solid #0066cc;
         }
         
         .job-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid #0066cc;
         }
         
-        .job-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .company-logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-right: 15px;
-        }
-        
-        .company-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .job-type {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-left: auto;
-        }
-        
-        .full-time {
-            background-color: rgba(39, 174, 96, 0.1);
-            color: var(--secondary);
-        }
-        
-        .part-time {
-            background-color: rgba(52, 152, 219, 0.1);
-            color: #3498db;
-        }
-        
-        .job-card h3 {
-            font-size: 18px;
+        .job-title {
+            font-size: 20px;
             margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .company-name {
+            font-size: 16px;
+            color: #0066cc;
+            margin-bottom: 15px;
         }
         
         .job-details {
+            display: flex;
             margin-bottom: 15px;
         }
         
-        .job-details span {
+        .job-detail {
+            margin-right: 20px;
             display: flex;
             align-items: center;
-            margin-bottom: 5px;
-            color: var(--gray);
-            font-size: 14px;
+            color: #666;
         }
         
-        .job-details i {
-            margin-right: 8px;
-            color: var(--primary);
+        .job-detail i {
+            margin-right: 5px;
+            color: #0066cc;
         }
         
-        /* CTA Section */
-        .cta {
-            padding: 80px 0;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: var(--light);
-            text-align: center;
-            position: relative;
-        }
-        
-        .cta::before,
-        .cta::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100px;
-            background-size: cover;
-            background-position: center;
-            left: 0;
-        }
-        
-        .cta::before {
-            top: -1px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100"><path fill="%23f8f9fa" d="M0,32L80,42.7C160,53,320,75,480,74.7C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"></path></svg>');
-            transform: rotate(180deg);
-        }
-        
-        .cta::after {
-            bottom: -1px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100"><path fill="%23ffffff" d="M0,32L80,42.7C160,53,320,75,480,74.7C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,100L1360,100C1280,100,1120,100,960,100C800,100,640,100,480,100C320,100,160,100,80,100L0,100Z"></path></svg>');
-        }
-        
-        .cta h2 {
-            font-size: 36px;
+        .job-description {
+            color: #666;
             margin-bottom: 20px;
+            line-height: 1.6;
         }
         
-        .cta p {
-            margin-bottom: 30px;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        /* Contact Section */
-        .contact {
-            padding: 100px 0;
-            background-color: var(--light);
-        }
-        
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-        
-        .contact-card {
-            padding: 30px;
-            background-color: var(--light);
-            border-radius: 8px;
-            text-align: center;
-            transition: var(--transition);
-            border: 1px solid #eee;
+        .apply-btn {
+            display: inline-block;
+            background-color: #0066cc;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
             position: relative;
+            z-index: 1;
             overflow: hidden;
         }
         
-        .contact-card::after {
+        .apply-btn:before {
             content: '';
             position: absolute;
-            width: 100%;
-            height: 3px;
-            background-color: var(--primary);
-            bottom: 0;
+            top: 0;
             left: 0;
-            transform: scaleX(0);
-            transition: var(--transition);
+            width: 0;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.1);
+            transition: width 0.3s ease;
+            z-index: -1;
         }
         
-        .contact-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow);
+        .apply-btn:hover {
+            background-color: #0052a3;
+            transform: translateY(-2px);
         }
         
-        .contact-card:hover::after {
-            transform: scaleX(1);
+        .apply-btn:hover:before {
+            width: 100%;
         }
         
-        .contact-icon {
-            width: 60px;
-            height: 60px;
-            background-color: var(--primary);
-            color: var(--light);
-            border-radius: 50%;
+        /* Company Info Section */
+        .company-info {
+            padding: 50px 0;
+            background-color: #f0f7ff;
+        }
+        
+        .info-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .info-item {
+            flex: 1;
+            min-width: 250px;
+            margin: 15px;
             display: flex;
             align-items: center;
+        }
+        
+        .info-icon {
+            background-color: #0066cc;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
             justify-content: center;
-            font-size: 24px;
-            margin: 0 auto 20px;
-            transition: var(--transition);
-        }
-        
-        .contact-card:hover .contact-icon {
-            background-color: var(--secondary);
-        }
-        
-        .contact-card h3 {
-            margin-bottom: 15px;
-            color: var(--primary);
+            align-items: center;
+            margin-right: 15px;
             font-size: 20px;
+        }
+        
+        .info-content h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .info-content p {
+            color: #666;
         }
         
         /* Footer */
         footer {
-            background-color: #2c3e50;
-            color: var(--light);
+            background-color: #333;
+            color: white;
             padding: 60px 0 20px;
         }
         
-        .footer-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
             margin-bottom: 40px;
         }
         
-        .footer-item h3 {
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
             font-size: 20px;
             margin-bottom: 20px;
             position: relative;
             padding-bottom: 10px;
         }
         
-        .footer-item h3::after {
+        .footer-column h3::after {
             content: '';
             position: absolute;
-            width: 50px;
-            height: 2px;
-            background-color: var(--secondary);
-            bottom: 0;
             left: 0;
+            bottom: 0;
+            height: 2px;
+            width: 50px;
+            background-color: #0066cc;
         }
         
-        .footer-about p {
-            margin-bottom: 20px;
-            opacity: 0.8;
+        .footer-menu {
+            list-style: none;
         }
         
-        .social-links {
-            display: flex;
-            gap: 10px;
+        .footer-menu li {
+            margin-bottom: 10px;
         }
         
-        .social-links a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--light);
-            border-radius: 50%;
-            transition: var(--transition);
+        .footer-menu a {
+            color: #bbb;
+            text-decoration: none;
+            transition: color 0.3s;
         }
         
-        .social-links a:hover {
-            background-color: var(--secondary);
-            transform: translateY(-3px);
+        .footer-menu a:hover {
+            color: white;
         }
         
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-        
-        .footer-links a {
-            color: #ddd;
-            transition: var(--transition);
-            display: block;
-            opacity: 0.8;
-        }
-        
-        .footer-links a:hover {
-            color: var(--light);
-            padding-left: 5px;
-            opacity: 1;
-        }
-        
-        .footer-contact li {
-            display: flex;
+        .footer-contact p {
             margin-bottom: 15px;
-            opacity: 0.8;
+            display: flex;
+            align-items: flex-start;
         }
         
         .footer-contact i {
             margin-right: 10px;
-            color: var(--secondary);
+            color: #0066cc;
         }
         
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 14px;
-            opacity: 0.8;
+        .social-links {
+            display: flex;
+            margin-top: 20px;
         }
         
-        /* Animations */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Back to Top Button */
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 50px;
-            height: 50px;
-            background-color: var(--primary);
-            color: var(--light);
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background-color: #444;
             border-radius: 50%;
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            opacity: 0;
-            visibility: hidden;
-            z-index: 99;
+            align-items: center;
+            margin-right: 10px;
+            transition: background-color 0.3s;
         }
         
-        .back-to-top.active {
-            opacity: 1;
-            visibility: visible;
+        .social-link:hover {
+            background-color: #0066cc;
         }
         
-        .back-to-top:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-5px);
+        .footer-bottom {
+            border-top: 1px solid #444;
+            padding-top: 20px;
+            text-align: center;
+            color: #bbb;
+            font-size: 14px;
         }
         
         /* Responsive Styles */
         @media (max-width: 992px) {
+            .nav-menu {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                flex-direction: column;
+                background-color: white;
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+                padding: 20px 0;
+            }
+            
+            .nav-menu.active {
+                left: 0;
+            }
+            
+            .nav-menu li {
+                margin: 15px 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
             .hero h1 {
-                font-size: 40px;
+                font-size: 36px;
             }
         }
         
         @media (max-width: 768px) {
-            .nav-links {
-                position: fixed;
-                top: 80px;
-                left: -100%;
-                width: 80%;
-                max-width: 300px;
-                height: calc(100vh - 80px);
-                background-color: var(--light);
-                flex-direction: column;
-                padding: 40px 20px;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-                transition: 0.4s;
-                z-index: 1000;
-            }
-            
-            .nav-links.active {
-                left: 0;
-            }
-            
-            .nav-links li {
-                margin: 15px 0;
-            }
-            
-            .mobile-toggle {
-                display: block;
-            }
-            
             .hero {
-                height: 80vh;
+                padding: 60px 0;
             }
             
             .hero h1 {
-                font-size: 32px;
+                font-size: 30px;
             }
             
-            .hero p {
-                font-size: 16px;
+            .section-title h2 {
+                font-size: 30px;
             }
             
-            .hero-buttons {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .btn {
-                width: 100%;
-            }
-            
-            .footer-item {
-                text-align: center;
-            }
-            
-            .footer-item h3::after {
-                left: 50%;
-                transform: translateX(-50%);
-            }
-            
-            .social-links {
-                justify-content: center;
-            }
-            
-            .footer-contact li {
-                justify-content: center;
+            .contact-form {
+                padding: 25px;
             }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
     <!-- Header -->
-    <header id="header">
-        <div class="container header-container">
-            <div class="logo">
-                <a href="index.html">
-                    <img src="images/logo.png" alt="B&H Employment & Consultancy">
-                </a>
-            </div>
-            <nav>
-                <ul class="nav-links" id="navLinks">
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="/images/logo.png" alt="B&H Employment & Consultancy Logo">
+                    </a>
+                </div>
+                <ul class="nav-menu">
                     <li><a href="index.html" class="active">Home</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="services.html">Services</a></li>
                     <li><a href="jobs.html">Jobs</a></li>
-                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
                 </ul>
-                <button class="mobile-toggle" id="mobileToggle">
+                <div class="mobile-menu-btn">
                     <i class="fas fa-bars"></i>
-                </button>
-            </nav>
+                </div>
+            </div>
         </div>
     </header>
 
-    <!-- Hero Section with Background Image -->
-    <section class="hero" style="background: linear-gradient(rgba(0, 86, 179, 0.85), rgba(0, 86, 179, 0.85)), url('images/hero-bg.jpg'); background-size: cover; background-position: center;">
+    <!-- Hero Section -->
+    <section class="hero">
         <div class="container">
-            <div class="hero-content">
-                <h1>Your Gateway to Career Opportunities in USA</h1>
-                <p>B&H Employment & Consultancy Inc is a premier job placement agency based in New York. Since 2010, we've been connecting talented professionals with leading employers across the United States.</p>
-                <p>With over 15 years of experience, our team of specialized recruiters offers personalized employment solutions tailored to your career goals. We pride ourselves on our extensive employer network, industry knowledge, and commitment to helping job seekers find their perfect match.</p>
-                <div class="hero-buttons">
-                    <a href="jobs.html" class="btn btn-secondary">Browse Jobs</a>
-                    <a href="contact.html" class="btn btn-outline">Contact Us</a>
-                </div>
-            </div>
+            <h1>Your Path to Career Success Starts Here</h1>
+            <p>B&H Employment & Consultancy Inc connects qualified candidates with top employers. Let us help you find your perfect job match or the ideal candidate for your business.</p>
+            <a href="jobs.html" class="cta-btn">Browse Jobs</a>
         </div>
     </section>
 
-    <!-- Services Section with Image Side-by-Side -->
-    <section class="services" style="padding: 80px 0;">
+    <!-- Company Info Section -->
+    <section class="company-info">
         <div class="container">
-            <div class="section-title" data-aos="fade-up">
-                <h2>Our Services</h2>
-                <p>Professional employment solutions for job seekers and employers</p>
-            </div>
-            
-            <!-- Image and Services Row -->
-            <div style="display: flex; flex-wrap: wrap; gap: 30px; align-items: center; margin: 30px 0 50px;" data-aos="fade-up">
-                <div style="flex: 1; min-width: 300px;">
-                    <img src="images/services-main.jpg" alt="Professional Services" style="width: 100%; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
-                </div>
-                <div style="flex: 1; min-width: 300px;">
-                    <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 24px;">Comprehensive Employment Solutions</h3>
-                    <p>At B&H Employment & Consultancy Inc, we offer a wide range of professional services designed to help both job seekers and employers achieve their goals. Our experienced team provides personalized support throughout the employment process.</p>
-                    <p>Whether you're looking for your next career opportunity or seeking to hire qualified professionals, we have the expertise and resources to meet your needs.</p>
-                </div>
-            </div>
-            
-            <div class="services-list" data-aos="fade-up" style="max-width: 900px; margin: 0 auto;">
-                <div class="services-column" style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: space-between;">
-                    <div class="service-item" style="flex: 0 0 calc(50% - 15px); background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; transition: all 0.3s ease;">
-                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                            <div style="width: 50px; height: 50px; background-color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                                <i class="fas fa-search" style="color: white; font-size: 20px;"></i>
-                            </div>
-                            <h3 style="margin: 0; color: var(--primary);">Job Placement</h3>
-                        </div>
-                        <p>We match qualified candidates with suitable positions across various industries in the USA.</p>
-                    </div>
-                    
-                    <div class="service-item" style="flex: 0 0 calc(50% - 15px); background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; transition: all 0.3s ease;">
-                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                            <div style="width: 50px; height: 50px; background-color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                                <i class="fas fa-file-alt" style="color: white; font-size: 20px;"></i>
-                            </div>
-                            <h3 style="margin: 0; color: var(--primary);">Resume Building</h3>
-                        </div>
-                        <p>Professional resume crafting services to highlight your strengths and catch employers' attention.</p>
-                    </div>
-                    
-                    <div class="service-item" style="flex: 0 0 calc(50% - 15px); background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; transition: all 0.3s ease;">
-                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                            <div style="width: 50px; height: 50px; background-color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                                <i class="fas fa-user-tie" style="color: white; font-size: 20px;"></i>
-                            </div>
-                            <h3 style="margin: 0; color: var(--primary);">Career Counseling</h3>
-                        </div>
-                        <p>Expert guidance on career paths, skill development, and professional growth strategies.</p>
-                    </div>
-                    
-                    <div class="service-item" style="flex: 0 0 calc(50% - 15px); background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; transition: all 0.3s ease;">
-                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                            <div style="width: 50px; height: 50px; background-color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                                <i class="fas fa-handshake" style="color: white; font-size: 20px;"></i>
-                            </div>
-                            <h3 style="margin: 0; color: var(--primary);">Employer Services</h3>
-                        </div>
-                        <p>Recruitment solutions for companies looking to hire top talent efficiently.</p>
-                    </div>
-                    
-                    <div class="service-item" style="flex: 0 0 calc(50% - 15px); background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; transition: all 0.3s ease;">
-                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                            <div style="width: 50px; height: 50px; background-color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                                <i class="fas fa-graduation-cap" style="color: white; font-size: 20px;"></i>
-                            </div>
-                            <h3 style="margin: 0; color: var(--primary);">Training Programs</h3>
-                        </div>
-                        <p>Specialized training to enhance your skills and improve your employment prospects.</p>
-                    </div>
-                    
-                    <div class="service-item" style="flex: 0 0 calc(50% - 15px); background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; transition: all 0.3s ease;">
-                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                            <div style="width: 50px; height: 50px; background-color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                                <i class="fas fa-comments" style="color: white; font-size: 20px;"></i>
-                            </div>
-                            <h3 style="margin: 0; color: var(--primary);">Interview Coaching</h3>
-                        </div>
-                        <p>Personalized coaching to help you succeed in job interviews and make a strong impression.</p>
-                    </div>
-                    
-                    <div class="service-item" style="flex: 0 0 calc(50% - 15px); background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; transition: all 0.3s ease;">
-                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                            <div style="width: 50px; height: 50px; background-color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                                <i class="fas fa-clipboard-check" style="color: white; font-size: 20px;"></i>
-                            </div>
-                            <h3 style="margin: 0; color: var(--primary);">Skills Assessment</h3>
-                        </div>
-                        <p>Comprehensive evaluation of your skills and qualifications to identify the best career opportunities.</p>
-                    </div>
-                    
-                    <div class="service-item" style="flex: 0 0 calc(50% - 15px); background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; transition: all 0.3s ease;">
-                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                            <div style="width: 50px; height: 50px; background-color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
-                                <i class="fas fa-building" style="color: white; font-size: 20px;"></i>
-                            </div>
-                            <h3 style="margin: 0; color: var(--primary);">Corporate Recruiting</h3>
-                        </div>
-                        <p>Specialized recruitment services for businesses of all sizes, tailored to your company's needs.</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="text-center" style="margin-top: 40px;" data-aos="fade-up">
-                <a href="services.html" class="btn btn-secondary">Learn More About Our Services</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="container">
-            <h2 data-aos="fade-up">Ready to Find Your Dream Job?</h2>
-            <p data-aos="fade-up" data-aos-delay="100">Join thousands of successful job seekers who found their perfect match through B&H Employment & Consultancy.</p>
-            <a href="contact.html" class="btn btn-outline" data-aos="fade-up" data-aos-delay="200">Contact Us Today</a>
-        </div>
-    </section>
-
-    <!-- Contact Section with Image Integration -->
-    <section class="contact">
-        <div class="container">
-            <div class="section-title" data-aos="fade-up">
-                <h2>Contact Us</h2>
-                <p>Get in touch with our team for any inquiries</p>
-            </div>
-            
-            <div style="display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 40px;" data-aos="fade-up">
-                <div style="flex: 1; min-width: 300px;">
-                    <img src="images/office-photo.jpg" alt="Our Office" style="width: 100%; border-radius: 8px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
-                </div>
-                <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: center;">
-                    <h3 style="color: var(--primary); margin-bottom: 20px;">Visit Our Office</h3>
-                    <p>Our team is ready to assist you with all your employment needs. Visit us at our office in Jackson Heights, NY, or contact us by phone or email for personalized service.</p>
-                    <p>We're available Monday through Saturday to answer your questions and provide guidance on your job search or recruitment needs.</p>
-                </div>
-            </div>
-            
-            <div class="contact-grid">
-                <div class="contact-card" data-aos="fade-up">
-                    <div class="contact-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <h3>Our Location</h3>
-                    <p>37-51 75th St.1A<br>Jackson Heights, NY 11372</p>
-                </div>
-                <div class="contact-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="contact-icon">
-                        <i class="fas fa-phone-alt"></i>
-                    </div>
-                    <h3>Phone Number</h3>
-                    <p>(1) 347-680-2869<br>(929) 823-7040</p>
-                </div>
-                <div class="contact-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="contact-icon">
+            <div class="info-container">
+                <div class="info-item">
+                    <div class="info-icon">
                         <i class="fas fa-envelope"></i>
                     </div>
-                    <h3>Email Address</h3>
-                    <p>bh.jobagency@gmail.com</p>
-                </div>
-                <div class="contact-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="contact-icon">
-                        <i class="fas fa-clock"></i>
+                    <div class="info-content">
+                        <h3>Email Us</h3>
+                        <p>bh.jobagency@gmail.com</p>
                     </div>
-                    <h3>Working Hours</h3>
-                    <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 2:00 PM</p>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Website</h3>
+                        <p>www.bh.com</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Call Us</h3>
+                        <p>(Office) (1)347680-2869</p>
+                        <p>(Mobile) (929)823-7040</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="info-content">
+                        <h3>Our Location</h3>
+                        <p>37-51 75th St.1A, Jackson Heights, NY 11372</p>
+                    </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Services</h2>
+                <p>We provide comprehensive employment and consultancy services to both job seekers and employers.</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Job Placement</h3>
+                    <p>We match qualified candidates with suitable job opportunities across various industries, ensuring a perfect fit for both parties.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Resume Building</h3>
+                    <p>Our experts help you create professional resumes that highlight your skills and experience, increasing your chances of getting hired.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Recruitment Services</h3>
+                    <p>We offer comprehensive recruitment solutions for businesses looking to hire talented professionals for their team.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Career Counseling</h3>
+                    <p>Get professional guidance on career development, job transitions, and skill enhancement to advance in your professional journey.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Interview Preparation</h3>
+                    <p>We prepare candidates for successful interviews with mock sessions, feedback, and industry-specific guidance.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>HR Consulting</h3>
+                    <p>We provide businesses with expert HR consulting services to optimize their workforce management and recruitment processes.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Jobs Section -->
+    <section class="featured-jobs">
+        <div class="container">
+            <div class="section-title">
+                <h2>Featured Job Opportunities</h2>
+                <p>Explore our latest job openings across various industries and locations.</p>
+            </div>
+            <div class="jobs-grid">
+                <div class="job-card">
+                    <h3 class="job-title">Senior Software Engineer</h3>
+                    <p class="company-name">Tech Solutions Inc.</p>
+                    <div class="job-details">
+                        <span class="job-detail"><i class="fas fa-map-marker-alt"></i> New York, NY</span>
+                        <span class="job-detail"><i class="fas fa-dollar-sign"></i> $120K - $150K</span>
+                        <span class="job-detail"><i class="fas fa-briefcase"></i> Full-time</span>
+                    </div>
+                    <p class="job-description">We are looking for an experienced Senior Software Engineer proficient in JavaScript, React, and Node.js to join our growing team...</p>
+                    <a href="jobs.html" class="apply-btn">View Details</a>
+                </div>
+                <div class="job-card">
+                    <h3 class="job-title">Marketing Manager</h3>
+                    <p class="company-name">Global Brands Ltd.</p>
+                    <div class="job-details">
+                        <span class="job-detail"><i class="fas fa-map-marker-alt"></i> Brooklyn, NY</span>
+                        <span class="job-detail"><i class="fas fa-dollar-sign"></i> $90K - $110K</span>
+                        <span class="job-detail"><i class="fas fa-briefcase"></i> Full-time</span>
+                    </div>
+                    <p class="job-description">A dynamic Marketing Manager is needed to develop and implement marketing strategies that will expand our customer base...</p>
+                    <a href="jobs.html" class="apply-btn">View Details</a>
+                </div>
+                <div class="job-card">
+                    <h3 class="job-title">Administrative Assistant</h3>
+                    <p class="company-name">Corporate Services LLC</p>
+                    <div class="job-details">
+                        <span class="job-detail"><i class="fas fa-map-marker-alt"></i> Queens, NY</span>
+                        <span class="job-detail"><i class="fas fa-dollar-sign"></i> $50K - $60K</span>
+                        <span class="job-detail"><i class="fas fa-briefcase"></i> Full-time</span>
+                    </div>
+                    <p class="job-description">We are seeking a detail-oriented Administrative Assistant to provide clerical support and ensure efficient office operations...</p>
+                    <a href="jobs.html" class="apply-btn">View Details</a>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="jobs.html" class="cta-btn">View All Jobs</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Get In Touch</h2>
+                <p>Have questions or need assistance? Fill out the form below and our team will get back to you soon.</p>
+            </div>
+            <form class="contact-form" action="process_form.php" method="POST">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" name="phone">
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" class="form-control" id="subject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Your Message</label>
+                    <textarea class="form-control" id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
         </div>
     </section>
 
     <!-- Footer -->
     <footer>
         <div class="container">
-            <div class="footer-container">
-                <div class="footer-item footer-about">
+            <div class="footer-content">
+                <div class="footer-column">
                     <h3>About Us</h3>
-                    <p>B&H Employment & Consultancy Inc is a leading job placement agency connecting talented professionals with top employers across the United States.</p>
+                    <p style="color: #bbb; line-height: 1.6; margin-bottom: 20px;">B&H Employment & Consultancy Inc is a leading employment agency dedicated to connecting qualified candidates with top employers across various industries.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
-                <div class="footer-item">
+                <div class="footer-column">
                     <h3>Quick Links</h3>
-                    <ul class="footer-links">
+                    <ul class="footer-menu">
                         <li><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="services.html">Services</a></li>
                         <li><a href="jobs.html">Jobs</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
                     </ul>
                 </div>
-                <div class="footer-item">
+                <div class="footer-column footer-contact">
                     <h3>Contact Info</h3>
-                    <ul class="footer-contact">
-                        <li>
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>37-51 75th St.1A<br>Jackson Heights, NY 11372</span>
-                        </li>
-                        <li>
-                            <i class="fas fa-phone-alt"></i>
-                            <span>(1) 347-680-2869<br>(929) 823-7040</span>
-                        </li>
-                        <li>
-                            <i class="fas fa-envelope"></i>
-                            <span>bh.jobagency@gmail.com</span>
-                        </li>
-                    </ul>
+                    <p><i class="fas fa-map-marker-alt"></i> 37-51 75th St.1A, Jackson Heights, NY 11372</p>
+                    <p><i class="fas fa-phone"></i> (Office) (1)347680-2869</p>
+                    <p><i class="fas fa-mobile-alt"></i> (Mobile) (929)823-7040</p>
+                    <p><i class="fas fa-envelope"></i> bh.jobagency@gmail.com</p>
+                    <p><i class="fas fa-globe"></i> www.bh.com</p>
                 </div>
             </div>
-            <div class="copyright">
+            <div class="footer-bottom">
                 <p>&copy; 2025 B&H Employment & Consultancy Inc. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Back to Top Button -->
-    <button class="back-to-top" id="backToTop">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
-    <!-- JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 800,
-            easing: 'ease',
-            once: true,
-            offset: 100
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
         });
         
-        // Mobile Menu Toggle
-        const mobileToggle = document.getElementById('mobileToggle');
-        const navLinks = document.getElementById('navLinks');
-        
-        mobileToggle.addEventListener('click', function() {
-            navLinks.classList.toggle('active');
-            this.innerHTML = navLinks.classList.contains('active') 
-                ? '<i class="fas fa-times"></i>' 
-                : '<i class="fas fa-bars"></i>';
-        });
-        
-        // Header Scroll Effect
-        const header = document.getElementById('header');
-        
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
-        
-        // Back to Top Button
-        const backToTop = document.getElementById('backToTop');
-        
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 300) {
-                backToTop.classList.add('active');
-            } else {
-                backToTop.classList.remove('active');
-            }
-        });
-        
-        backToTop.addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    document.querySelector('.nav-menu').classList.remove('active');
+                }
             });
         });
+        
+        // Scroll animation for elements
+        function handleScrollAnimation() {
+            const elements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in, .contact-form');
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.2;
+                
+                if (elementPosition < screenPosition) {
+                    element.classList.add('active');
+                }
+            });
+        }
+        
+        // Run on load and scroll
+        window.addEventListener('load', function() {
+            handleScrollAnimation();
+            
+            // Add animation classes to elements
+            document.querySelectorAll('.service-card').forEach((card, index) => {
+                card.classList.add('fade-in');
+                card.style.transitionDelay = `${0.1 * index}s`;
+            });
+            
+            document.querySelectorAll('.job-card').forEach((card, index) => {
+                card.classList.add('fade-in');
+                card.style.transitionDelay = `${0.1 * index}s`;
+            });
+            
+            document.querySelectorAll('.info-item').forEach((item, index) => {
+                item.classList.add(index % 2 === 0 ? 'slide-in-left' : 'slide-in-right');
+                item.style.transitionDelay = `${0.1 * index}s`;
+            });
+            
+            document.querySelectorAll('.section-title').forEach(title => {
+                title.classList.add('scale-in');
+            });
+        });
+        
+        window.addEventListener('scroll', handleScrollAnimation);
     </script>
-</div>
+</body>
+</html>
