@@ -67,6 +67,101 @@ function formatDate($date) {
     <title>Admin Dashboard - B&H Employment & Consultancy Inc</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../css/styles.css">
+        <style>
+            .dashboard-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.quick-action {
+    background-color: white;
+    border-radius: 12px;
+    padding: 25px 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    text-decoration: none;
+    color: #333;
+}
+
+.quick-action:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    background-color: #f0f7ff;
+    color: #0066cc;
+}
+
+.quick-action i {
+    font-size: 32px;
+    margin-bottom: 15px;
+    color: #0066cc;
+    transition: all 0.3s ease;
+}
+
+.quick-action:hover i {
+    transform: scale(1.2);
+}
+
+.quick-action span {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #ff3366;
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* For smaller screens */
+@media (max-width: 768px) {
+    .dashboard-quick-actions {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .quick-action {
+        padding: 20px 15px;
+    }
+    
+    .quick-action i {
+        font-size: 28px;
+    }
+    
+    .quick-action span {
+        font-size: 14px;
+    }
+}
+        .notification-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff3366;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .quick-action {
+            position: relative;
+        }
+        </style>
 </head>
 <body>
     <?php include '../includes/header.php'; ?>
@@ -139,7 +234,17 @@ function formatDate($date) {
                             </div>
                         </div>
                     </div>
-                    
+                    <?php
+                    // Get count of unread messages
+                        $unread_messages_count = 0;
+                        try {
+                            $messages_stmt = $pdo->prepare("SELECT COUNT(*) as unread_count FROM contact_messages WHERE is_read = 0");
+                            $messages_stmt->execute();
+                            $unread_messages_count = $messages_stmt->fetch()['unread_count'];
+                        } catch (PDOException $e) {
+                            error_log("Error fetching unread messages count: " . $e->getMessage());
+                        }
+                    ?>
                     <div class="dashboard-quick-actions">
                         <a href="manage-users.php" class="quick-action">
                             <i class="fas fa-users"></i>
@@ -152,6 +257,13 @@ function formatDate($date) {
                         <a href="manage-services.php" class="quick-action">
                             <i class="fas fa-cogs"></i>
                             <span>Manage Services</span>
+                        </a>
+                        <a href="contact-messages.php" class="quick-action">
+                            <i class="fas fa-envelope"></i>
+                            <span>Messages</span>
+                            <?php if ($unread_messages_count > 0): ?>
+                                <div class="notification-badge"><?php echo $unread_messages_count; ?></div>
+                            <?php endif; ?>
                         </a>
                         <a href="site-settings.php" class="quick-action">
                             <i class="fas fa-sliders-h"></i>

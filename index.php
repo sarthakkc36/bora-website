@@ -1,15 +1,33 @@
 <?php
 require_once 'config.php';
+
+// Get site settings for use throughout the page
+try {
+    $site_settings_stmt = $pdo->prepare("SELECT * FROM site_settings");
+    $site_settings_stmt->execute();
+    $site_settings_rows = $site_settings_stmt->fetchAll();
+    
+    // Convert to associative array
+    $site_settings = [];
+    foreach ($site_settings_rows as $row) {
+        $site_settings[$row['setting_key']] = $row['setting_value'];
+    }
+} catch (PDOException $e) {
+    error_log("Error fetching site settings: " . $e->getMessage());
+    $site_settings = [];
+}
+
+// Set defaults if not found
+$site_title = $site_settings['site_title'] ?? 'B&H Employment & Consultancy Inc';
+$site_description = $site_settings['site_description'] ?? 'Professional employment agency connecting qualified candidates with top employers';
 ?>
-<!DOCTYPE html>
-<html lang="en">
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($site_settings['site_title'] ?? 'B&H Employment & Consultancy Inc'); ?></title>
-    <meta name="description" content="<?php echo htmlspecialchars($site_settings['site_description'] ?? 'Professional employment agency connecting qualified candidates with top employers'); ?>">
+    <title><?php echo htmlspecialchars($site_title); ?></title>
+    <meta name="description" content="<?php echo htmlspecialchars($site_description); ?>">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -21,7 +39,7 @@ require_once 'config.php';
     <section class="hero">
         <div class="container">
             <h1>Your Path to Career Success Starts Here</h1>
-            <p>B&H Employment & Consultancy Inc connects qualified candidates with top employers. Let us help you find your perfect job match or the ideal candidate for your business.</p>
+            <p><?php echo htmlspecialchars($site_description); ?></p>
             <a href="jobs.php" class="cta-btn">Browse Jobs</a>
         </div>
     </section>
