@@ -10,6 +10,61 @@ if (!isLoggedIn() || !isAdmin()) {
 $errors = [];
 $success = '';
 
+// Handle favicon upload
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_favicon'])) {
+    // Check if a file was uploaded
+    if (isset($_FILES['favicon']) && $_FILES['favicon']['error'] == 0) {
+        $allowed_types = ['image/x-icon', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml'];
+        $max_size = 2 * 1024 * 1024; // 2MB
+        
+        // Validate file type and size
+        if (!in_array($_FILES['favicon']['type'], $allowed_types)) {
+            $errors[] = "Invalid file type. Only ICO, PNG, JPG, GIF, and SVG files are allowed.";
+        } elseif ($_FILES['favicon']['size'] > $max_size) {
+            $errors[] = "File size is too large. Maximum size is 2MB.";
+        } else {
+            // Create uploads directory if it doesn't exist
+            $upload_dir = '../uploads/favicon/';
+            if (!file_exists($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+            
+            // Generate a unique filename
+            $file_extension = pathinfo($_FILES['favicon']['name'], PATHINFO_EXTENSION);
+            $new_filename = 'favicon_' . time() . '.' . $file_extension;
+            $upload_path = $upload_dir . $new_filename;
+            
+            // Move uploaded file
+            if (move_uploaded_file($_FILES['favicon']['tmp_name'], $upload_path)) {
+                // Update favicon path in database
+                $favicon_path = 'uploads/favicon/' . $new_filename;
+                
+                try {
+                    $stmt = $pdo->prepare("UPDATE site_settings SET setting_value = :value WHERE setting_key = 'favicon'");
+                    $stmt->bindParam(':value', $favicon_path);
+                    $stmt->execute();
+                    
+                    // If the setting doesn't exist, create it
+                    if ($stmt->rowCount() === 0) {
+                        $stmt = $pdo->prepare("INSERT INTO site_settings (setting_key, setting_value) VALUES ('favicon', :value)");
+                        $stmt->bindParam(':value', $favicon_path);
+                        $stmt->execute();
+                    }
+                    
+                    $success = "Favicon uploaded and updated successfully!";
+                } catch (PDOException $e) {
+                    error_log("Error updating favicon: " . $e->getMessage());
+                    $errors[] = "An error occurred while updating the favicon. Please try again.";
+                }
+            } else {
+                $errors[] = "Failed to upload file. Please try again.";
+            }
+        }
+    } else {
+        $errors[] = "Please select a file to upload.";
+    }
+}
+
 // Handle settings update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
     // Get form data
@@ -77,6 +132,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_settings'])) {
     }
 }
 
+// Handle legal documents update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_legal_documents'])) {
+    $terms_of_service = $_POST['terms_of_service'];
+    $privacy_policy = $_POST['privacy_policy'];
+    
+    try {
+        // Update terms of service
+        $stmt = $pdo->prepare("UPDATE site_settings SET setting_value = :value WHERE setting_key = 'terms_of_service'");
+        $stmt->bindParam(':value', $terms_of_service);
+        $stmt->execute();
+        
+        // If the setting doesn't exist, create it
+        if ($stmt->rowCount() === 0) {
+            $stmt = $pdo->prepare("INSERT INTO site_settings (setting_key, setting_value) VALUES ('terms_of_service', :value)");
+            $stmt->bindParam(':value', $terms_of_service);
+            $stmt->execute();
+        }
+        
+        // Update privacy policy
+        $stmt = $pdo->prepare("UPDATE site_settings SET setting_value = :value WHERE setting_key = 'privacy_policy'");
+        $stmt->bindParam(':value', $privacy_policy);
+        $stmt->execute();
+        
+        // If the setting doesn't exist, create it
+        if ($stmt->rowCount() === 0) {
+            $stmt = $pdo->prepare("INSERT INTO site_settings (setting_key, setting_value) VALUES ('privacy_policy', :value)");
+            $stmt->bindParam(':value', $privacy_policy);
+            $stmt->execute();
+        }
+        
+        $success = "Legal documents updated successfully!";
+    } catch (PDOException $e) {
+        error_log("Error updating legal documents: " . $e->getMessage());
+        $errors[] = "An error occurred while updating legal documents. Please try again.";
+    }
+}
+
 // Get current settings
 try {
     $stmt = $pdo->prepare("SELECT * FROM site_settings");
@@ -103,6 +195,18 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/updated-styles.css">
+<?php
+// Get site settings for favicon
+$favicon_path = '';
+if (isset($site_settings) && !empty($site_settings['favicon'])) {
+    $favicon_path = '/' . ltrim($site_settings['favicon'], '/');
+} else {
+    $favicon_path = '/favicon.ico';
+}
+?>
+<!-- Dynamic Favicon -->
+<link rel="icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
+<link rel="shortcut icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
 </head>
 <body>
     <?php include '../includes/header.php'; ?>
@@ -137,6 +241,35 @@ try {
                     <?php endif; ?>
                     
                     <?php displayFlashMessage(); ?>
+                    
+                    <div class="content-box">
+                        <div class="content-header">
+                            <h2><i class="fas fa-image"></i> Site Favicon</h2>
+                        </div>
+                        
+                        <div class="content-body">
+                            <div class="current-favicon">
+                                <h3>Current Favicon</h3>
+                                <div class="favicon-preview">
+                                    <?php if (!empty($settings['favicon'])): ?>
+                                        <img src="../<?php echo htmlspecialchars($settings['favicon']); ?>?v=<?php echo time(); ?>" alt="Current Favicon">
+                                    <?php else: ?>
+                                        <div class="no-favicon">No favicon set</div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            
+                            <form action="site-settings.php" method="POST" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="favicon">Upload New Favicon</label>
+                                    <input type="file" id="favicon" name="favicon" class="form-control" accept=".ico,.png,.jpg,.jpeg,.gif,.svg">
+                                    <small class="form-text">Recommended formats: ICO, PNG, or SVG. Maximum size: 2MB.</small>
+                                </div>
+                                
+                                <button type="submit" name="upload_favicon" class="submit-btn">Upload Favicon</button>
+                            </form>
+                        </div>
+                    </div>
                     
                     <div class="content-box">
                         <div class="content-header">
@@ -212,31 +345,30 @@ try {
                             </form>
                         </div>
                     </div>
+                    
                     <div class="content-box">
-    <div class="content-header">
-        <h2><i class="fas fa-file-contract"></i> Legal Documents</h2>
-    </div>
-    
-    <div class="content-body">
-        <form action="site-settings.php" method="POST">
-            <input type="hidden" name="document_settings" value="1">
-            
-            <div class="form-group">
-                <label for="terms_of_service">Terms of Service</label>
-                <textarea id="terms_of_service" name="terms_of_service" class="form-control" rows="15"><?php echo htmlspecialchars($site_settings['terms_of_service'] ?? ''); ?></textarea>
-                <small class="form-text">HTML formatting is supported. This content will be displayed on the Terms of Service page.</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="privacy_policy">Privacy Policy</label>
-                <textarea id="privacy_policy" name="privacy_policy" class="form-control" rows="15"><?php echo htmlspecialchars($site_settings['privacy_policy'] ?? ''); ?></textarea>
-                <small class="form-text">HTML formatting is supported. This content will be displayed on the Privacy Policy page.</small>
-            </div>
-            
-            <button type="submit" name="update_legal_documents" class="submit-btn">Save Legal Documents</button>
-        </form>
-    </div>
-</div>
+                        <div class="content-header">
+                            <h2><i class="fas fa-file-contract"></i> Legal Documents</h2>
+                        </div>
+                        
+                        <div class="content-body">
+                            <form action="site-settings.php" method="POST">
+                                <div class="form-group">
+                                    <label for="terms_of_service">Terms of Service</label>
+                                    <textarea id="terms_of_service" name="terms_of_service" class="form-control" rows="15"><?php echo htmlspecialchars($settings['terms_of_service'] ?? ''); ?></textarea>
+                                    <small class="form-text">HTML formatting is supported. This content will be displayed on the Terms of Service page.</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="privacy_policy">Privacy Policy</label>
+                                    <textarea id="privacy_policy" name="privacy_policy" class="form-control" rows="15"><?php echo htmlspecialchars($settings['privacy_policy'] ?? ''); ?></textarea>
+                                    <small class="form-text">HTML formatting is supported. This content will be displayed on the Privacy Policy page.</small>
+                                </div>
+                                
+                                <button type="submit" name="update_legal_documents" class="submit-btn">Save Legal Documents</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -273,6 +405,30 @@ try {
         margin-bottom: 20px;
         color: #333;
         font-size: 20px;
+    }
+    
+    .current-favicon {
+        margin-bottom: 25px;
+    }
+    
+    .favicon-preview {
+        display: inline-block;
+        padding: 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        min-width: 100px;
+        text-align: center;
+    }
+    
+    .favicon-preview img {
+        max-width: 64px;
+        max-height: 64px;
+    }
+    
+    .no-favicon {
+        color: #888;
+        font-style: italic;
     }
     </style>
 </body>

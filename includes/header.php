@@ -37,7 +37,27 @@ $base_path = $is_root ? '' : '../';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="<?php echo $base_path; ?>css/styles.css">
     <link rel="stylesheet" href="<?php echo $base_path; ?>css/updated-styles.css">
-    <link rel="icon" href="<?php echo $base_path . ($site_settings['favicon'] ?? 'images/favicon.ico'); ?>?v=<?php echo time(); ?>">
+    
+    <!-- Dynamic Favicon -->
+    <?php if (!empty($site_settings['favicon'])): ?>
+        <link rel="icon" href="<?php echo $base_path . $site_settings['favicon']; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($site_settings['favicon'], PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($site_settings['favicon'], PATHINFO_EXTENSION); ?>">
+        <link rel="shortcut icon" href="<?php echo $base_path . $site_settings['favicon']; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($site_settings['favicon'], PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($site_settings['favicon'], PATHINFO_EXTENSION); ?>">
+    <?php else: ?>
+        <link rel="icon" href="<?php echo $base_path; ?>images/favicon.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="<?php echo $base_path; ?>images/favicon.ico" type="image/x-icon">
+    <?php endif; ?>
+<?php
+// Get site settings for favicon
+$favicon_path = '';
+if (isset($site_settings) && !empty($site_settings['favicon'])) {
+    $favicon_path = '/' . ltrim($site_settings['favicon'], '/');
+} else {
+    $favicon_path = '/favicon.ico';
+}
+?>
+<!-- Dynamic Favicon -->
+<link rel="icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
+<link rel="shortcut icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
 </head>
 <body>
 

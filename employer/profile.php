@@ -149,6 +149,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/updated-styles.css">
+<?php
+// Get site settings for favicon
+$favicon_path = '';
+if (isset($site_settings) && !empty($site_settings['favicon'])) {
+    $favicon_path = '/' . ltrim($site_settings['favicon'], '/');
+} else {
+    $favicon_path = '/favicon.ico';
+}
+?>
+<!-- Dynamic Favicon -->
+<link rel="icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
+<link rel="shortcut icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
 </head>
 <body>
     <?php include '../includes/header.php'; ?>

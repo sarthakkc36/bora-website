@@ -95,4 +95,39 @@ function hasValidSubscription() {
     
     return false;
 }
+/**
+ * Handle favicon upload without requiring GD library
+ * @param array $file The uploaded file ($_FILES['favicon'])
+ * @param string $upload_dir Directory to save the favicon
+ * @return string|false Path to the favicon or false on failure
+ */
+function handleFaviconUpload($file, $upload_dir = 'uploads/favicon/') {
+    // Check if file was uploaded successfully
+    if (!isset($file) || $file['error'] != 0) {
+        return false;
+    }
+    
+    // Validate file type
+    $allowed_types = ['image/x-icon', 'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml'];
+    if (!in_array($file['type'], $allowed_types)) {
+        return false;
+    }
+    
+    // Create uploads directory if it doesn't exist
+    if (!file_exists($upload_dir)) {
+        mkdir($upload_dir, 0755, true);
+    }
+    
+    // Generate a unique filename
+    $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $new_filename = 'favicon_' . time() . '.' . $file_extension;
+    $upload_path = $upload_dir . $new_filename;
+    
+    // Move uploaded file
+    if (move_uploaded_file($file['tmp_name'], $upload_path)) {
+        return $upload_path;
+    }
+    
+    return false;
+}
 ?>
