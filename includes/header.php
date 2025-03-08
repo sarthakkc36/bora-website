@@ -1,9 +1,28 @@
 <?php
 require_once __DIR__ . '/../config.php';
-?>
-<?php
+
 // Get current page to highlight active nav link
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// Get site settings
+try {
+    $site_settings_stmt = $pdo->prepare("SELECT * FROM site_settings");
+    $site_settings_stmt->execute();
+    $site_settings_rows = $site_settings_stmt->fetchAll();
+    
+    // Convert to associative array
+    $site_settings = [];
+    foreach ($site_settings_rows as $row) {
+        $site_settings[$row['setting_key']] = $row['setting_value'];
+    }
+} catch (PDOException $e) {
+    error_log("Error fetching site settings: " . $e->getMessage());
+    $site_settings = [];
+}
+
+// Set default values if settings are not found
+$site_title = $site_settings['site_title'] ?? 'B&H Employment & Consultancy Inc';
+$site_description = $site_settings['site_description'] ?? 'Professional employment agency connecting qualified candidates with top employers';
 ?>
 
 <!-- Header -->
@@ -12,7 +31,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <div class="header-content">
             <div class="logo">
                 <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'index.php' : '../index.php'; ?>">
-                    <img src="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'images/logo.png' : '../images/logo.svg'; ?>" alt="B&H Employment & Consultancy Logo">
+                    <img src="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'images/logo.png' : '../images/logo.png'; ?>" alt="<?php echo htmlspecialchars($site_title); ?> Logo">
                 </a>
             </div>
             <ul class="nav-menu">

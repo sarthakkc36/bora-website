@@ -1,9 +1,9 @@
 <?php
 // Database configuration
-$db_host = 'bh-employment-skdonplays-b8b1.d.aivencloud.com:26520';
-$db_name = 'defaultdb'; // Change this to your database name
-$db_user = 'avnadmin'; // Change this to your MySQL username
-$db_pass = 'AVNS_7hGdIcd0eYwoWNW9dwB'; // Change this to your MySQL password
+$db_host = 'localhost';
+$db_name = 'bh_employment'; // Change this to your database name
+$db_user = 'root'; // Change this to your MySQL username
+$db_pass = ''; // Change this to your MySQL password
 
 // Create database connection
 try {
@@ -17,7 +17,7 @@ try {
 }
 
 // Site URL configuration
-$site_url = "https://bandh123.netlify.app/"; // Change to your actual domain in production
+$site_url = "http://localhost/"; // Change to your actual domain in production
 
 // Session configuration
 session_start();

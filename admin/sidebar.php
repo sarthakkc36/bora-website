@@ -1,6 +1,16 @@
 <?php
 // Get current page to highlight active link
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// Get count of unread messages for admin sidebar
+$unread_messages_count = 0;
+try {
+    $messages_stmt = $pdo->prepare("SELECT COUNT(*) as unread_count FROM contact_messages WHERE is_read = 0");
+    $messages_stmt->execute();
+    $unread_messages_count = $messages_stmt->fetch()['unread_count'];
+} catch (PDOException $e) {
+    error_log("Error fetching unread messages count: " . $e->getMessage());
+}
 ?>
 
 <div class="dashboard-user-info">
@@ -35,6 +45,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <i class="fas fa-cogs"></i> Manage Services
         </a>
     </li>
+    <li class="<?php echo $current_page === 'contact-messages.php' ? 'active' : ''; ?>">
+        <a href="contact-messages.php">
+            <i class="fas fa-envelope"></i> Messages
+            <?php if ($unread_messages_count > 0): ?>
+                <span class="badge-small"><?php echo $unread_messages_count; ?></span>
+            <?php endif; ?>
+        </a>
+    </li>
     <li class="<?php echo $current_page === 'site-settings.php' ? 'active' : ''; ?>">
         <a href="site-settings.php">
             <i class="fas fa-sliders-h"></i> Site Settings
@@ -51,3 +69,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </a>
     </li>
 </ul>
+
+<style>
+.badge-small {
+    background-color: #0066cc;
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 5px;
+}
+</style>

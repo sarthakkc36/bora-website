@@ -1,15 +1,45 @@
+<?php
+// Get site settings if not already loaded in header
+if (!isset($site_settings)) {
+    try {
+        $site_settings_stmt = $pdo->prepare("SELECT * FROM site_settings");
+        $site_settings_stmt->execute();
+        $site_settings_rows = $site_settings_stmt->fetchAll();
+        
+        // Convert to associative array
+        $site_settings = [];
+        foreach ($site_settings_rows as $row) {
+            $site_settings[$row['setting_key']] = $row['setting_value'];
+        }
+    } catch (PDOException $e) {
+        error_log("Error fetching site settings: " . $e->getMessage());
+        $site_settings = [];
+    }
+}
+
+// Set default values if settings are not found
+$site_title = $site_settings['site_title'] ?? 'B&H Employment & Consultancy Inc';
+$contact_email = $site_settings['contact_email'] ?? 'bh.jobagency@gmail.com';
+$contact_phone = $site_settings['contact_phone'] ?? '(1)347680-2869';
+$contact_address = $site_settings['contact_address'] ?? '37-51 75th St.1A, Jackson Heights, NY 11372';
+$social_facebook = $site_settings['social_facebook'] ?? '#';
+$social_twitter = $site_settings['social_twitter'] ?? '#';
+$social_linkedin = $site_settings['social_linkedin'] ?? '#';
+$social_instagram = $site_settings['social_instagram'] ?? '#';
+?>
+
 <!-- Footer -->
 <footer>
     <div class="container">
         <div class="footer-content">
             <div class="footer-column">
                 <h3>About Us</h3>
-                <p style="color: #bbb; line-height: 1.6; margin-bottom: 20px;">B&H Employment & Consultancy Inc is a leading employment agency dedicated to connecting qualified candidates with top employers across various industries.</p>
+                <p style="color: #bbb; line-height: 1.6; margin-bottom: 20px;"><?php echo htmlspecialchars($site_description ?? $site_settings['site_description'] ?? 'B&H Employment & Consultancy Inc is a leading employment agency dedicated to connecting qualified candidates with top employers across various industries.'); ?></p>
                 <div class="social-links">
-                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="<?php echo htmlspecialchars($social_facebook); ?>" class="social-link" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="<?php echo htmlspecialchars($social_twitter); ?>" class="social-link" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="<?php echo htmlspecialchars($social_linkedin); ?>" class="social-link" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="<?php echo htmlspecialchars($social_instagram); ?>" class="social-link" target="_blank"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
             <div class="footer-column">
@@ -26,15 +56,15 @@
             </div>
             <div class="footer-column footer-contact">
                 <h3>Contact Info</h3>
-                <p><i class="fas fa-map-marker-alt"></i> 37-51 75th St.1A, Jackson Heights, NY 11372</p>
-                <p><i class="fas fa-phone"></i> (Office) (1)347680-2869</p>
+                <p><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($contact_address); ?></p>
+                <p><i class="fas fa-phone"></i> (Office) <?php echo htmlspecialchars($contact_phone); ?></p>
                 <p><i class="fas fa-mobile-alt"></i> (Mobile) (929)823-7040</p>
-                <p><i class="fas fa-envelope"></i> bh.jobagency@gmail.com</p>
+                <p><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($contact_email); ?></p>
                 <p><i class="fas fa-globe"></i> www.bh.com</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; <?php echo date('Y'); ?> B&H Employment & Consultancy Inc. All Rights Reserved.</p>
+            <p>&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($site_title); ?>. All Rights Reserved.</p>
         </div>
     </div>
 </footer>
