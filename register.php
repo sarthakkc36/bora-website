@@ -180,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <div class="terms-check">
                             <input type="checkbox" id="terms" name="terms" required>
-                            <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                            <label for="terms">I agree to the <a href="terms.php" target="_blank">Terms of Service</a> and <a href="privacy.php" target="_blank">Privacy Policy</a></label>
                         </div>
                     </div>
                     
@@ -190,6 +190,158 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <p>Already have an account? <a href="login.php">Login</a></p>
                     </div>
                 </form>
+                <!-- Terms & Privacy Modal -->
+<div id="legal-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">Terms of Service</h2>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="modal-loading">
+                <i class="fas fa-spinner fa-spin"></i> Loading...
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 800px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 22px;
+}
+
+.close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close:hover {
+    color: #0066cc;
+}
+
+.modal-body {
+    padding: 25px;
+    overflow-y: auto;
+    line-height: 1.6;
+    color: #333;
+    flex-grow: 1;
+}
+
+.modal-loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #666;
+}
+
+.modal-loading i {
+    margin-right: 10px;
+    color: #0066cc;
+}
+</style>
+
+<script>
+// Modal functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('legal-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalBody = document.getElementById('modal-body');
+    const closeBtn = document.getElementsByClassName('close')[0];
+    
+    // Open modal when Terms of Service is clicked
+    document.querySelector('a[href="terms.php"]').addEventListener('click', function(e) {
+        e.preventDefault();
+        modalTitle.textContent = 'Terms of Service';
+        modalBody.innerHTML = '<div class="modal-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+        modal.style.display = 'block';
+        
+        // Fetch terms content
+        fetch('terms.php')
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const content = doc.querySelector('.legal-document').innerHTML;
+                modalBody.innerHTML = content;
+            })
+            .catch(error => {
+                modalBody.innerHTML = '<div class="error">Failed to load content. Please try again later.</div>';
+            });
+    });
+    
+    // Open modal when Privacy Policy is clicked
+    document.querySelector('a[href="privacy.php"]').addEventListener('click', function(e) {
+        e.preventDefault();
+        modalTitle.textContent = 'Privacy Policy';
+        modalBody.innerHTML = '<div class="modal-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+        modal.style.display = 'block';
+        
+        // Fetch privacy content
+        fetch('privacy.php')
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const content = doc.querySelector('.legal-document').innerHTML;
+                modalBody.innerHTML = content;
+            })
+            .catch(error => {
+                modalBody.innerHTML = '<div class="error">Failed to load content. Please try again later.</div>';
+            });
+    });
+    
+    // Close modal when X is clicked
+    closeBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+});
+</script>
             </div>
         </div>
     </section>

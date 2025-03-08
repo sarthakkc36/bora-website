@@ -212,6 +212,31 @@ try {
                             </form>
                         </div>
                     </div>
+                    <div class="content-box">
+    <div class="content-header">
+        <h2><i class="fas fa-file-contract"></i> Legal Documents</h2>
+    </div>
+    
+    <div class="content-body">
+        <form action="site-settings.php" method="POST">
+            <input type="hidden" name="document_settings" value="1">
+            
+            <div class="form-group">
+                <label for="terms_of_service">Terms of Service</label>
+                <textarea id="terms_of_service" name="terms_of_service" class="form-control" rows="15"><?php echo htmlspecialchars($site_settings['terms_of_service'] ?? ''); ?></textarea>
+                <small class="form-text">HTML formatting is supported. This content will be displayed on the Terms of Service page.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="privacy_policy">Privacy Policy</label>
+                <textarea id="privacy_policy" name="privacy_policy" class="form-control" rows="15"><?php echo htmlspecialchars($site_settings['privacy_policy'] ?? ''); ?></textarea>
+                <small class="form-text">HTML formatting is supported. This content will be displayed on the Privacy Policy page.</small>
+            </div>
+            
+            <button type="submit" name="update_legal_documents" class="submit-btn">Save Legal Documents</button>
+        </form>
+    </div>
+</div>
                 </div>
             </div>
         </div>

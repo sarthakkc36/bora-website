@@ -50,8 +50,8 @@ $social_instagram = $site_settings['social_instagram'] ?? '#';
                     <li><a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'index.php#services' : '../index.php#services'; ?>">Services</a></li>
                     <li><a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'index.php#about' : '../index.php#about'; ?>">About Us</a></li>
                     <li><a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'index.php#contact' : '../index.php#contact'; ?>">Contact</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'privacy.php' : '../privacy.php'; ?>">Privacy Policy</a></li>
+                    <li><a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'terms.php' : '../terms.php'; ?>">Terms & Conditions</a></li>
                 </ul>
             </div>
             <div class="footer-column footer-contact">

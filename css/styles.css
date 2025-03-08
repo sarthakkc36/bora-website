@@ -2976,3 +2976,20 @@ footer {
         margin: 10px 0;
     }
 }
+input[type="file"] {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+}
+
+input[type="file"]:hover {
+    background-color: #f0f0f0;
+}
+
+input[type="file"]:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+}

@@ -23,17 +23,37 @@ try {
 // Set default values if settings are not found
 $site_title = $site_settings['site_title'] ?? 'B&H Employment & Consultancy Inc';
 $site_description = $site_settings['site_description'] ?? 'Professional employment agency connecting qualified candidates with top employers';
+$favicon = $site_settings['favicon'] ?? 'images/favicon.ico';
+$current_page = basename($_SERVER['PHP_SELF']);
+$is_root = (dirname($_SERVER['PHP_SELF']) == '/' || dirname($_SERVER['PHP_SELF']) == '\\');
+$base_path = $is_root ? '' : '../';
 ?>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($site_settings['site_title'] ?? 'B&H Employment & Consultancy Inc'); ?></title>
+    <meta name="description" content="<?php echo htmlspecialchars($site_settings['site_description'] ?? 'Professional employment agency connecting qualified candidates with top employers'); ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo $base_path; ?>css/styles.css">
+    <link rel="stylesheet" href="<?php echo $base_path; ?>css/updated-styles.css">
+    <link rel="icon" href="<?php echo $base_path . ($site_settings['favicon'] ?? 'images/favicon.ico'); ?>?v=<?php echo time(); ?>">
+</head>
+<body>
 
 <!-- Header -->
 <header>
-    <div class="container">
-        <div class="header-content">
-            <div class="logo">
-                <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'index.php' : '../index.php'; ?>">
-                    <img src="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'images/logo.png' : '../images/logo.png'; ?>" alt="<?php echo htmlspecialchars($site_title); ?> Logo">
-                </a>
-            </div>
+<div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="<?php echo $base_path; ?>index.php">
+                        <?php if (!empty($site_settings['site_logo']) && file_exists($is_root ? $site_settings['site_logo'] : '../' . $site_settings['site_logo'])): ?>
+                            <img src="<?php echo $base_path . $site_settings['site_logo']; ?>?v=<?php echo time(); ?>" alt="<?php echo htmlspecialchars($site_settings['site_title'] ?? 'B&H Employment & Consultancy Inc'); ?> Logo">
+                        <?php else: ?>
+                            <img src="<?php echo $base_path; ?>images/logo.png" alt="<?php echo htmlspecialchars($site_settings['site_title'] ?? 'B&H Employment & Consultancy Inc'); ?> Logo">
+                        <?php endif; ?>
+                    </a>
+                </div>
             <ul class="nav-menu">
                 <li>
                     <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'index.php' : '../index.php'; ?>" 
