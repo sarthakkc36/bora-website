@@ -141,11 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="auth-links">
                         <p>Don't have an account? <a href="register.php">Register Now</a></p>
                     </div>
-
-                    <!-- Admin login reminder -->
-                    <div class="admin-login-note">
-                        <p><small><i class="fas fa-info-circle"></i> Admin login: username <strong>admin</strong>, password <strong>admin123</strong></small></p>
-                    </div>
                 </form>
             </div>
         </div>
