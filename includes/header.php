@@ -63,81 +63,119 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
 
 <!-- Header -->
 <header>
-<div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <a href="<?php echo $base_path; ?>index.php">
-                        <?php if (!empty($site_settings['site_logo']) && file_exists($is_root ? $site_settings['site_logo'] : '../' . $site_settings['site_logo'])): ?>
-                            <img src="<?php echo $base_path . $site_settings['site_logo']; ?>?v=<?php echo time(); ?>" alt="<?php echo htmlspecialchars($site_settings['site_title'] ?? 'B&H Employment & Consultancy Inc'); ?> Logo">
-                        <?php else: ?>
-                            <img src="<?php echo $base_path; ?>images/logo.png" alt="<?php echo htmlspecialchars($site_settings['site_title'] ?? 'B&H Employment & Consultancy Inc'); ?> Logo">
-                        <?php endif; ?>
-                    </a>
-                </div>
+    <div class="container">
+        <div class="header-content">
+            <div class="logo">
+                <a href="index.php">
+                    <img src="images/logo.png" alt="B&H Employment & Consultancy Inc">
+                </a>
+            </div>
+            
+            <div class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+            
             <ul class="nav-menu">
                 <li>
-                    <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'index.php' : '../index.php'; ?>" 
-                       class="<?php echo $current_page === 'index.php' ? 'active' : ''; ?>">Home</a>
-                </li>
-                <li>
-                    <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'jobs.php' : '../jobs.php'; ?>" 
-                       class="<?php echo $current_page === 'jobs.php' ? 'active' : ''; ?>">Jobs</a>
-                </li>
-                <li>
-                    <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'index.php#services' : '../index.php#services'; ?>" 
-                       class="<?php echo $current_page === 'services.php' ? 'active' : ''; ?>">Services</a>
-                </li>
-                <li>
-                    <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'index.php#about' : '../index.php#about'; ?>" 
-                       class="<?php echo $current_page === 'about.php' ? 'active' : ''; ?>">About Us</a>
-                </li>
-                <li>
-                    <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'index.php#contact' : '../index.php#contact'; ?>" 
-                       class="<?php echo $current_page === 'contact.php' ? 'active' : ''; ?>">Contact</a>
-                </li>
-                <?php if (isLoggedIn()): ?>
-                    <li class="user-menu">
-                    <a href="#" class="user-toggle">
-                        <i class="fas fa-user-circle"></i> <?php echo isset($_SESSION['user_name']) ? explode(' ', $_SESSION['user_name'])[0] : 'User'; ?> <i class="fas fa-caret-down"></i>
+                    <a href="index.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'index.php' ? 'active' : ''; ?>">
+                        Home
                     </a>
+                </li>
+                <li>
+                    <a href="submit-job.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'submit-job.php' ? 'active' : ''; ?>">
+                        Submit a Job
+                    </a>
+                </li>
+                <li>
+                    <a href="request-appointment.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'request-appointment.php' ? 'active' : ''; ?>">
+                        Request Appointment
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php#about" class="<?php echo basename($_SERVER['PHP_SELF']) === 'index.php#about' ? 'active' : ''; ?>">
+                        About Us
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php#contact" class="<?php echo basename($_SERVER['PHP_SELF']) === 'index.php#contact' ? 'active' : ''; ?>">
+                        Contact
+                    </a>
+                </li>
+                
+                <?php if (isLoggedIn()): ?>
+                    <li>
+                        <a href="jobs.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'jobs.php' ? 'active' : ''; ?>">
+                            Browse Jobs
+                        </a>
+                    </li>
+                    
+                    <?php if (isAdmin()): ?>
+                        <li>
+                            <a href="admin/dashboard.php">
+                                Admin Dashboard
+                            </a>
+                        </li>
+                    <?php elseif (isJobSeeker()): ?>
+                        <li>
+                            <a href="job-seeker/dashboard.php">
+                                My Dashboard
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                    
+                    <li class="user-menu">
+                        <a href="#" class="user-toggle">
+                            <i class="fas fa-user-circle"></i> <?php echo $_SESSION['user_name']; ?>
+                        </a>
                         <ul class="user-dropdown">
                             <?php if (isAdmin()): ?>
-                                <li><a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'admin/dashboard.php' : '../admin/dashboard.php'; ?>">
-                                    <i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+                                <li>
+                                    <a href="admin/dashboard.php">
+                                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                                    </a>
                                 </li>
-                            <?php elseif (isEmployer()): ?>
-                                <li><a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'employer/dashboard.php' : '../employer/dashboard.php'; ?>">
-                                    <i class="fas fa-tachometer-alt"></i> Employer Dashboard</a>
+                                <li>
+                                    <a href="admin/profile.php">
+                                        <i class="fas fa-user"></i> My Profile
+                                    </a>
                                 </li>
-                            <?php else: ?>
-                                <li><a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'job-seeker/dashboard.php' : '../job-seeker/dashboard.php'; ?>">
-                                    <i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                            <?php elseif (isJobSeeker()): ?>
+                                <li>
+                                    <a href="job-seeker/dashboard.php">
+                                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="job-seeker/profile.php">
+                                        <i class="fas fa-user"></i> My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="job-seeker/applications.php">
+                                        <i class="fas fa-file-alt"></i> My Applications
+                                    </a>
                                 </li>
                             <?php endif; ?>
-                            
-                            <li><a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'logout.php' : '../logout.php'; ?>">
-                                <i class="fas fa-sign-out-alt"></i> Logout</a>
+                            <li>
+                                <a href="logout.php">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a>
                             </li>
                         </ul>
                     </li>
                 <?php else: ?>
-                    <li class="auth-buttons">
-        <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'login.php' : '../login.php'; ?>" 
-           class="<?php echo $current_page === 'login.php' ? 'active' : ''; ?> login-btn">
-           <i class="fas fa-sign-in-alt"></i> Login
-        </a>
-    </li>
-    <li>
-        <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'register.php' : '../register.php'; ?>" 
-           class="<?php echo $current_page === 'register.php' ? 'active' : ''; ?> highlight-btn">
-           <i class="fas fa-user-plus"></i> Register
-        </a>
-    </li>
+                    <li>
+                        <a href="login.php" class="login-btn">
+                            Login
+                        </a>
+                    </li>
+                    <li>
+                        <a href="register.php" class="highlight-btn">
+                            Register
+                        </a>
+                    </li>
                 <?php endif; ?>
             </ul>
-            <div class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </div>
         </div>
     </div>
 </header>

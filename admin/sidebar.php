@@ -11,6 +11,26 @@ try {
 } catch (PDOException $e) {
     error_log("Error fetching unread messages count: " . $e->getMessage());
 }
+
+// Get count of pending appointments
+$pending_appointments_count = 0;
+try {
+    $appointments_stmt = $pdo->prepare("SELECT COUNT(*) as pending_count FROM appointments WHERE status = 'pending'");
+    $appointments_stmt->execute();
+    $pending_appointments_count = $appointments_stmt->fetch()['pending_count'];
+} catch (PDOException $e) {
+    error_log("Error fetching pending appointments count: " . $e->getMessage());
+}
+
+// Get count of pending job approvals
+$pending_jobs_count = 0;
+try {
+    $jobs_stmt = $pdo->prepare("SELECT COUNT(*) as pending_count FROM jobs WHERE approval_status = 'pending'");
+    $jobs_stmt->execute();
+    $pending_jobs_count = $jobs_stmt->fetch()['pending_count'];
+} catch (PDOException $e) {
+    error_log("Error fetching pending jobs count: " . $e->getMessage());
+}
 ?>
 
 <div class="dashboard-user-info">
@@ -38,6 +58,17 @@ try {
     <li class="<?php echo $current_page === 'manage-jobs.php' ? 'active' : ''; ?>">
         <a href="manage-jobs.php">
             <i class="fas fa-briefcase"></i> Manage Jobs
+            <?php if ($pending_jobs_count > 0): ?>
+                <span class="badge-small"><?php echo $pending_jobs_count; ?></span>
+            <?php endif; ?>
+        </a>
+    </li>
+    <li class="<?php echo $current_page === 'appointments.php' ? 'active' : ''; ?>">
+        <a href="appointments.php">
+            <i class="fas fa-calendar-check"></i> Appointments
+            <?php if ($pending_appointments_count > 0): ?>
+                <span class="badge-small"><?php echo $pending_appointments_count; ?></span>
+            <?php endif; ?>
         </a>
     </li>
     <li class="<?php echo $current_page === 'manage-services.php' ? 'active' : ''; ?>">

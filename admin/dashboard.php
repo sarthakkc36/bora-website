@@ -1,6 +1,49 @@
 <?php
 require_once '../config.php';
+try {
+    $stmt = $pdo->prepare("SELECT COUNT(*) as pending_jobs FROM jobs WHERE approval_status = 'pending'");
+    $stmt->execute();
+    $pending_jobs_count = $stmt->fetch()['pending_jobs'];
+} catch (PDOException $e) {
+    error_log("Error fetching pending jobs: " . $e->getMessage());
+    $pending_jobs_count = 0;
+}
 
+// Get pending appointment count
+try {
+    $stmt = $pdo->prepare("SELECT COUNT(*) as pending_appointments FROM appointments WHERE status = 'pending'");
+    $stmt->execute();
+    $pending_appointments_count = $stmt->fetch()['pending_appointments'];
+} catch (PDOException $e) {
+    error_log("Error fetching pending appointments: " . $e->getMessage());
+    $pending_appointments_count = 0;
+}
+
+// Get recent pending jobs
+try {
+    $stmt = $pdo->prepare("SELECT * FROM jobs 
+                          WHERE approval_status = 'pending' 
+                          ORDER BY created_at DESC 
+                          LIMIT 5");
+    $stmt->execute();
+    $pending_jobs = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log("Error fetching pending jobs: " . $e->getMessage());
+    $pending_jobs = [];
+}
+
+// Get recent pending appointments
+try {
+    $stmt = $pdo->prepare("SELECT * FROM appointments 
+                          WHERE status = 'pending' 
+                          ORDER BY created_at DESC 
+                          LIMIT 5");
+    $stmt->execute();
+    $pending_appointments = $stmt->fetchAll();
+} catch (PDOException $e) {
+    error_log("Error fetching pending appointments: " . $e->getMessage());
+    $pending_appointments = [];
+}
 // Check if user is logged in and is an admin
 if (!isLoggedIn() || !isAdmin()) {
     flashMessage("You must be logged in as an admin to access this page", "danger");
@@ -235,14 +278,22 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                                 <p>Active Jobs</p>
                             </div>
                         </div>
-                        
                         <div class="stat-card">
                             <div class="stat-icon">
-                                <i class="fas fa-file-alt"></i>
+                                <i class="fas fa-clock"></i>
                             </div>
                             <div class="stat-info">
-                                <h3><?php echo number_format($application_count); ?></h3>
-                                <p>Applications</p>
+                                <h3><?php echo number_format($pending_jobs_count); ?></h3>
+                                <p>Pending Job Approvals</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3><?php echo number_format($pending_appointments_count); ?></h3>
+                                <p>Pending Appointments</p>
                             </div>
                         </div>
                     </div>
@@ -280,6 +331,13 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                         <a href="site-settings.php" class="quick-action">
                             <i class="fas fa-sliders-h"></i>
                             <span>Site Settings</span>
+                        </a>
+                        <a href="appointments.php?status=pending" class="quick-action">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Manage Appointments</span>
+                            <?php if ($pending_appointments_count > 0): ?>
+                                <div class="notification-badge"><?php echo $pending_appointments_count; ?></div>
+                            <?php endif; ?>
                         </a>
                     </div>
                     
@@ -319,7 +377,81 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                                 </div>
                             </div>
                         </div>
-                        
+                        <div class="dashboard-row">
+                            <div class="dashboard-column">
+                                <div class="content-box">
+                                    <div class="content-header">
+                                        <h2><i class="fas fa-briefcase"></i> Pending Job Approvals</h2>
+                                        <a href="manage-jobs.php?status=pending" class="view-all">View All</a>
+                                    </div>
+                                    
+                                    <div class="content-body">
+                                        <?php if (empty($pending_jobs)): ?>
+                                            <div class="empty-state">
+                                                <i class="fas fa-check-circle"></i>
+                                                <p>No pending job approvals at this time.</p>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="jobs-list">
+                                                <?php foreach ($pending_jobs as $job): ?>
+                                                    <div class="job-item dashboard-job">
+                                                        <div class="job-info">
+                                                            <h3><?php echo htmlspecialchars($job['title']); ?></h3>
+                                                            <p class="job-company"><?php echo htmlspecialchars($job['company_name']); ?></p>
+                                                            <div class="job-meta">
+                                                                <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($job['submitter_name']); ?></span>
+                                                                <span><i class="fas fa-calendar"></i> Submitted on <?php echo formatDate($job['created_at']); ?></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="job-actions">
+                                                            <a href="manage-jobs.php?status=pending" class="btn-primary btn-small">Review</a>
+                                                        </div>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="dashboard-column">
+                                <div class="content-box">
+                                    <div class="content-header">
+                                        <h2><i class="fas fa-calendar-check"></i> Pending Appointments</h2>
+                                        <a href="appointments.php?status=pending" class="view-all">View All</a>
+                                    </div>
+                                    
+                                    <div class="content-body">
+                                        <?php if (empty($pending_appointments)): ?>
+                                            <div class="empty-state">
+                                                <i class="fas fa-check-circle"></i>
+                                                <p>No pending appointment requests at this time.</p>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="appointments-list">
+                                                <?php foreach ($pending_appointments as $appointment): ?>
+                                                    <div class="application-item">
+                                                        <div class="applicant-info">
+                                                            <div class="applicant-avatar">
+                                                                <i class="fas fa-user-circle"></i>
+                                                            </div>
+                                                            <div class="applicant-details">
+                                                                <h4><?php echo htmlspecialchars($appointment['name']); ?></h4>
+                                                                <p>Purpose: <strong><?php echo htmlspecialchars($appointment['purpose']); ?></strong></p>
+                                                                <p>Preferred: <?php echo formatDate($appointment['preferred_date']); ?> at <?php echo formatTime($appointment['preferred_time']); ?></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="applicant-actions">
+                                                            <a href="appointments.php?status=pending" class="btn-primary btn-small">Review</a>
+                                                        </div>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="dashboard-column">
                             <div class="content-box">
                                 <div class="content-header">

@@ -31,8 +31,13 @@ function isAdmin() {
     return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
 }
 
-function isEmployer() {
-    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'employer';
+function isJobSeeker() {
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'job_seeker';
+}
+
+// Add new helper functions for the verification system
+function isEmailVerified() {
+    return isset($_SESSION['email_verified']) && $_SESSION['email_verified'] == 1;
 }
 
 function redirect($url) {
@@ -67,9 +72,6 @@ function displayFlashMessage() {
         unset($_SESSION['flash_type']);
     }
 }
-function isJobSeeker() {
-    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'job_seeker';
-}
 
 function isVerified() {
     return isset($_SESSION['is_verified']) && $_SESSION['is_verified'] == 1;
@@ -94,6 +96,43 @@ function hasValidSubscription() {
     }
     
     return false;
+}
+function getJobStatusLabel($status) {
+    switch($status) {
+        case 'pending':
+            return '<span class="status-badge pending">Pending Approval</span>';
+        case 'approved':
+            return '<span class="status-badge active">Approved</span>';
+        case 'rejected':
+            return '<span class="status-badge inactive">Rejected</span>';
+        default:
+            return '<span class="status-badge">Unknown</span>';
+    }
+}
+
+// Add functions for appointment status
+function getAppointmentStatusLabel($status) {
+    switch($status) {
+        case 'pending':
+            return '<span class="status-badge pending">Pending</span>';
+        case 'confirmed':
+            return '<span class="status-badge active">Confirmed</span>';
+        case 'rescheduled':
+            return '<span class="status-badge warning">Rescheduled</span>';
+        case 'cancelled':
+            return '<span class="status-badge inactive">Cancelled</span>';
+        default:
+            return '<span class="status-badge">Unknown</span>';
+    }
+}
+
+// Function to send emails
+function sendEmail($to, $subject, $message) {
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    $headers .= 'From: B&H Employment & Consultancy <noreply@bhemployment.com>' . "\r\n";
+    
+    return mail($to, $subject, $message, $headers);
 }
 /**
  * Handle favicon upload without requiring GD library

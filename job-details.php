@@ -19,12 +19,10 @@ if (!isset($_GET['id'])) {
 
 $job_id = (int)$_GET['id'];
 
-// Fetch job details
+// Fetch job details - only show approved jobs
 try {
-    $stmt = $pdo->prepare("SELECT j.*, u.email as employer_email, u.company_name as company
-                          FROM jobs j
-                          LEFT JOIN users u ON j.user_id = u.id
-                          WHERE j.id = :job_id AND j.is_active = 1");
+    $stmt = $pdo->prepare("SELECT * FROM jobs 
+                          WHERE id = :job_id AND is_active = 1 AND approval_status = 'approved'");
     $stmt->bindParam(':job_id', $job_id);
     $stmt->execute();
     
@@ -34,11 +32,18 @@ try {
     }
     
     $job = $stmt->fetch();
+    
+    // Update view count
+    $stmt = $pdo->prepare("UPDATE jobs SET views = views + 1 WHERE id = :job_id");
+    $stmt->bindParam(':job_id', $job_id);
+    $stmt->execute();
+    
 } catch (PDOException $e) {
     error_log("Error fetching job details: " . $e->getMessage());
     flashMessage("An error occurred while fetching the job details", "danger");
     redirect('jobs.php');
 }
+
 
 
 
