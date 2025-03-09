@@ -122,17 +122,17 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                     </li>
                 <?php else: ?>
                     <li class="auth-buttons">
-                        <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'login.php' : '../login.php'; ?>" 
-                           class="<?php echo $current_page === 'login.php' ? 'active' : ''; ?> login-btn">
-                           <i class="fas fa-sign-in-alt"></i> Login
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'register.php' : '../register.php'; ?>" 
-                           class="<?php echo $current_page === 'register.php' ? 'active' : ''; ?> highlight-btn">
-                           <i class="fas fa-building"></i> Register as Employer
-                        </a>
-                    </li>
+        <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'login.php' : '../login.php'; ?>" 
+           class="<?php echo $current_page === 'login.php' ? 'active' : ''; ?> login-btn">
+           <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+    </li>
+    <li>
+        <a href="<?php echo $current_page == 'index.php' || strpos($current_page, '/') !== false ? 'register.php' : '../register.php'; ?>" 
+           class="<?php echo $current_page === 'register.php' ? 'active' : ''; ?> highlight-btn">
+           <i class="fas fa-user-plus"></i> Register
+        </a>
+    </li>
                 <?php endif; ?>
             </ul>
             <div class="mobile-menu-btn">

@@ -58,56 +58,326 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
 <body>
     <!-- Header -->
     <?php include 'includes/header.php'; ?>
+<style>/* Image-Only Hero Section */
+.hero-image-only {
+    position: relative;
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Your Path to Career Success Starts Here</h1>
-            <p><?php echo htmlspecialchars($site_description); ?></p>
-            <a href="jobs.php" class="cta-btn">Browse Jobs</a>
-        </div>
-    </section>
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0066cc, #003366);
+    z-index: 1;
+}
 
-    <!-- Company Info Section -->
-<!-- Company Info Section -->
-<section class="company-info">
+.hero-image-only .container {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.hero-image-only .hero-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    perspective: 1000px;
+}
+
+.main-image {
+    width: 90%;
+    max-width: 900px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-15px) rotateY(5deg);
+    transition: all 0.5s ease;
+    border: 8px solid white;
+    display: block;
+    margin: 0 auto;
+}
+
+.secondary-image {
+    position: absolute;
+    width: 70%;
+    max-width: 700px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transform: translateY(60px) translateX(20%) rotateY(-5deg);
+    transition: all 0.5s ease;
+    border: 8px solid white;
+    z-index: 3;
+    right: 0;
+}
+
+.image-container:hover .main-image {
+    transform: translateY(-20px) rotateY(3deg);
+}
+
+.image-container:hover .secondary-image {
+    transform: translateY(70px) translateX(23%) rotateY(-3deg);
+}
+
+.floating-badge {
+    position: absolute;
+    padding: 15px;
+    border-radius: 15px;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+    transition: transform 0.3s ease;
+}
+
+.jobs-badge {
+    background-color: #4CAF50;
+    top: 40px;
+    right: 10%;
+    animation: float 4s ease-in-out infinite;
+}
+
+.services-badge {
+    background-color: #FF9800;
+    bottom: 40px;
+    left: 10%;
+    animation: float 4s ease-in-out infinite 2s;
+}
+
+.badge-number {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.badge-text {
+    font-size: 14px;
+    text-align: center;
+}
+
+.floating-badge i {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.cta-container {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 5;
+}
+
+.hero-cta-btn {
+    display: inline-block;
+    padding: 16px 36px;
+    border-radius: 50px;
+    background-color: #0066cc;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 10px 20px rgba(0, 102, 204, 0.3);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.hero-cta-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 102, 204, 0.4);
+    background-color: #0052a3;
+}
+
+.hero-cta-btn.secondary {
+    background-color: white;
+    color: #0066cc;
+    border: 2px solid #0066cc;
+}
+
+.hero-cta-btn.secondary:hover {
+    background-color: #f5f5f5;
+    color: #0052a3;
+    border-color: #0052a3;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* Media Queries */
+@media (max-width: 1200px) {
+    .main-image {
+        width: 85%;
+    }
+    
+    .secondary-image {
+        width: 65%;
+        transform: translateY(60px) translateX(20%) rotateY(-5deg);
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-image-only {
+        height: auto;
+        padding: 120px 0 150px;
+    }
+    
+    .main-image {
+        width: 90%;
+        transform: translateY(0) rotateY(0);
+    }
+    
+    .secondary-image {
+        position: relative;
+        width: 80%;
+        margin: 0 auto;
+        display: block;
+        transform: translateY(-40px) rotateY(0);
+        left: 0;
+        right: 0;
+    }
+    
+    .image-container:hover .main-image,
+    .image-container:hover .secondary-image {
+        transform: translateY(0) rotateY(0);
+    }
+    
+    .floating-badge {
+        padding: 10px;
+    }
+    
+    .jobs-badge {
+        top: 20px;
+        left: 5%;
+    }
+    
+    .services-badge {
+        bottom: 80px;
+        right: 5%;
+    }
+    
+    .cta-container {
+        position: relative;
+        bottom: -50px;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .hero-cta-btn {
+        padding: 14px 30px;
+        font-size: 16px;
+        width: 200px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-image-only {
+        padding: 100px 0 170px;
+    }
+    
+    .main-image {
+        width: 95%;
+        border-width: 5px;
+    }
+    
+    .secondary-image {
+        width: 85%;
+        border-width: 5px;
+        transform: translateY(-30px) rotateY(0);
+    }
+    
+    .badge-number {
+        font-size: 20px;
+    }
+    
+    .badge-text {
+        font-size: 12px;
+    }
+    
+    .floating-badge i {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-image-only {
+        padding: 80px 0 150px;
+    }
+    
+    .main-image, .secondary-image {
+        border-width: 4px;
+    }
+    
+    .secondary-image {
+        transform: translateY(-20px) rotateY(0);
+    }
+    
+    .floating-badge {
+        padding: 8px;
+    }
+    
+    .jobs-badge {
+        top: 10px;
+        left: 5%;
+    }
+    
+    .services-badge {
+        bottom: 50px;
+        right: 5%;
+    }
+    
+    .hero-cta-btn {
+        padding: 12px 25px;
+        font-size: 15px;
+        width: 180px;
+    }
+}</style>
+    <!-- Hero Section with Image -->
+    <section class="hero-image-only">
+    <div class="hero-background"></div>
     <div class="container">
-        <div class="info-container">
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-envelope"></i>
+        <div class="hero-content">
+            <div class="image-container">
+                <img src="images/hero.jpeg" alt="B&H Employment & Consultancy" class="main-image">
+                <div class="floating-badge jobs-badge">
+                    <span class="badge-number">7+</span>
+                    <span class="badge-text">Jobs Available</span>
                 </div>
-                <div class="info-content">
-                    <h3>Email Us</h3>
-                    <p><?php echo htmlspecialchars($site_settings['contact_email'] ?? 'bh.jobagency@gmail.com'); ?></p>
+                <div class="floating-badge services-badge">
+                    <i class="fas fa-briefcase"></i>
+                    <span class="badge-text">Multiple Industries</span>
                 </div>
-            </div>
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-globe"></i>
-                </div>
-                <div class="info-content">
-                    <h3>Website</h3>
-                    <p>www.bh.com</p>
-                </div>
-            </div>
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-phone"></i>
-                </div>
-                <div class="info-content">
-                    <h3>Call Us</h3>
-                    <p>(Office) <?php echo htmlspecialchars($site_settings['contact_phone'] ?? '(1)347680-2869'); ?></p>
-                    <p>(Mobile) (929)823-7040</p>
-                </div>
-            </div>
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-map-marker-alt"></i>
-                </div>
-                <div class="info-content">
-                    <h3>Our Location</h3>
-                    <p><?php echo htmlspecialchars($site_settings['contact_address'] ?? '37-51 75th St.1A, Jackson Heights, NY 11372'); ?></p>
+                <div class="cta-container">
+                    <a href="#services" class="hero-cta-btn secondary">Our Services</a>
                 </div>
             </div>
         </div>
@@ -150,66 +420,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
             </div>
         </div>
     </section>
-    
-    <!-- Featured Jobs Section -->
-    <section class="featured-jobs">
-        <div class="container">
-            <div class="section-title">
-                <h2>Featured Job Opportunities</h2>
-                <p>Explore our latest job openings across various industries and locations.</p>
-            </div>
-            
-            <?php
-            // Fetch featured jobs
-            try {
-                $stmt = $pdo->prepare("SELECT * FROM jobs WHERE is_active = 1 ORDER BY created_at DESC LIMIT 3");
-                $stmt->execute();
-                $jobs = $stmt->fetchAll();
-            } catch (PDOException $e) {
-                error_log("Error fetching featured jobs: " . $e->getMessage());
-                $jobs = [];
-            }
-            
-            if (!empty($jobs)):
-            ?>
-            <div class="jobs-grid">
-                <?php foreach ($jobs as $job): ?>
-                <div class="job-card">
-                    <h3 class="job-title"><?php echo htmlspecialchars($job['title']); ?></h3>
-                    <p class="company-name"><?php echo htmlspecialchars($job['company_name']); ?></p>
-                    <div class="job-details">
-                        <span class="job-detail"><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($job['location']); ?></span>
-                        <?php if (!empty($job['salary_min']) || !empty($job['salary_max'])): ?>
-                            <span class="job-detail"><i class="fas fa-dollar-sign"></i> 
-                            <?php 
-                                if (!empty($job['salary_min']) && !empty($job['salary_max'])) {
-                                    echo '$' . number_format($job['salary_min']) . ' - $' . number_format($job['salary_max']);
-                                } elseif (!empty($job['salary_min'])) {
-                                    echo 'From $' . number_format($job['salary_min']);
-                                } elseif (!empty($job['salary_max'])) {
-                                    echo 'Up to $' . number_format($job['salary_max']);
-                                }
-                            ?>
-                            </span>
-                        <?php endif; ?>
-                        <span class="job-detail"><i class="fas fa-briefcase"></i> <?php echo ucfirst(str_replace('-', ' ', $job['job_type'])); ?></span>
-                    </div>
-                    <p class="job-description"><?php echo substr(strip_tags($job['description']), 0, 150) . '...'; ?></p>
-                    <a href="job-details.php?id=<?php echo $job['id']; ?>" class="apply-btn">View Details</a>
-                </div>
-                <?php endforeach; ?>
-            </div>
-            <?php else: ?>
-            <div class="empty-state">
-                <p>No job postings available at the moment. Please check back soon.</p>
-            </div>
-            <?php endif; ?>
-            
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="jobs.php" class="cta-btn">View All Jobs</a>
-            </div>
-        </div>
-    </section>
+
 
     <!-- Contact Form Section -->
 <!-- Contact Form Section -->
@@ -292,7 +503,51 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
         </form>
     </div>
 </section>
-
+    <!-- Company Info Section -->
+<!-- Company Info Section -->
+<section class="company-info">
+    <div class="container">
+        <div class="info-container">
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="info-content">
+                    <h3>Email Us</h3>
+                    <p><?php echo htmlspecialchars($site_settings['contact_email'] ?? 'bh.jobagency@gmail.com'); ?></p>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div class="info-content">
+                    <h3>Website</h3>
+                    <p>www.bh.com</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="info-content">
+                    <h3>Call Us</h3>
+                    <p>(Office) <?php echo htmlspecialchars($site_settings['contact_phone'] ?? '(1)347680-2869'); ?></p>
+                    <p>(Mobile) (929)823-7040</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="info-content">
+                    <h3>Our Location</h3>
+                    <p><?php echo htmlspecialchars($site_settings['contact_address'] ?? '37-51 75th St.1A, Jackson Heights, NY 11372'); ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
     <?php include 'includes/footer.php'; ?>
 <script>// Mobile menu toggle
 document.addEventListener('DOMContentLoaded', function() {

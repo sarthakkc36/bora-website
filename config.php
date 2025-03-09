@@ -130,4 +130,5 @@ function handleFaviconUpload($file, $upload_dir = 'uploads/favicon/') {
     
     return false;
 }
+
 ?>

@@ -1,6 +1,17 @@
 <?php
 require_once 'config.php';
 
+// Check if user is logged in
+if (!isLoggedIn()) {
+    // Store the intended destination URL in the session
+    $_SESSION['redirect_after_login'] = 'jobs.php';
+    
+    // Redirect to login page with message
+    flashMessage("Please log in to view job listings", "info");
+    redirect('login.php');
+    exit;
+}
+
 // Get jobs from database
 try {
     $stmt = $pdo->prepare("SELECT * FROM jobs WHERE is_active = 1 ORDER BY created_at DESC");
@@ -50,6 +61,8 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
 
     <section class="jobs-list">
         <div class="container">
+            <?php displayFlashMessage(); ?>
+            
             <div class="jobs-header">
                 <div class="jobs-count">
                     <strong><?php echo count($jobs); ?></strong> jobs found

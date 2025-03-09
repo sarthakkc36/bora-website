@@ -1,6 +1,17 @@
 <?php
 require_once 'config.php';
 
+// Check if user is logged in
+if (!isLoggedIn()) {
+    // Store the intended destination URL in the session
+    $_SESSION['redirect_after_login'] = 'job-details.php?id=' . (int)$_GET['id'];
+    
+    // Redirect to login page with message
+    flashMessage("Please log in to view job details", "info");
+    redirect('login.php');
+    exit;
+}
+
 // Check if job ID is provided
 if (!isset($_GET['id'])) {
     redirect('jobs.php');
@@ -28,6 +39,8 @@ try {
     flashMessage("An error occurred while fetching the job details", "danger");
     redirect('jobs.php');
 }
+
+
 
 // Check if the job is saved by the current user
 $is_saved = false;
