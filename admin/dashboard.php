@@ -1,39 +1,35 @@
 <?php
 require_once '../config.php';
 try {
+    // Get count of pending jobs
     $stmt = $pdo->prepare("SELECT COUNT(*) as pending_jobs FROM jobs WHERE approval_status = 'pending'");
     $stmt->execute();
     $pending_jobs_count = $stmt->fetch()['pending_jobs'];
-} catch (PDOException $e) {
-    error_log("Error fetching pending jobs: " . $e->getMessage());
-    $pending_jobs_count = 0;
-}
-
-// Get pending appointment count
-try {
+    
+    // Get count of jobs submitted by guests (no user_id)
+    $stmt = $pdo->prepare("SELECT COUNT(*) as guest_jobs FROM jobs WHERE user_id IS NULL");
+    $stmt->execute();
+    $guest_jobs_count = $stmt->fetch()['guest_jobs'];
+    
+    // Get count of active jobs
+    $stmt = $pdo->prepare("SELECT COUNT(*) as active_jobs FROM jobs WHERE is_active = 1 AND approval_status = 'approved'");
+    $stmt->execute();
+    $active_jobs_count = $stmt->fetch()['active_jobs'];
+    
+    // Get pending appointment count
     $stmt = $pdo->prepare("SELECT COUNT(*) as pending_appointments FROM appointments WHERE status = 'pending'");
     $stmt->execute();
     $pending_appointments_count = $stmt->fetch()['pending_appointments'];
-} catch (PDOException $e) {
-    error_log("Error fetching pending appointments: " . $e->getMessage());
-    $pending_appointments_count = 0;
-}
-
-// Get recent pending jobs
-try {
+    
+    // Get recent pending jobs
     $stmt = $pdo->prepare("SELECT * FROM jobs 
                           WHERE approval_status = 'pending' 
                           ORDER BY created_at DESC 
                           LIMIT 5");
     $stmt->execute();
     $pending_jobs = $stmt->fetchAll();
-} catch (PDOException $e) {
-    error_log("Error fetching pending jobs: " . $e->getMessage());
-    $pending_jobs = [];
-}
-
-// Get recent pending appointments
-try {
+    
+    // Get recent pending appointments
     $stmt = $pdo->prepare("SELECT * FROM appointments 
                           WHERE status = 'pending' 
                           ORDER BY created_at DESC 
@@ -41,9 +37,11 @@ try {
     $stmt->execute();
     $pending_appointments = $stmt->fetchAll();
 } catch (PDOException $e) {
-    error_log("Error fetching pending appointments: " . $e->getMessage());
-    $pending_appointments = [];
+    error_log("Error fetching dashboard statistics: " . $e->getMessage());
+    $pending_jobs_count = $guest_jobs_count = $active_jobs_count = $pending_appointments_count = 0;
+    $pending_jobs = $pending_appointments = [];
 }
+
 // Check if user is logged in and is an admin
 if (!isLoggedIn() || !isAdmin()) {
     flashMessage("You must be logged in as an admin to access this page", "danger");
@@ -82,7 +80,7 @@ try {
     // Recent jobs
     $stmt = $pdo->prepare("SELECT j.*, u.username as employer_username 
                           FROM jobs j 
-                          JOIN users u ON j.user_id = u.id 
+                          LEFT JOIN users u ON j.user_id = u.id 
                           ORDER BY j.created_at DESC 
                           LIMIT 5");
     $stmt->execute();
@@ -100,6 +98,11 @@ try {
 function formatDate($date) {
     return date('M j, Y', strtotime($date));
 }
+
+// Format time
+function formatTime($time) {
+    return date('g:i A', strtotime($time));
+}
 ?>
 
 <!DOCTYPE html>
@@ -110,88 +113,56 @@ function formatDate($date) {
     <title>Admin Dashboard - B&H Employment & Consultancy Inc</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../css/styles.css">
-        <style>
-            .dashboard-quick-actions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
+    <style>
+        .dashboard-quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-.quick-action {
-    background-color: white;
-    border-radius: 12px;
-    padding: 25px 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    transition: all 0.3s ease;
-    position: relative;
-    text-decoration: none;
-    color: #333;
-}
+        .quick-action {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            text-decoration: none;
+            color: #333;
+        }
 
-.quick-action:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    background-color: #f0f7ff;
-    color: #0066cc;
-}
+        .quick-action:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background-color: #f0f7ff;
+            color: #0066cc;
+        }
 
-.quick-action i {
-    font-size: 32px;
-    margin-bottom: 15px;
-    color: #0066cc;
-    transition: all 0.3s ease;
-}
+        .quick-action i {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: #0066cc;
+            transition: all 0.3s ease;
+        }
 
-.quick-action:hover i {
-    transform: scale(1.2);
-}
+        .quick-action:hover i {
+            transform: scale(1.2);
+        }
 
-.quick-action span {
-    font-weight: 600;
-    font-size: 16px;
-}
+        .quick-action span {
+            font-weight: 600;
+            font-size: 16px;
+        }
 
-.notification-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: #ff3366;
-    color: white;
-    font-size: 12px;
-    padding: 2px 6px;
-    border-radius: 10px;
-    min-width: 20px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-/* For smaller screens */
-@media (max-width: 768px) {
-    .dashboard-quick-actions {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    }
-    
-    .quick-action {
-        padding: 20px 15px;
-    }
-    
-    .quick-action i {
-        font-size: 28px;
-    }
-    
-    .quick-action span {
-        font-size: 14px;
-    }
-}
         .notification-badge {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             background-color: #ff3366;
             color: white;
             font-size: 12px;
@@ -199,12 +170,70 @@ function formatDate($date) {
             border-radius: 10px;
             min-width: 20px;
             text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .quick-action {
-            position: relative;
+        /* For smaller screens */
+        @media (max-width: 768px) {
+            .dashboard-quick-actions {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .quick-action {
+                padding: 20px 15px;
+            }
+            
+            .quick-action i {
+                font-size: 28px;
+            }
+            
+            .quick-action span {
+                font-size: 14px;
+            }
         }
-        </style>
+        
+        .dashboard-note {
+            background-color: #fff8e6;
+            border-left: 4px solid #f8bb86;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .dashboard-note h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #e69500;
+            display: flex;
+            align-items: center;
+        }
+        
+        .dashboard-note h3 i {
+            margin-right: 10px;
+        }
+        
+        .dashboard-note p {
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .guest-submission {
+            border-left: 3px solid #0066cc;
+            background-color: #f0f7ff;
+            padding: 2px 8px;
+            margin-left: 5px;
+            font-size: 12px;
+            color: #0066cc;
+            border-radius: 3px;
+        }
+    </style>
 <?php
 // Get site settings for favicon
 $favicon_path = '';
@@ -237,6 +266,11 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                 
                 <div class="dashboard-content">
                     <?php displayFlashMessage(); ?>
+                    
+                    <div class="dashboard-note">
+                        <h3><i class="fas fa-info-circle"></i> Public Job Submissions</h3>
+                        <p>Job seekers can now submit job postings without logging in. Guest submissions require your review before being published.</p>
+                    </div>
                     
                     <div class="dashboard-stats">
                         <div class="stat-card">
@@ -274,19 +308,31 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="stat-info">
-                                <h3><?php echo number_format($job_stats['active_jobs']); ?></h3>
+                                <h3><?php echo number_format($active_jobs_count); ?></h3>
                                 <p>Active Jobs</p>
                             </div>
                         </div>
+                        
                         <div class="stat-card">
                             <div class="stat-icon">
                                 <i class="fas fa-clock"></i>
                             </div>
                             <div class="stat-info">
                                 <h3><?php echo number_format($pending_jobs_count); ?></h3>
-                                <p>Pending Job Approvals</p>
+                                <p>Pending Jobs</p>
                             </div>
                         </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-user-tag"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3><?php echo number_format($guest_jobs_count); ?></h3>
+                                <p>Guest Submissions</p>
+                            </div>
+                        </div>
+                        
                         <div class="stat-card">
                             <div class="stat-icon">
                                 <i class="fas fa-calendar-alt"></i>
@@ -316,6 +362,9 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                         <a href="manage-jobs.php" class="quick-action">
                             <i class="fas fa-briefcase"></i>
                             <span>Manage Jobs</span>
+                            <?php if ($pending_jobs_count > 0): ?>
+                                <div class="notification-badge"><?php echo $pending_jobs_count; ?></div>
+                            <?php endif; ?>
                         </a>
                         <a href="manage-services.php" class="quick-action">
                             <i class="fas fa-cogs"></i>
@@ -399,7 +448,12 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                                                             <h3><?php echo htmlspecialchars($job['title']); ?></h3>
                                                             <p class="job-company"><?php echo htmlspecialchars($job['company_name']); ?></p>
                                                             <div class="job-meta">
-                                                                <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($job['submitter_name']); ?></span>
+                                                                <span><i class="fas fa-user"></i> 
+                                                                    <?php echo htmlspecialchars($job['submitter_name']); ?>
+                                                                    <?php if (empty($job['user_id'])): ?>
+                                                                        <span class="guest-submission">Guest</span>
+                                                                    <?php endif; ?>
+                                                                </span>
                                                                 <span><i class="fas fa-calendar"></i> Submitted on <?php echo formatDate($job['created_at']); ?></span>
                                                             </div>
                                                         </div>
@@ -473,11 +527,18 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                                                         <h3><?php echo htmlspecialchars($job['title']); ?></h3>
                                                         <p class="job-employer">
                                                             <i class="fas fa-building"></i> <?php echo htmlspecialchars($job['company_name']); ?>
-                                                            <span class="job-username">(<?php echo htmlspecialchars($job['employer_username']); ?>)</span>
+                                                            <?php if (!empty($job['employer_username'])): ?>
+                                                                <span class="job-username">(<?php echo htmlspecialchars($job['employer_username']); ?>)</span>
+                                                            <?php elseif (empty($job['user_id'])): ?>
+                                                                <span class="guest-submission">Guest Submission</span>
+                                                            <?php endif; ?>
                                                         </p>
                                                         <div class="job-meta">
                                                             <span><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($job['location']); ?></span>
                                                             <span><i class="fas fa-calendar"></i> Posted on <?php echo formatDate($job['created_at']); ?></span>
+                                                            <?php if (!empty($job['submitter_email'])): ?>
+                                                                <span><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($job['submitter_email']); ?></span>
+                                                            <?php endif; ?>
                                                         </div>
                                                     </div>
                                                     <div class="job-status <?php echo $job['is_active'] ? 'active' : 'inactive'; ?>">
@@ -497,159 +558,6 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     </section>
 
     <?php include '../includes/footer.php'; ?>
-    <script>// Mobile menu toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', function() {
-            document.querySelector('.nav-menu').classList.toggle('active');
-        });
-    }
-    
-    // User dropdown toggle
-    const userToggle = document.querySelector('.user-toggle');
-    if (userToggle) {
-        userToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            this.nextElementSibling.classList.toggle('active');
-        });
-    }
-    
-    // Close the dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (userToggle && !userToggle.contains(e.target)) {
-            const dropdown = document.querySelector('.user-dropdown');
-            if (dropdown && dropdown.classList.contains('active')) {
-                dropdown.classList.remove('active');
-            }
-        }
-    });
-    
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            
-            e.preventDefault();
-            
-            const target = document.querySelector(targetId);
-            if (target) {
-                window.scrollTo({
-                    top: target.offsetTop - 80,
-                    behavior: 'smooth'
-                });
-                
-                // Close mobile menu if open
-                const navMenu = document.querySelector('.nav-menu');
-                if (navMenu && navMenu.classList.contains('active')) {
-                    navMenu.classList.remove('active');
-                }
-            }
-        });
-    });
-    
-    // Scroll animation for elements
-    function handleScrollAnimation() {
-        const elements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in, .contact-form');
-        
-        elements.forEach(element => {
-            const elementPosition = element.getBoundingClientRect().top;
-            const screenPosition = window.innerHeight / 1.2;
-            
-            if (elementPosition < screenPosition) {
-                element.classList.add('active');
-            }
-        });
-    }
-    
-    // Run animation on load
-    handleScrollAnimation();
-    
-    // Add animation classes to elements
-    document.querySelectorAll('.service-card').forEach((card, index) => {
-        card.classList.add('fade-in');
-        card.style.transitionDelay = `${0.1 * index}s`;
-    });
-    
-    document.querySelectorAll('.job-card').forEach((card, index) => {
-        card.classList.add('fade-in');
-        card.style.transitionDelay = `${0.1 * index}s`;
-    });
-    
-    document.querySelectorAll('.info-item').forEach((item, index) => {
-        item.classList.add(index % 2 === 0 ? 'slide-in-left' : 'slide-in-right');
-        item.style.transitionDelay = `${0.1 * index}s`;
-    });
-    
-    document.querySelectorAll('.section-title').forEach(title => {
-        title.classList.add('scale-in');
-    });
-    
-    // Run animation on scroll
-    window.addEventListener('scroll', handleScrollAnimation);
-    
-    // Job save functionality
-    const saveBtns = document.querySelectorAll('.job-save[data-job-id]');
-    saveBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (this.getAttribute('href')) return; // Let the login link work normally
-            
-            const jobId = this.getAttribute('data-job-id');
-            const icon = this.querySelector('i');
-            const text = this.querySelector('span');
-            const isSaved = icon.classList.contains('fas');
-            
-            // Create AJAX request
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'ajax/save-job.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    try {
-                        const response = JSON.parse(xhr.responseText);
-                        
-                        if (response.success) {
-                            if (isSaved) {
-                                icon.classList.remove('fas');
-                                icon.classList.add('far');
-                                text.textContent = 'Save Job';
-                            } else {
-                                icon.classList.remove('far');
-                                icon.classList.add('fas');
-                                text.textContent = 'Saved';
-                                
-                                // Add heart animation
-                                icon.style.transform = 'scale(1.3)';
-                                setTimeout(() => {
-                                    icon.style.transform = 'scale(1)';
-                                }, 300);
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Error parsing response:', e);
-                    }
-                }
-            };
-            
-            xhr.send('job_id=' + jobId + '&action=' + (isSaved ? 'unsave' : 'save'));
-        });
-    });
-    
-    // Auto-hide flash messages after 5 seconds
-    const flashMessages = document.querySelectorAll('.alert');
-    if (flashMessages.length > 0) {
-        setTimeout(() => {
-            flashMessages.forEach(message => {
-                message.style.opacity = '0';
-                setTimeout(() => {
-                    message.style.display = 'none';
-                }, 500);
-            });
-        }, 5000);
-    }
-});</script>
     <script src="../js/script.js"></script>
 </body>
 </html>

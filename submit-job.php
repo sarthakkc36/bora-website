@@ -5,14 +5,6 @@ require_once 'config.php';
 $errors = [];
 $success = '';
 
-// Check if user is logged in
-if (!isLoggedIn()) {
-    flashMessage("Please log in to submit a job posting", "warning");
-    $_SESSION['redirect_after_login'] = 'submit-job.php';
-    redirect('login.php');
-    exit;
-}
-
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
     // Get form data
@@ -28,6 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
     $application_instructions = sanitizeInput($_POST['application_instructions'] ?? '');
     $contact_email = sanitizeInput($_POST['contact_email'] ?? '');
     $contact_phone = sanitizeInput($_POST['contact_phone'] ?? '');
+    
+    // Get submitter information
+    $submitter_name = sanitizeInput($_POST['submitter_name']);
+    $submitter_email = sanitizeInput($_POST['submitter_email']);
+    $submitter_phone = sanitizeInput($_POST['submitter_phone'] ?? '');
     
     // Validate inputs
     if (empty($title)) {
@@ -50,16 +47,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
         $errors[] = "Job requirements are required";
     }
     
+    if (empty($submitter_name)) {
+        $errors[] = "Your name is required";
+    }
+    
+    if (empty($submitter_email)) {
+        $errors[] = "Your email is required";
+    } elseif (!filter_var($submitter_email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Please enter a valid email address";
+    }
+    
     // Process job submission if no errors
     if (empty($errors)) {
         try {
-            // Always set initial approval status to 'pending' regardless of user role
+            // Always set initial approval status to 'pending'
             $approval_status = 'pending';
-            
-            // Set submitter information
-            $submitter_name = $_SESSION['user_name'];
-            $submitter_email = $_SESSION['user_email'];
-            $submitter_phone = ''; // Could fetch from user profile if needed
             
             // Insert into database
             $stmt = $pdo->prepare("INSERT INTO jobs (title, company_name, location, job_type, experience_level, 
@@ -72,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
                                   :submitter_name, :submitter_email, :submitter_phone)");
                                   
             $is_active = 1; // Default to active
+            $user_id = isLoggedIn() ? $_SESSION['user_id'] : null; // Set user_id only if logged in
             
             $stmt->bindParam(':title', $title);
             $stmt->bindParam(':company_name', $company_name);
@@ -85,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
             $stmt->bindParam(':application_instructions', $application_instructions);
             $stmt->bindParam(':contact_email', $contact_email);
             $stmt->bindParam(':contact_phone', $contact_phone);
-            $stmt->bindParam(':user_id', $_SESSION['user_id']);
+            $stmt->bindParam(':user_id', $user_id);
             $stmt->bindParam(':approval_status', $approval_status);
             $stmt->bindParam(':is_active', $is_active);
             $stmt->bindParam(':submitter_name', $submitter_name);
@@ -127,11 +130,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
                 }
             }
             
+            // Send confirmation email to submitter
+            $submitter_subject = "Job Posting Submitted Successfully: " . $title;
+            $submitter_message = "<p>Dear " . htmlspecialchars($submitter_name) . ",</p>";
+            $submitter_message .= "<p>Thank you for submitting your job posting for <strong>" . htmlspecialchars($title) . "</strong>.</p>";
+            $submitter_message .= "<p>Your submission is currently being reviewed by our team. We will notify you once it has been approved.</p>";
+            $submitter_message .= "<p>Job Posting Details:</p>";
+            $submitter_message .= "<ul>";
+            $submitter_message .= "<li><strong>Job Title:</strong> " . htmlspecialchars($title) . "</li>";
+            $submitter_message .= "<li><strong>Company:</strong> " . htmlspecialchars($company_name) . "</li>";
+            $submitter_message .= "<li><strong>Location:</strong> " . htmlspecialchars($location) . "</li>";
+            $submitter_message .= "</ul>";
+            $submitter_message .= "<p>If you have any questions, please contact our support team.</p>";
+            $submitter_message .= "<p>Best regards,<br>B&H Employment & Consultancy Team</p>";
+            
+            sendEmail($submitter_email, $submitter_subject, $submitter_message);
+            
             // Set success message
             $success = "Thank you for submitting your job posting. It will be reviewed by our team and published soon.";
             
             // Reset form fields
             $title = $company_name = $location = $description = $requirements = $application_instructions = $contact_email = $contact_phone = '';
+            $submitter_name = $submitter_email = $submitter_phone = '';
             $salary_min = $salary_max = null;
             $job_type = 'full-time';
             $experience_level = 'entry';
@@ -164,6 +184,86 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
 <!-- Dynamic Favicon -->
 <link rel="icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
 <link rel="shortcut icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
+<style>
+    .submit-job-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .form-section {
+        margin-bottom: 30px;
+    }
+    
+    .form-section-title {
+        font-size: 20px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        color: #333;
+    }
+    
+    .privacy-notice,
+    .approval-notice {
+        display: flex;
+        background-color: #f0f7ff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        align-items: center;
+        border-left: 3px solid #0066cc;
+    }
+    
+    .approval-notice {
+        background-color: #fff8e6;
+        border-left-color: #f8bb86;
+    }
+    
+    .privacy-notice i,
+    .approval-notice i {
+        font-size: 24px;
+        margin-right: 15px;
+    }
+    
+    .privacy-notice i {
+        color: #0066cc;
+    }
+    
+    .approval-notice i {
+        color: #f8bb86;
+    }
+    
+    .privacy-notice h3,
+    .approval-notice h3 {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+    
+    .privacy-notice h3 {
+        color: #0066cc;
+    }
+    
+    .approval-notice h3 {
+        color: #e69500;
+    }
+    
+    .privacy-notice p,
+    .approval-notice p {
+        margin-bottom: 0;
+        color: #333;
+    }
+    
+    .form-text {
+        color: #666;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    
+    .form-note {
+        font-style: italic;
+        color: #666;
+        margin-bottom: 15px;
+    }
+</style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -218,7 +318,28 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                         
                         <form action="submit-job.php" method="POST">
                             <div class="form-section">
-                                <h3 class="form-section-title">Basic Information</h3>
+                                <h3 class="form-section-title">Your Contact Information</h3>
+                                
+                                <div class="form-row">
+                                    <div class="form-group half">
+                                        <label for="submitter_name">Your Name</label>
+                                        <input type="text" id="submitter_name" name="submitter_name" class="form-control" value="<?php echo isset($submitter_name) ? htmlspecialchars($submitter_name) : (isLoggedIn() ? htmlspecialchars($_SESSION['user_name']) : ''); ?>" required>
+                                    </div>
+                                    
+                                    <div class="form-group half">
+                                        <label for="submitter_email">Your Email</label>
+                                        <input type="email" id="submitter_email" name="submitter_email" class="form-control" value="<?php echo isset($submitter_email) ? htmlspecialchars($submitter_email) : (isLoggedIn() ? htmlspecialchars($_SESSION['user_email']) : ''); ?>" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="submitter_phone">Your Phone Number (Optional)</label>
+                                    <input type="tel" id="submitter_phone" name="submitter_phone" class="form-control" value="<?php echo isset($submitter_phone) ? htmlspecialchars($submitter_phone) : ''; ?>">
+                                </div>
+                            </div>
+                            
+                            <div class="form-section">
+                                <h3 class="form-section-title">Basic Job Information</h3>
                                 
                                 <div class="form-group">
                                     <label for="title">Job Title</label>
@@ -297,16 +418,17 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                             </div>
                             
                             <div class="form-section">
-                                <h3 class="form-section-title">Contact Information</h3>
+                                <h3 class="form-section-title">Additional Contact Information (Optional)</h3>
+                                <p class="form-note">These details can be different from your personal contact information and will be shown to job applicants after screening.</p>
                                 
                                 <div class="form-row">
                                     <div class="form-group half">
-                                        <label for="contact_email">Contact Email (Optional)</label>
+                                        <label for="contact_email">Contact Email for Applicants</label>
                                         <input type="email" id="contact_email" name="contact_email" class="form-control" value="<?php echo isset($contact_email) ? htmlspecialchars($contact_email) : ''; ?>">
                                     </div>
                                     
                                     <div class="form-group half">
-                                        <label for="contact_phone">Contact Phone (Optional)</label>
+                                        <label for="contact_phone">Contact Phone for Applicants</label>
                                         <input type="text" id="contact_phone" name="contact_phone" class="form-control" value="<?php echo isset($contact_phone) ? htmlspecialchars($contact_phone) : ''; ?>">
                                     </div>
                                 </div>
@@ -327,80 +449,6 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
 
     <?php include 'includes/footer.php'; ?>
     
-    <style>
-        .submit-job-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        
-        .form-section {
-            margin-bottom: 30px;
-        }
-        
-        .form-section-title {
-            font-size: 20px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            color: #333;
-        }
-        
-        .privacy-notice,
-        .approval-notice {
-            display: flex;
-            background-color: #f0f7ff;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            align-items: center;
-            border-left: 3px solid #0066cc;
-        }
-        
-        .approval-notice {
-            background-color: #fff8e6;
-            border-left-color: #f8bb86;
-        }
-        
-        .privacy-notice i,
-        .approval-notice i {
-            font-size: 24px;
-            margin-right: 15px;
-        }
-        
-        .privacy-notice i {
-            color: #0066cc;
-        }
-        
-        .approval-notice i {
-            color: #f8bb86;
-        }
-        
-        .privacy-notice h3,
-        .approval-notice h3 {
-            margin-top: 0;
-            margin-bottom: 5px;
-        }
-        
-        .privacy-notice h3 {
-            color: #0066cc;
-        }
-        
-        .approval-notice h3 {
-            color: #e69500;
-        }
-        
-        .privacy-notice p,
-        .approval-notice p {
-            margin-bottom: 0;
-            color: #333;
-        }
-        
-        .form-text {
-            color: #666;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-    </style>
     <script src="js/script.js"></script>
 </body>
 </html>
