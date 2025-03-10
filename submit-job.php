@@ -1,23 +1,33 @@
 <?php
 require_once 'config.php';
 
+// Initialize variables
 $errors = [];
 $success = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Check if user is logged in (can be either an employer or admin)
+if (!isLoggedIn()) {
+    flashMessage("Please log in to submit a job posting", "warning");
+    $_SESSION['redirect_after_login'] = 'submit-job.php';
+    redirect('login.php');
+    exit;
+}
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
     // Get form data
     $title = sanitizeInput($_POST['title']);
     $company_name = sanitizeInput($_POST['company_name']);
     $location = sanitizeInput($_POST['location']);
     $job_type = sanitizeInput($_POST['job_type']);
     $experience_level = sanitizeInput($_POST['experience_level']);
-    $salary_min = !empty($_POST['salary_min']) ? (float)$_POST['salary_min'] : null;
-    $salary_max = !empty($_POST['salary_max']) ? (float)$_POST['salary_max'] : null;
+    $salary_min = !empty($_POST['salary_min']) ? (int)$_POST['salary_min'] : null;
+    $salary_max = !empty($_POST['salary_max']) ? (int)$_POST['salary_max'] : null;
     $description = sanitizeInput($_POST['description']);
     $requirements = sanitizeInput($_POST['requirements']);
-    $submitter_name = sanitizeInput($_POST['submitter_name']);
-    $submitter_email = sanitizeInput($_POST['submitter_email']);
-    $submitter_phone = sanitizeInput($_POST['submitter_phone']);
+    $application_instructions = sanitizeInput($_POST['application_instructions'] ?? '');
+    $contact_email = sanitizeInput($_POST['contact_email'] ?? '');
+    $contact_phone = sanitizeInput($_POST['contact_phone'] ?? '');
     
     // Validate inputs
     if (empty($title)) {
@@ -29,15 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     if (empty($location)) {
-        $errors[] = "Location is required";
-    }
-    
-    if (empty($job_type)) {
-        $errors[] = "Job type is required";
-    }
-    
-    if (empty($experience_level)) {
-        $errors[] = "Experience level is required";
+        $errors[] = "Job location is required";
     }
     
     if (empty($description)) {
@@ -48,63 +50,106 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Job requirements are required";
     }
     
-    if (empty($submitter_name)) {
-        $errors[] = "Your name is required";
-    }
-    
-    if (empty($submitter_email)) {
-        $errors[] = "Your email is required";
-    } elseif (!filter_var($submitter_email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Invalid email format";
-    }
-    
-    if (!empty($salary_min) && !empty($salary_max) && $salary_min > $salary_max) {
-        $errors[] = "Minimum salary cannot be greater than maximum salary";
-    }
-    
-    // If no errors, save the job posting
+    // Process job submission if no errors
     if (empty($errors)) {
         try {
-            $stmt = $pdo->prepare("INSERT INTO jobs (company_name, title, description, requirements, location, job_type, 
-                               salary_min, salary_max, experience_level, submitter_name, submitter_email, submitter_phone, approval_status)
-                               VALUES (:company_name, :title, :description, :requirements, :location, :job_type,
-                               :salary_min, :salary_max, :experience_level, :submitter_name, :submitter_email, :submitter_phone, 'pending')");
+            // Set initial approval status
+            $approval_status = 'pending';
             
-            $stmt->bindParam(':company_name', $company_name);
+            // If admin, auto-approve
+            if (isAdmin()) {
+                $approval_status = 'approved';
+            }
+            
+            // Set submitter information
+            $submitter_name = $_SESSION['user_name'];
+            $submitter_email = $_SESSION['user_email'];
+            $submitter_phone = ''; // Could fetch from user profile if needed
+            
+            // Insert into database
+            $stmt = $pdo->prepare("INSERT INTO jobs (title, company_name, location, job_type, experience_level, 
+                                  salary_min, salary_max, description, requirements, application_instructions, 
+                                  contact_email, contact_phone, user_id, approval_status, is_active, 
+                                  submitter_name, submitter_email, submitter_phone) 
+                                  VALUES (:title, :company_name, :location, :job_type, :experience_level, 
+                                  :salary_min, :salary_max, :description, :requirements, :application_instructions, 
+                                  :contact_email, :contact_phone, :user_id, :approval_status, :is_active, 
+                                  :submitter_name, :submitter_email, :submitter_phone)");
+                                  
+            $is_active = 1; // Default to active
+            
             $stmt->bindParam(':title', $title);
-            $stmt->bindParam(':description', $description);
-            $stmt->bindParam(':requirements', $requirements);
+            $stmt->bindParam(':company_name', $company_name);
             $stmt->bindParam(':location', $location);
             $stmt->bindParam(':job_type', $job_type);
+            $stmt->bindParam(':experience_level', $experience_level);
             $stmt->bindParam(':salary_min', $salary_min);
             $stmt->bindParam(':salary_max', $salary_max);
-            $stmt->bindParam(':experience_level', $experience_level);
+            $stmt->bindParam(':description', $description);
+            $stmt->bindParam(':requirements', $requirements);
+            $stmt->bindParam(':application_instructions', $application_instructions);
+            $stmt->bindParam(':contact_email', $contact_email);
+            $stmt->bindParam(':contact_phone', $contact_phone);
+            $stmt->bindParam(':user_id', $_SESSION['user_id']);
+            $stmt->bindParam(':approval_status', $approval_status);
+            $stmt->bindParam(':is_active', $is_active);
             $stmt->bindParam(':submitter_name', $submitter_name);
             $stmt->bindParam(':submitter_email', $submitter_email);
             $stmt->bindParam(':submitter_phone', $submitter_phone);
             
             $stmt->execute();
             
-            // Send notification email to admin
-            $admin_email = "admin@bhemployment.com"; // Change to your admin email
-            $subject = "New Job Submission: " . $title;
-            $message = "<p>A new job has been submitted and is pending approval:</p>";
-            $message .= "<p><strong>Job Title:</strong> " . htmlspecialchars($title) . "</p>";
-            $message .= "<p><strong>Company:</strong> " . htmlspecialchars($company_name) . "</p>";
-            $message .= "<p><strong>Submitted By:</strong> " . htmlspecialchars($submitter_name) . " (" . htmlspecialchars($submitter_email) . ")</p>";
-            $message .= "<p>Please login to the admin panel to review this submission.</p>";
+            // Get the job ID
+            $job_id = $pdo->lastInsertId();
             
-            sendEmail($admin_email, $subject, $message);
+            // Notify admin of new job posting if not submitted by admin
+            if (!isAdmin()) {
+                // Get admin email(s)
+                $admin_emails = [];
+                
+                try {
+                    $admin_stmt = $pdo->prepare("SELECT email FROM users WHERE role = 'admin'");
+                    $admin_stmt->execute();
+                    
+                    while ($admin = $admin_stmt->fetch()) {
+                        $admin_emails[] = $admin['email'];
+                    }
+                } catch (PDOException $e) {
+                    error_log("Error fetching admin emails: " . $e->getMessage());
+                }
+                
+                // Send notification if we have admin emails
+                if (!empty($admin_emails)) {
+                    $admin_subject = "New Job Posting Requires Approval: " . $title;
+                    $admin_message = "<p>A new job posting has been submitted and requires your approval:</p>";
+                    $admin_message .= "<p><strong>Job Title:</strong> " . htmlspecialchars($title) . "</p>";
+                    $admin_message .= "<p><strong>Company:</strong> " . htmlspecialchars($company_name) . "</p>";
+                    $admin_message .= "<p><strong>Location:</strong> " . htmlspecialchars($location) . "</p>";
+                    $admin_message .= "<p><strong>Submitted By:</strong> " . htmlspecialchars($submitter_name) . " (" . htmlspecialchars($submitter_email) . ")</p>";
+                    $admin_message .= "<p><a href='" . $site_url . "admin/edit-job.php?id=" . $job_id . "'>Click here to review the job posting</a></p>";
+                    
+                    foreach ($admin_emails as $admin_email) {
+                        sendEmail($admin_email, $admin_subject, $admin_message);
+                    }
+                }
+            }
             
-            $success = "Thank you for submitting your job! Our team will review it and it will be published once approved.";
+            // Set success message based on user role
+            if (isAdmin()) {
+                $success = "Job posting has been submitted and automatically approved.";
+            } else {
+                $success = "Thank you for submitting your job posting. It will be reviewed by our team and published soon.";
+            }
             
             // Reset form fields
-            $title = $company_name = $location = $job_type = $experience_level = $description = $requirements = $submitter_name = $submitter_email = $submitter_phone = '';
+            $title = $company_name = $location = $description = $requirements = $application_instructions = $contact_email = $contact_phone = '';
             $salary_min = $salary_max = null;
+            $job_type = 'full-time';
+            $experience_level = 'entry';
             
         } catch (PDOException $e) {
-            error_log("Error posting job: " . $e->getMessage());
-            $errors[] = "An error occurred while submitting the job. Please try again.";
+            error_log("Error submitting job: " . $e->getMessage());
+            $errors[] = "An error occurred while submitting your job posting. Please try again.";
         }
     }
 }
@@ -137,122 +182,147 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     <section class="page-title">
         <div class="container">
             <h1>Submit a Job</h1>
-            <p>Share your job opportunity with our network of qualified candidates</p>
+            <p>Post a new job opportunity on our platform</p>
         </div>
     </section>
 
-    <section class="post-job-section">
+    <section class="submit-job-section">
         <div class="container">
-            <?php if (!empty($errors)): ?>
-                <div class="alert alert-danger">
-                    <ul>
-                        <?php foreach ($errors as $error): ?>
-                            <li><?php echo $error; ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
-            
-            <?php if (!empty($success)): ?>
-                <div class="alert alert-success"><?php echo $success; ?></div>
-            <?php endif; ?>
-            
-            <?php displayFlashMessage(); ?>
-            
-            <div class="content-box">
-                <div class="content-header">
-                    <h2><i class="fas fa-plus-circle"></i> Submit Job Posting</h2>
-                </div>
+            <div class="submit-job-container">
+                <?php if (!empty($errors)): ?>
+                    <div class="alert alert-danger">
+                        <ul>
+                            <?php foreach ($errors as $error): ?>
+                                <li><?php echo $error; ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
                 
-                <div class="content-body">
-                    <div class="alert alert-info">
-                        <p><i class="fas fa-info-circle"></i> <strong>Note:</strong> Job listings will be reviewed by our team before being published. Please ensure all information is accurate.</p>
+                <?php if (!empty($success)): ?>
+                    <div class="alert alert-success"><?php echo $success; ?></div>
+                <?php endif; ?>
+                
+                <?php displayFlashMessage(); ?>
+                
+                <div class="content-box">
+                    <div class="content-header">
+                        <h2><i class="fas fa-plus-circle"></i> Post New Job</h2>
                     </div>
                     
-                    <form action="submit-job.php" method="POST">
-                        <h3>Job Details</h3>
-                        <div class="form-group">
-                            <label for="title">Job Title</label>
-                            <input type="text" id="title" name="title" class="form-control" value="<?php echo isset($title) ? htmlspecialchars($title) : ''; ?>" required>
+                    <div class="content-body">
+                        <div class="privacy-notice">
+                            <i class="fas fa-lock"></i>
+                            <div>
+                                <h3>Confidential Hiring Process</h3>
+                                <p>Company names and locations are hidden from job seekers to protect client privacy. Job seekers will only see your position details until they pass initial screening.</p>
+                            </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="company_name">Company Name</label>
-                            <input type="text" id="company_name" name="company_name" class="form-control" value="<?php echo isset($company_name) ? htmlspecialchars($company_name) : ''; ?>" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="location">Location</label>
-                            <input type="text" id="location" name="location" class="form-control" value="<?php echo isset($location) ? htmlspecialchars($location) : ''; ?>" required>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group half">
-                                <label for="job_type">Job Type</label>
-                                <select id="job_type" name="job_type" class="form-control" required>
-                                    <option value="">Select Job Type</option>
-                                    <option value="full-time" <?php echo isset($job_type) && $job_type === 'full-time' ? 'selected' : ''; ?>>Full-time</option>
-                                    <option value="part-time" <?php echo isset($job_type) && $job_type === 'part-time' ? 'selected' : ''; ?>>Part-time</option>
-                                    <option value="contract" <?php echo isset($job_type) && $job_type === 'contract' ? 'selected' : ''; ?>>Contract</option>
-                                    <option value="temporary" <?php echo isset($job_type) && $job_type === 'temporary' ? 'selected' : ''; ?>>Temporary</option>
-                                    <option value="internship" <?php echo isset($job_type) && $job_type === 'internship' ? 'selected' : ''; ?>>Internship</option>
-                                </select>
+                        <form action="submit-job.php" method="POST">
+                            <div class="form-section">
+                                <h3 class="form-section-title">Basic Information</h3>
+                                
+                                <div class="form-group">
+                                    <label for="title">Job Title</label>
+                                    <input type="text" id="title" name="title" class="form-control" value="<?php echo isset($title) ? htmlspecialchars($title) : ''; ?>" required>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group half">
+                                        <label for="company_name">Company Name</label>
+                                        <input type="text" id="company_name" name="company_name" class="form-control" value="<?php echo isset($company_name) ? htmlspecialchars($company_name) : ''; ?>" required>
+                                    </div>
+                                    
+                                    <div class="form-group half">
+                                        <label for="location">Location</label>
+                                        <input type="text" id="location" name="location" class="form-control" value="<?php echo isset($location) ? htmlspecialchars($location) : ''; ?>" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group half">
+                                        <label for="job_type">Job Type</label>
+                                        <select id="job_type" name="job_type" class="form-control" required>
+                                            <option value="full-time" <?php echo (isset($job_type) && $job_type === 'full-time') ? 'selected' : ''; ?>>Full Time</option>
+                                            <option value="part-time" <?php echo (isset($job_type) && $job_type === 'part-time') ? 'selected' : ''; ?>>Part Time</option>
+                                            <option value="contract" <?php echo (isset($job_type) && $job_type === 'contract') ? 'selected' : ''; ?>>Contract</option>
+                                            <option value="temporary" <?php echo (isset($job_type) && $job_type === 'temporary') ? 'selected' : ''; ?>>Temporary</option>
+                                            <option value="internship" <?php echo (isset($job_type) && $job_type === 'internship') ? 'selected' : ''; ?>>Internship</option>
+                                            <option value="remote" <?php echo (isset($job_type) && $job_type === 'remote') ? 'selected' : ''; ?>>Remote</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group half">
+                                        <label for="experience_level">Experience Level</label>
+                                        <select id="experience_level" name="experience_level" class="form-control" required>
+                                            <option value="entry" <?php echo (isset($experience_level) && $experience_level === 'entry') ? 'selected' : ''; ?>>Entry Level</option>
+                                            <option value="mid" <?php echo (isset($experience_level) && $experience_level === 'mid') ? 'selected' : ''; ?>>Mid Level</option>
+                                            <option value="senior" <?php echo (isset($experience_level) && $experience_level === 'senior') ? 'selected' : ''; ?>>Senior Level</option>
+                                            <option value="executive" <?php echo (isset($experience_level) && $experience_level === 'executive') ? 'selected' : ''; ?>>Executive Level</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group half">
+                                        <label for="salary_min">Salary Minimum (Optional)</label>
+                                        <input type="number" id="salary_min" name="salary_min" class="form-control" value="<?php echo isset($salary_min) ? $salary_min : ''; ?>">
+                                    </div>
+                                    
+                                    <div class="form-group half">
+                                        <label for="salary_max">Salary Maximum (Optional)</label>
+                                        <input type="number" id="salary_max" name="salary_max" class="form-control" value="<?php echo isset($salary_max) ? $salary_max : ''; ?>">
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div class="form-group half">
-                                <label for="experience_level">Experience Level</label>
-                                <select id="experience_level" name="experience_level" class="form-control" required>
-                                    <option value="">Select Experience Level</option>
-                                    <option value="entry" <?php echo isset($experience_level) && $experience_level === 'entry' ? 'selected' : ''; ?>>Entry Level</option>
-                                    <option value="mid" <?php echo isset($experience_level) && $experience_level === 'mid' ? 'selected' : ''; ?>>Mid Level</option>
-                                    <option value="senior" <?php echo isset($experience_level) && $experience_level === 'senior' ? 'selected' : ''; ?>>Senior Level</option>
-                                    <option value="executive" <?php echo isset($experience_level) && $experience_level === 'executive' ? 'selected' : ''; ?>>Executive</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group half">
-                                <label for="salary_min">Minimum Salary (Optional)</label>
-                                <input type="number" id="salary_min" name="salary_min" class="form-control" value="<?php echo isset($salary_min) ? htmlspecialchars($salary_min) : ''; ?>">
-                            </div>
-                            
-                            <div class="form-group half">
-                                <label for="salary_max">Maximum Salary (Optional)</label>
-                                <input type="number" id="salary_max" name="salary_max" class="form-control" value="<?php echo isset($salary_max) ? htmlspecialchars($salary_max) : ''; ?>">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="description">Job Description</label>
-                            <textarea id="description" name="description" class="form-control" rows="8" required><?php echo isset($description) ? htmlspecialchars($description) : ''; ?></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="requirements">Job Requirements</label>
-                            <textarea id="requirements" name="requirements" class="form-control" rows="6" required><?php echo isset($requirements) ? htmlspecialchars($requirements) : ''; ?></textarea>
-                        </div>
-                        
-                        <h3>Contact Information</h3>
-                        <div class="form-group">
-                            <label for="submitter_name">Your Name</label>
-                            <input type="text" id="submitter_name" name="submitter_name" class="form-control" value="<?php echo isset($submitter_name) ? htmlspecialchars($submitter_name) : ''; ?>" required>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group half">
-                                <label for="submitter_email">Your Email</label>
-                                <input type="email" id="submitter_email" name="submitter_email" class="form-control" value="<?php echo isset($submitter_email) ? htmlspecialchars($submitter_email) : ''; ?>" required>
+                            <div class="form-section">
+                                <h3 class="form-section-title">Job Details</h3>
+                                
+                                <div class="form-group">
+                                    <label for="description">Job Description</label>
+                                    <textarea id="description" name="description" class="form-control" rows="8" required><?php echo isset($description) ? htmlspecialchars($description) : ''; ?></textarea>
+                                    <small class="form-text">Provide a detailed description of the job, including responsibilities and day-to-day tasks.</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="requirements">Job Requirements</label>
+                                    <textarea id="requirements" name="requirements" class="form-control" rows="8" required><?php echo isset($requirements) ? htmlspecialchars($requirements) : ''; ?></textarea>
+                                    <small class="form-text">List qualifications, skills, experience, and education requirements for the position.</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="application_instructions">Application Instructions (Optional)</label>
+                                    <textarea id="application_instructions" name="application_instructions" class="form-control" rows="4"><?php echo isset($application_instructions) ? htmlspecialchars($application_instructions) : ''; ?></textarea>
+                                    <small class="form-text">Provide any specific instructions for applicants (e.g., documents to include, application process).</small>
+                                </div>
                             </div>
                             
-                            <div class="form-group half">
-                                <label for="submitter_phone">Your Phone (Optional)</label>
-                                <input type="tel" id="submitter_phone" name="submitter_phone" class="form-control" value="<?php echo isset($submitter_phone) ? htmlspecialchars($submitter_phone) : ''; ?>">
+                            <div class="form-section">
+                                <h3 class="form-section-title">Contact Information</h3>
+                                
+                                <div class="form-row">
+                                    <div class="form-group half">
+                                        <label for="contact_email">Contact Email (Optional)</label>
+                                        <input type="email" id="contact_email" name="contact_email" class="form-control" value="<?php echo isset($contact_email) ? htmlspecialchars($contact_email) : ''; ?>">
+                                    </div>
+                                    
+                                    <div class="form-group half">
+                                        <label for="contact_phone">Contact Phone (Optional)</label>
+                                        <input type="text" id="contact_phone" name="contact_phone" class="form-control" value="<?php echo isset($contact_phone) ? htmlspecialchars($contact_phone) : ''; ?>">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <button type="submit" class="submit-btn">Submit Job</button>
-                    </form>
+                            
+                            <div class="form-group terms-check">
+                                <input type="checkbox" id="terms" name="terms" required>
+                                <label for="terms">I confirm that all the information provided is accurate and I am authorized to post this job.</label>
+                            </div>
+                            
+                            <button type="submit" name="submit_job" class="submit-btn">Submit Job Posting</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -260,6 +330,57 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
 
     <?php include 'includes/footer.php'; ?>
     
+    <style>
+        .submit-job-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+        
+        .privacy-notice {
+            display: flex;
+            background-color: #f0f7ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            align-items: center;
+            border-left: 3px solid #0066cc;
+        }
+        
+        .privacy-notice i {
+            font-size: 24px;
+            color: #0066cc;
+            margin-right: 15px;
+        }
+        
+        .privacy-notice h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: #0066cc;
+        }
+        
+        .privacy-notice p {
+            margin-bottom: 0;
+            color: #333;
+        }
+        
+        .form-text {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
     <script src="js/script.js"></script>
 </body>
 </html>

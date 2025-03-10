@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['job_id'], $_POST['act
                 if (!empty($job['submitter_email'])) {
                     $subject = "Job Posting Approved: " . $job['title'];
                     $message = "<p>Dear " . htmlspecialchars($job['submitter_name']) . ",</p>";
-                    $message .= "<p>Good news! Your job posting for <strong>" . htmlspecialchars($job['title']) . "</strong> at <strong>" . htmlspecialchars($job['company_name']) . "</strong> has been approved and is now live on our website.</p>";
+                    $message .= "<p>Good news! Your job posting for <strong>" . htmlspecialchars($job['title']) . "</strong> has been approved and is now live on our website.</p>";
                     
                     if (!empty($admin_notes)) {
                         $message .= "<p><strong>Admin Notes:</strong> " . nl2br(htmlspecialchars($admin_notes)) . "</p>";
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['job_id'], $_POST['act
                 if (!empty($job['submitter_email'])) {
                     $subject = "Job Posting Not Approved: " . $job['title'];
                     $message = "<p>Dear " . htmlspecialchars($job['submitter_name']) . ",</p>";
-                    $message .= "<p>Thank you for submitting your job posting for <strong>" . htmlspecialchars($job['title']) . "</strong> at <strong>" . htmlspecialchars($job['company_name']) . "</strong>.</p>";
+                    $message .= "<p>Thank you for submitting your job posting for <strong>" . htmlspecialchars($job['title']) . "</strong>.</p>";
                     $message .= "<p>After reviewing your submission, we are unable to approve it at this time.</p>";
                     
                     if (!empty($admin_notes)) {
@@ -239,6 +239,18 @@ function formatDate($date) {
             font-size: 14px;
         }
     </style>
+<?php
+// Get site settings for favicon
+$favicon_path = '';
+if (isset($site_settings) && !empty($site_settings['favicon'])) {
+    $favicon_path = '/' . ltrim($site_settings['favicon'], '/');
+} else {
+    $favicon_path = '/favicon.ico';
+}
+?>
+<!-- Dynamic Favicon -->
+<link rel="icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
+<link rel="shortcut icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
 </head>
 <body>
     <?php include '../includes/header.php'; ?>
@@ -259,6 +271,11 @@ function formatDate($date) {
                 
                 <div class="dashboard-content">
                     <?php displayFlashMessage(); ?>
+                    
+                    <div class="note-box">
+                        <h3><i class="fas fa-info-circle"></i> Company Privacy Protection</h3>
+                        <p>All job postings on the public site will hide company names and locations to protect client privacy. Only job title, type, and job details will be visible to candidates. Complete details are only shared after successful screening.</p>
+                    </div>
                     
                     <div class="filter-tabs">
                         <a href="manage-jobs.php" class="filter-tab <?php echo empty($status_filter) ? 'active' : ''; ?>">All Jobs</a>
@@ -319,6 +336,10 @@ function formatDate($date) {
                                                             <i class="fas fa-eye"></i>
                                                         </a>
                                                         
+                                                        <a href="edit-job.php?id=<?php echo $job['id']; ?>" class="action-btn edit" title="Edit Job">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        
                                                         <?php if ($job['approval_status'] === 'pending'): ?>
                                                             <a href="#" class="action-btn activate" title="Approve Job" onclick="showApproveModal(<?php echo $job['id']; ?>)">
                                                                 <i class="fas fa-check-circle"></i>
@@ -364,7 +385,7 @@ function formatDate($date) {
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('approveJobModal')">&times;</span>
             <h2>Approve Job</h2>
-            <p>Are you sure you want to approve this job posting? It will be visible to job seekers.</p>
+            <p>Are you sure you want to approve this job posting? It will be visible to job seekers with company name and location hidden.</p>
             <form method="POST" id="approveJobForm">
                 <input type="hidden" name="job_id" id="approveJobId">
                 <input type="hidden" name="action" value="approve">
@@ -375,6 +396,7 @@ function formatDate($date) {
                 </div>
                 
                 <div class="action-buttons">
+                    <a href="#" id="editBeforeApproveBtn" class="btn-secondary">Edit First</a>
                     <button type="submit" class="submit-btn">Approve Job</button>
                     <button type="button" class="cancel-btn" onclick="closeModal('approveJobModal')">Cancel</button>
                 </div>
@@ -436,6 +458,9 @@ function formatDate($date) {
         function showApproveModal(jobId) {
             document.getElementById('approveJobId').value = jobId;
             document.getElementById('approveJobModal').style.display = 'block';
+            
+            // Update edit link in the approve modal
+            document.getElementById('editBeforeApproveBtn').href = 'edit-job.php?id=' + jobId;
         }
         
         // Show reject modal
@@ -456,6 +481,38 @@ function formatDate($date) {
             }
         }
     </script>
+    
+    <style>
+        .note-box {
+            background-color: #f0f7ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .note-box h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #0066cc;
+        }
+        
+        .note-box p {
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        .note-box i {
+            margin-right: 5px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
     <script src="../js/script.js"></script>
 </body>
 </html>
