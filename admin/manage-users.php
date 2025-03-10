@@ -14,12 +14,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verify/unverify user
     if (isset($_POST['toggle_verification'])) {
         $is_verified = (int)$_POST['is_verified'] ? 0 : 1; // Toggle the status
+        $verification_notes = sanitizeInput($_POST['verification_notes'] ?? '');
         
         try {
-            $stmt = $pdo->prepare("UPDATE users SET is_verified = :is_verified WHERE id = :user_id");
+            $stmt = $pdo->prepare("UPDATE users SET 
+                                 is_verified = :is_verified, 
+                                 verification_notes = :verification_notes,
+                                 verification_date = :verification_date
+                                 WHERE id = :user_id");
             $stmt->bindParam(':is_verified', $is_verified);
+            $stmt->bindParam(':verification_notes', $verification_notes);
+            
+            // If verifying, set current date as verification date
+            $verification_date = $is_verified ? date('Y-m-d H:i:s') : null;
+            $stmt->bindParam(':verification_date', $verification_date);
+            
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();
+            
+            // Get user details for sending email
+            $user_stmt = $pdo->prepare("SELECT email, first_name, last_name FROM users WHERE id = :user_id");
+            $user_stmt->bindParam(':user_id', $user_id);
+            $user_stmt->execute();
+            $user = $user_stmt->fetch();
+            
+            // Send verification email to user
+            if ($is_verified && !empty($user['email'])) {
+                $subject = "Your Account Has Been Verified - B&H Employment & Consultancy";
+                $message = "<p>Dear " . htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) . ",</p>";
+                $message .= "<p>Congratulations! Your account has been successfully verified.</p>";
+                $message .= "<p>You now have full access to all features of our platform.</p>";
+                $message .= "<p>Thank you for choosing B&H Employment & Consultancy Inc.</p>";
+                $message .= "<p>Best regards,<br>B&H Employment & Consultancy Team</p>";
+                
+                sendEmail($user['email'], $subject, $message);
+            }
             
             flashMessage("User verification status updated successfully", "success");
             redirect('manage-users.php');
@@ -85,6 +114,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Get user details for verification modal if user_id is provided
+$verification_user = null;
+if (isset($_GET['verify']) && !empty($_GET['verify'])) {
+    $verify_id = (int)$_GET['verify'];
+    
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :user_id");
+        $stmt->bindParam(':user_id', $verify_id);
+        $stmt->execute();
+        
+        if ($stmt->rowCount() > 0) {
+            $verification_user = $stmt->fetch();
+        }
+    } catch (PDOException $e) {
+        error_log("Error fetching user for verification: " . $e->getMessage());
+    }
+}
+
 // Get user details for subscription edit if user_id is provided
 $edit_user = null;
 if (isset($_GET['edit']) && !empty($_GET['edit'])) {
@@ -140,6 +187,72 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
 <!-- Dynamic Favicon -->
 <link rel="icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
 <link rel="shortcut icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
+<style>
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.5);
+    }
+    
+    .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 50%;
+        max-width: 600px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        animation: modalFadeIn 0.3s;
+    }
+    
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .close-modal {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    
+    .close-modal:hover {
+        color: #333;
+    }
+    
+    .payment-info {
+        background-color: #f0f7ff;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-left: 3px solid #0066cc;
+    }
+    
+    .payment-info h4 {
+        margin-top: 0;
+        margin-bottom: 5px;
+        color: #0066cc;
+    }
+    
+    .payment-info p {
+        margin-bottom: 0;
+    }
+</style>
 </head>
 <body>
     <?php include '../includes/header.php'; ?>
@@ -194,6 +307,44 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                     </div>
                     <?php endif; ?>
                     
+                    <?php if ($verification_user): ?>
+                    <div class="content-box">
+                        <div class="content-header">
+                            <h2><i class="fas fa-user-check"></i> Verify User Account</h2>
+                            <a href="manage-users.php" class="btn-secondary">Back to Users</a>
+                        </div>
+                        
+                        <div class="content-body">
+                            <div class="user-info-summary">
+                                <p><strong>Name:</strong> <?php echo htmlspecialchars($verification_user['first_name'] . ' ' . $verification_user['last_name']); ?></p>
+                                <p><strong>Email:</strong> <?php echo htmlspecialchars($verification_user['email']); ?></p>
+                                <p><strong>Role:</strong> <?php echo ucfirst(str_replace('_', ' ', $verification_user['role'])); ?></p>
+                                <p><strong>Registered:</strong> <?php echo formatDate($verification_user['created_at']); ?></p>
+                            </div>
+                            
+                            <div class="payment-info">
+                                <h4>Payment Verification</h4>
+                                <p>Confirm that the user has completed the required payment at the office before verifying the account.</p>
+                            </div>
+                            
+                            <form action="manage-users.php" method="POST">
+                                <input type="hidden" name="user_id" value="<?php echo $verification_user['id']; ?>">
+                                <input type="hidden" name="is_verified" value="<?php echo $verification_user['is_verified']; ?>">
+                                
+                                <div class="form-group">
+                                    <label for="verification_notes">Verification Notes (Optional)</label>
+                                    <textarea id="verification_notes" name="verification_notes" class="form-control" rows="3"><?php echo htmlspecialchars($verification_user['verification_notes'] ?? ''); ?></textarea>
+                                    <small class="form-text">Add any notes about the verification (payment details, special instructions, etc.)</small>
+                                </div>
+                                
+                                <button type="submit" name="toggle_verification" class="submit-btn">
+                                    <?php echo $verification_user['is_verified'] ? 'Unverify Account' : 'Verify Account'; ?>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                    
                     <div class="content-box">
                         <div class="content-header">
                             <h2><i class="fas fa-users"></i> All Users</h2>
@@ -237,6 +388,9 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                                                         <span class="status-badge <?php echo $user['is_verified'] ? 'active' : 'inactive'; ?>">
                                                             <?php echo $user['is_verified'] ? 'Verified' : 'Unverified'; ?>
                                                         </span>
+                                                        <?php if ($user['is_verified'] && !empty($user['verification_date'])): ?>
+                                                            <br><small>on <?php echo date('M j, Y', strtotime($user['verification_date'])); ?></small>
+                                                        <?php endif; ?>
                                                     </td>
                                                     <td>
                                                         <?php if ($user['subscription_start'] && $user['subscription_end']): ?>
@@ -269,14 +423,9 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                                                             </a>
                                                             
                                                             <?php if ($user['role'] !== 'admin'): ?>
-                                                                <form method="POST" class="action-form">
-                                                                    <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-                                                                    <input type="hidden" name="is_verified" value="<?php echo $user['is_verified']; ?>">
-                                                                    <button type="submit" name="toggle_verification" class="action-btn <?php echo $user['is_verified'] ? 'deactivate' : 'activate'; ?>" 
-                                                                            title="<?php echo $user['is_verified'] ? 'Revoke Verification' : 'Verify User'; ?>">
-                                                                        <i class="fas <?php echo $user['is_verified'] ? 'fa-times-circle' : 'fa-check-circle'; ?>"></i>
-                                                                    </button>
-                                                                </form>
+                                                                <a href="manage-users.php?verify=<?php echo $user['id']; ?>" class="action-btn <?php echo $user['is_verified'] ? 'deactivate' : 'activate'; ?>" title="<?php echo $user['is_verified'] ? 'Unverify User' : 'Verify User'; ?>">
+                                                                    <i class="fas <?php echo $user['is_verified'] ? 'fa-times-circle' : 'fa-check-circle'; ?>"></i>
+                                                                </a>
                                                                 
                                                                 <form method="POST" class="action-form" onsubmit="return confirm('Are you sure you want to delete this user? This action cannot be undone.');">
                                                                     <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
@@ -300,161 +449,81 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
         </div>
     </section>
 
+    <!-- Verification Modal -->
+    <div id="verificationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Verify User</h2>
+            
+            <div class="user-info-summary" id="modalUserInfo">
+                <!-- User info will be populated via JavaScript -->
+            </div>
+            
+            <div class="payment-info">
+                <h4>Payment Verification</h4>
+                <p>Confirm that the user has completed the required payment at the office before verifying the account.</p>
+            </div>
+            
+            <form id="verificationForm" action="manage-users.php" method="POST">
+                <input type="hidden" id="modalUserId" name="user_id" value="">
+                <input type="hidden" id="modalIsVerified" name="is_verified" value="">
+                
+                <div class="form-group">
+                    <label for="modalNotes">Verification Notes (Optional)</label>
+                    <textarea id="modalNotes" name="verification_notes" class="form-control" rows="3"></textarea>
+                    <small class="form-text">Add any notes about the verification (payment details, special instructions, etc.)</small>
+                </div>
+                
+                <button type="submit" name="toggle_verification" class="submit-btn" id="modalSubmitBtn">Verify Account</button>
+            </form>
+        </div>
+    </div>
+
     <?php include '../includes/footer.php'; ?>
 
     <script src="../js/script.js"></script>
-    <script>// Mobile menu toggle
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', function() {
-            document.querySelector('.nav-menu').classList.toggle('active');
-        });
-    }
-    
-    // User dropdown toggle
-    const userToggle = document.querySelector('.user-toggle');
-    if (userToggle) {
-        userToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            this.nextElementSibling.classList.toggle('active');
-        });
-    }
-    
-    // Close the dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (userToggle && !userToggle.contains(e.target)) {
-            const dropdown = document.querySelector('.user-dropdown');
-            if (dropdown && dropdown.classList.contains('active')) {
-                dropdown.classList.remove('active');
+    <script>
+        // Handle the verification modal
+        function showVerificationModal(userId, userName, userEmail, isVerified) {
+            const modal = document.getElementById('verificationModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalUserInfo = document.getElementById('modalUserInfo');
+            const modalUserId = document.getElementById('modalUserId');
+            const modalIsVerified = document.getElementById('modalIsVerified');
+            const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+            
+            // Set the modal title based on current verification status
+            modalTitle.textContent = isVerified ? 'Unverify User Account' : 'Verify User Account';
+            
+            // Set the user info
+            modalUserInfo.innerHTML = `
+                <p><strong>Name:</strong> ${userName}</p>
+                <p><strong>Email:</strong> ${userEmail}</p>
+            `;
+            
+            // Set the form values
+            modalUserId.value = userId;
+            modalIsVerified.value = isVerified;
+            
+            // Set the button text
+            modalSubmitBtn.textContent = isVerified ? 'Unverify Account' : 'Verify Account';
+            
+            // Show the modal
+            modal.style.display = 'block';
+        }
+        
+        // Close the modal
+        function closeModal() {
+            document.getElementById('verificationModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('verificationModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
             }
         }
-    });
-    
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            
-            e.preventDefault();
-            
-            const target = document.querySelector(targetId);
-            if (target) {
-                window.scrollTo({
-                    top: target.offsetTop - 80,
-                    behavior: 'smooth'
-                });
-                
-                // Close mobile menu if open
-                const navMenu = document.querySelector('.nav-menu');
-                if (navMenu && navMenu.classList.contains('active')) {
-                    navMenu.classList.remove('active');
-                }
-            }
-        });
-    });
-    
-    // Scroll animation for elements
-    function handleScrollAnimation() {
-        const elements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in, .contact-form');
-        
-        elements.forEach(element => {
-            const elementPosition = element.getBoundingClientRect().top;
-            const screenPosition = window.innerHeight / 1.2;
-            
-            if (elementPosition < screenPosition) {
-                element.classList.add('active');
-            }
-        });
-    }
-    
-    // Run animation on load
-    handleScrollAnimation();
-    
-    // Add animation classes to elements
-    document.querySelectorAll('.service-card').forEach((card, index) => {
-        card.classList.add('fade-in');
-        card.style.transitionDelay = `${0.1 * index}s`;
-    });
-    
-    document.querySelectorAll('.job-card').forEach((card, index) => {
-        card.classList.add('fade-in');
-        card.style.transitionDelay = `${0.1 * index}s`;
-    });
-    
-    document.querySelectorAll('.info-item').forEach((item, index) => {
-        item.classList.add(index % 2 === 0 ? 'slide-in-left' : 'slide-in-right');
-        item.style.transitionDelay = `${0.1 * index}s`;
-    });
-    
-    document.querySelectorAll('.section-title').forEach(title => {
-        title.classList.add('scale-in');
-    });
-    
-    // Run animation on scroll
-    window.addEventListener('scroll', handleScrollAnimation);
-    
-    // Job save functionality
-    const saveBtns = document.querySelectorAll('.job-save[data-job-id]');
-    saveBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (this.getAttribute('href')) return; // Let the login link work normally
-            
-            const jobId = this.getAttribute('data-job-id');
-            const icon = this.querySelector('i');
-            const text = this.querySelector('span');
-            const isSaved = icon.classList.contains('fas');
-            
-            // Create AJAX request
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'ajax/save-job.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    try {
-                        const response = JSON.parse(xhr.responseText);
-                        
-                        if (response.success) {
-                            if (isSaved) {
-                                icon.classList.remove('fas');
-                                icon.classList.add('far');
-                                text.textContent = 'Save Job';
-                            } else {
-                                icon.classList.remove('far');
-                                icon.classList.add('fas');
-                                text.textContent = 'Saved';
-                                
-                                // Add heart animation
-                                icon.style.transform = 'scale(1.3)';
-                                setTimeout(() => {
-                                    icon.style.transform = 'scale(1)';
-                                }, 300);
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Error parsing response:', e);
-                    }
-                }
-            };
-            
-            xhr.send('job_id=' + jobId + '&action=' + (isSaved ? 'unsave' : 'save'));
-        });
-    });
-    
-    // Auto-hide flash messages after 5 seconds
-    const flashMessages = document.querySelectorAll('.alert');
-    if (flashMessages.length > 0) {
-        setTimeout(() => {
-            flashMessages.forEach(message => {
-                message.style.opacity = '0';
-                setTimeout(() => {
-                    message.style.display = 'none';
-                }, 500);
-            });
-        }, 5000);
-    }
-});</script>
+    </script>
 </body>
 </html>

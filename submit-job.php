@@ -5,7 +5,7 @@ require_once 'config.php';
 $errors = [];
 $success = '';
 
-// Check if user is logged in (can be either an employer or admin)
+// Check if user is logged in
 if (!isLoggedIn()) {
     flashMessage("Please log in to submit a job posting", "warning");
     $_SESSION['redirect_after_login'] = 'submit-job.php';
@@ -53,13 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
     // Process job submission if no errors
     if (empty($errors)) {
         try {
-            // Set initial approval status
+            // Always set initial approval status to 'pending' regardless of user role
             $approval_status = 'pending';
-            
-            // If admin, auto-approve
-            if (isAdmin()) {
-                $approval_status = 'approved';
-            }
             
             // Set submitter information
             $submitter_name = $_SESSION['user_name'];
@@ -102,44 +97,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
             // Get the job ID
             $job_id = $pdo->lastInsertId();
             
-            // Notify admin of new job posting if not submitted by admin
-            if (!isAdmin()) {
-                // Get admin email(s)
-                $admin_emails = [];
+            // Notify admin of new job posting
+            // Get admin email(s)
+            $admin_emails = [];
+            
+            try {
+                $admin_stmt = $pdo->prepare("SELECT email FROM users WHERE role = 'admin'");
+                $admin_stmt->execute();
                 
-                try {
-                    $admin_stmt = $pdo->prepare("SELECT email FROM users WHERE role = 'admin'");
-                    $admin_stmt->execute();
-                    
-                    while ($admin = $admin_stmt->fetch()) {
-                        $admin_emails[] = $admin['email'];
-                    }
-                } catch (PDOException $e) {
-                    error_log("Error fetching admin emails: " . $e->getMessage());
+                while ($admin = $admin_stmt->fetch()) {
+                    $admin_emails[] = $admin['email'];
                 }
+            } catch (PDOException $e) {
+                error_log("Error fetching admin emails: " . $e->getMessage());
+            }
+            
+            // Send notification if we have admin emails
+            if (!empty($admin_emails)) {
+                $admin_subject = "New Job Posting Requires Approval: " . $title;
+                $admin_message = "<p>A new job posting has been submitted and requires your approval:</p>";
+                $admin_message .= "<p><strong>Job Title:</strong> " . htmlspecialchars($title) . "</p>";
+                $admin_message .= "<p><strong>Company:</strong> " . htmlspecialchars($company_name) . "</p>";
+                $admin_message .= "<p><strong>Location:</strong> " . htmlspecialchars($location) . "</p>";
+                $admin_message .= "<p><strong>Submitted By:</strong> " . htmlspecialchars($submitter_name) . " (" . htmlspecialchars($submitter_email) . ")</p>";
+                $admin_message .= "<p><a href='" . $site_url . "admin/edit-job.php?id=" . $job_id . "'>Click here to review the job posting</a></p>";
                 
-                // Send notification if we have admin emails
-                if (!empty($admin_emails)) {
-                    $admin_subject = "New Job Posting Requires Approval: " . $title;
-                    $admin_message = "<p>A new job posting has been submitted and requires your approval:</p>";
-                    $admin_message .= "<p><strong>Job Title:</strong> " . htmlspecialchars($title) . "</p>";
-                    $admin_message .= "<p><strong>Company:</strong> " . htmlspecialchars($company_name) . "</p>";
-                    $admin_message .= "<p><strong>Location:</strong> " . htmlspecialchars($location) . "</p>";
-                    $admin_message .= "<p><strong>Submitted By:</strong> " . htmlspecialchars($submitter_name) . " (" . htmlspecialchars($submitter_email) . ")</p>";
-                    $admin_message .= "<p><a href='" . $site_url . "admin/edit-job.php?id=" . $job_id . "'>Click here to review the job posting</a></p>";
-                    
-                    foreach ($admin_emails as $admin_email) {
-                        sendEmail($admin_email, $admin_subject, $admin_message);
-                    }
+                foreach ($admin_emails as $admin_email) {
+                    sendEmail($admin_email, $admin_subject, $admin_message);
                 }
             }
             
-            // Set success message based on user role
-            if (isAdmin()) {
-                $success = "Job posting has been submitted and automatically approved.";
-            } else {
-                $success = "Thank you for submitting your job posting. It will be reviewed by our team and published soon.";
-            }
+            // Set success message
+            $success = "Thank you for submitting your job posting. It will be reviewed by our team and published soon.";
             
             // Reset form fields
             $title = $company_name = $location = $description = $requirements = $application_instructions = $contact_email = $contact_phone = '';
@@ -216,6 +205,14 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                             <div>
                                 <h3>Confidential Hiring Process</h3>
                                 <p>Company names and locations are hidden from job seekers to protect client privacy. Job seekers will only see your position details until they pass initial screening.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="approval-notice">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <div>
+                                <h3>Approval Required</h3>
+                                <p>All job postings require approval by our team before they appear on the site. This helps maintain quality and legitimacy. The approval process typically takes 24-48 hours.</p>
                             </div>
                         </div>
                         
@@ -348,29 +345,52 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
             color: #333;
         }
         
-        .privacy-notice {
+        .privacy-notice,
+        .approval-notice {
             display: flex;
             background-color: #f0f7ff;
             padding: 20px;
             border-radius: 8px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             align-items: center;
             border-left: 3px solid #0066cc;
         }
         
-        .privacy-notice i {
+        .approval-notice {
+            background-color: #fff8e6;
+            border-left-color: #f8bb86;
+        }
+        
+        .privacy-notice i,
+        .approval-notice i {
             font-size: 24px;
-            color: #0066cc;
             margin-right: 15px;
         }
         
-        .privacy-notice h3 {
-            margin-top: 0;
-            margin-bottom: 5px;
+        .privacy-notice i {
             color: #0066cc;
         }
         
-        .privacy-notice p {
+        .approval-notice i {
+            color: #f8bb86;
+        }
+        
+        .privacy-notice h3,
+        .approval-notice h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+        
+        .privacy-notice h3 {
+            color: #0066cc;
+        }
+        
+        .approval-notice h3 {
+            color: #e69500;
+        }
+        
+        .privacy-notice p,
+        .approval-notice p {
             margin-bottom: 0;
             color: #333;
         }
