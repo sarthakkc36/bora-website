@@ -11,6 +11,12 @@ if (!isLoggedIn()) {
     redirect('login.php');
     exit;
 }
+// Check verification status - redirect to verification page if not verified
+if (isJobSeeker() && !isVerified()) {
+    flashMessage("Your account requires verification before you can view job details", "warning");
+    redirect('verification-pending.php');
+    exit;
+}
 
 // Get jobs from database - show only approved jobs
 try {

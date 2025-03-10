@@ -24,7 +24,7 @@ session_start();
 
 // Helper functions
 function isLoggedIn() {
-    return isset($_SESSION['user_id']);
+    return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }
 
 function isAdmin() {
@@ -35,11 +35,46 @@ function isJobSeeker() {
     return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'job_seeker';
 }
 
-// Add new helper functions for the verification system
-function isEmailVerified() {
-    return isset($_SESSION['email_verified']) && $_SESSION['email_verified'] == 1;
+function isEmployer() {
+    return isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'employer';
 }
 
+// Fixed isVerified function to properly check verification status
+function isVerified() {
+    // Always return true for admins
+    if (isAdmin()) {
+        return true;
+    }
+    
+    // Check if the user is verified
+    return isset($_SESSION['is_verified']) && $_SESSION['is_verified'] === true;
+}
+
+// Function to check if user has access to pages requiring verification
+// Use this on all protected pages that require verification
+function requireVerification() {
+    if (!isLoggedIn()) {
+        flashMessage("Please log in to access this page", "info");
+        redirect('login.php');
+        exit;
+    }
+    
+    if (isAdmin()) {
+        // Admins always have access
+        return true;
+    }
+    
+    if (isJobSeeker() && !isVerified()) {
+        // Job seekers who are not verified must complete verification
+        flashMessage("Your account requires verification before accessing this page", "warning");
+        redirect('verification-pending.php');
+        exit;
+    }
+    
+    return true;
+}
+
+// Redirect helper
 function redirect($url) {
     header("Location: $url");
     exit;
@@ -73,10 +108,6 @@ function displayFlashMessage() {
     }
 }
 
-function isVerified() {
-    return isset($_SESSION['is_verified']) && $_SESSION['is_verified'] == 1;
-}
-
 function hasValidSubscription() {
     // Admin always has valid "subscription"
     if (isAdmin()) {
@@ -97,6 +128,7 @@ function hasValidSubscription() {
     
     return false;
 }
+
 function getJobStatusLabel($status) {
     switch($status) {
         case 'pending':
@@ -134,6 +166,7 @@ function sendEmail($to, $subject, $message) {
     
     return mail($to, $subject, $message, $headers);
 }
+
 /**
  * Handle favicon upload without requiring GD library
  * @param array $file The uploaded file ($_FILES['favicon'])
@@ -169,5 +202,4 @@ function handleFaviconUpload($file, $upload_dir = 'uploads/favicon/') {
     
     return false;
 }
-
 ?>

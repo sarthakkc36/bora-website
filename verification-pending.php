@@ -6,13 +6,17 @@ if (!isLoggedIn()) {
     redirect('login.php');
 }
 
-// If user is admin or employer, redirect to appropriate dashboard
+// If user is admin, redirect to admin dashboard
 if (isAdmin()) {
     redirect('admin/dashboard.php');
-} elseif (isEmployer()) {
-    redirect('employer/dashboard.php');
-} elseif (isJobSeeker() && isVerified()) {
+} 
+// If the user is verified job seeker, redirect to dashboard
+elseif (isJobSeeker() && isVerified()) {
     redirect('job-seeker/dashboard.php');
+}
+// If the user is not a job seeker, but somehow got here, redirect to home
+elseif (!isJobSeeker()) {
+    redirect('index.php');
 }
 
 // Get user info
@@ -21,11 +25,18 @@ try {
     $stmt->bindParam(':user_id', $_SESSION['user_id']);
     $stmt->execute();
     $user = $stmt->fetch();
+    
+    // Update session verification status to match database
+    $_SESSION['is_verified'] = (bool)$user['is_verified'];
+    
+    // If user is verified after checking database, redirect to dashboard
+    if ($_SESSION['is_verified']) {
+        redirect('job-seeker/dashboard.php');
+    }
 } catch (PDOException $e) {
     error_log("Error fetching user data: " . $e->getMessage());
     $user = [];
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -229,7 +240,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                 <div class="verification-status pending">
                     <h3><i class="fas fa-hourglass-half"></i> Verification Pending</h3>
                     <p>Your account is currently pending verification. Please visit our office to complete the verification process with a payment.</p>
-                    <?php if (isset($user['verification_notes']) && !empty($user['verification_notes']) && $user['is_verified'] == 0): ?>
+                    <?php if (isset($user['verification_notes']) && !empty($user['verification_notes'])): ?>
                         <div class="alert alert-info">
                             <strong>Note:</strong> <?php echo htmlspecialchars($user['verification_notes']); ?>
                         </div>

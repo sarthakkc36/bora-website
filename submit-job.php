@@ -8,22 +8,22 @@ $success = '';
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
     // Get form data
-    $title = sanitizeInput($_POST['title']);
-    $company_name = sanitizeInput($_POST['company_name']);
-    $location = sanitizeInput($_POST['location']);
-    $job_type = sanitizeInput($_POST['job_type']);
-    $experience_level = sanitizeInput($_POST['experience_level']);
+    $title = sanitizeInput($_POST['title'] ?? '');
+    $company_name = sanitizeInput($_POST['company_name'] ?? '');
+    $location = sanitizeInput($_POST['location'] ?? '');
+    $job_type = sanitizeInput($_POST['job_type'] ?? '');
+    $experience_level = sanitizeInput($_POST['experience_level'] ?? '');
     $salary_min = !empty($_POST['salary_min']) ? (int)$_POST['salary_min'] : null;
     $salary_max = !empty($_POST['salary_max']) ? (int)$_POST['salary_max'] : null;
-    $description = sanitizeInput($_POST['description']);
-    $requirements = sanitizeInput($_POST['requirements']);
+    $description = sanitizeInput($_POST['description'] ?? '');
+    $requirements = sanitizeInput($_POST['requirements'] ?? '');
     $application_instructions = sanitizeInput($_POST['application_instructions'] ?? '');
     $contact_email = sanitizeInput($_POST['contact_email'] ?? '');
     $contact_phone = sanitizeInput($_POST['contact_phone'] ?? '');
     
     // Get submitter information
-    $submitter_name = sanitizeInput($_POST['submitter_name']);
-    $submitter_email = sanitizeInput($_POST['submitter_email']);
+    $submitter_name = sanitizeInput($_POST['submitter_name'] ?? '');
+    $submitter_email = sanitizeInput($_POST['submitter_email'] ?? '');
     $submitter_phone = sanitizeInput($_POST['submitter_phone'] ?? '');
     
     // Validate inputs
@@ -62,20 +62,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
         try {
             // Always set initial approval status to 'pending'
             $approval_status = 'pending';
-            
-            // Insert into database
-            $stmt = $pdo->prepare("INSERT INTO jobs (title, company_name, location, job_type, experience_level, 
-                                  salary_min, salary_max, description, requirements, application_instructions, 
-                                  contact_email, contact_phone, user_id, approval_status, is_active, 
-                                  submitter_name, submitter_email, submitter_phone) 
-                                  VALUES (:title, :company_name, :location, :job_type, :experience_level, 
-                                  :salary_min, :salary_max, :description, :requirements, :application_instructions, 
-                                  :contact_email, :contact_phone, :user_id, :approval_status, :is_active, 
-                                  :submitter_name, :submitter_email, :submitter_phone)");
-                                  
             $is_active = 1; // Default to active
             $user_id = isLoggedIn() ? $_SESSION['user_id'] : null; // Set user_id only if logged in
             
+            // Insert into database - Fixed SQL query with properly bound parameters
+            $stmt = $pdo->prepare("INSERT INTO jobs 
+                (title, company_name, location, job_type, experience_level, 
+                salary_min, salary_max, description, requirements, application_instructions, 
+                contact_email, contact_phone, user_id, approval_status, is_active, 
+                submitter_name, submitter_email, submitter_phone) 
+                VALUES 
+                (:title, :company_name, :location, :job_type, :experience_level, 
+                :salary_min, :salary_max, :description, :requirements, :application_instructions, 
+                :contact_email, :contact_phone, :user_id, :approval_status, :is_active, 
+                :submitter_name, :submitter_email, :submitter_phone)");
+                                  
+            // Bind parameters 
             $stmt->bindParam(':title', $title);
             $stmt->bindParam(':company_name', $company_name);
             $stmt->bindParam(':location', $location);
@@ -95,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
             $stmt->bindParam(':submitter_email', $submitter_email);
             $stmt->bindParam(':submitter_phone', $submitter_phone);
             
+            // Execute the query
             $stmt->execute();
             
             // Get the job ID

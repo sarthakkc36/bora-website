@@ -5,6 +5,14 @@ require_once '../config.php';
 if (!isLoggedIn() || !isJobSeeker()) {
     flashMessage("You must be logged in as a job seeker to access this page", "danger");
     redirect('../login.php');
+    exit;
+}
+
+// Check verification status - redirect to verification page if not verified
+if (!isVerified()) {
+    flashMessage("Your account requires verification before you can access your dashboard", "warning");
+    redirect('../verification-pending.php');
+    exit;
 }
 
 // Get user information

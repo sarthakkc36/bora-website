@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
                     $_SESSION['user_email'] = $user['email'];
                     $_SESSION['user_role'] = $user['role'];
-                    $_SESSION['is_verified'] = (bool)$user['is_verified'];
+                    $_SESSION['is_verified'] = (bool)$user['is_verified']; // Make sure this is boolean
                     $_SESSION['logged_in'] = true;
                     
                     // Update last login time
@@ -67,15 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         } else {
                             redirect('admin/dashboard.php');
                         }
-                    } elseif ($user['role'] === 'employer') {
-                        // For now, employers don't need verification
-                        if (isset($_SESSION['redirect_after_login']) && !empty($_SESSION['redirect_after_login'])) {
-                            $redirect_url = $_SESSION['redirect_after_login'];
-                            unset($_SESSION['redirect_after_login']);
-                            redirect($redirect_url);
-                        } else {
-                            redirect('employer/dashboard.php');
-                        }
                     } elseif ($user['role'] === 'job_seeker') {
                         // Job seekers need verification
                         if ($user['is_verified']) {
@@ -92,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             redirect('verification-pending.php');
                         }
                     } else {
-                        // Unknown role
+                        // Unknown role - this should never happen
                         flashMessage("Invalid user role", "danger");
                         redirect('login.php');
                     }

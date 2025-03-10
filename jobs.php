@@ -12,6 +12,13 @@ if (!isLoggedIn()) {
     exit;
 }
 
+// Check verification status - redirect to verification page if not verified
+if (isJobSeeker() && !isVerified()) {
+    flashMessage("Your account requires verification before you can view job listings", "warning");
+    redirect('verification-pending.php');
+    exit;
+}
+
 // Get jobs from database - show only approved jobs
 try {
     $stmt = $pdo->prepare("SELECT * FROM jobs WHERE is_active = 1 AND approval_status = 'approved' ORDER BY created_at DESC");
@@ -69,6 +76,10 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                 </div>
             </div>
             
+            <div class="job-confidentiality-notice">
+                <p><i class="fas fa-lock"></i> <strong>Confidential Hiring Process:</strong> To maintain our clients' privacy, company names and locations are only revealed after initial application screening.</p>
+            </div>
+            
             <div class="jobs-grid">
                 <?php if (empty($jobs)): ?>
                     <div class="no-jobs-found">
@@ -81,7 +92,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                         <div class="job-item">
                             <div class="job-header">
                                 <div class="job-company-logo">
-                                    <img src="/api/placeholder/80/80" alt="<?php echo htmlspecialchars($job['company_name']); ?> Logo">
+                                    <i class="fas fa-briefcase" style="font-size: 32px; color: #0066cc;"></i>
                                 </div>
                                 <div class="job-info">
                                     <h3 class="job-title">
@@ -89,7 +100,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                                             <?php echo htmlspecialchars($job['title']); ?>
                                         </a>
                                     </h3>
-                                    <p class="job-company"><?php echo htmlspecialchars($job['company_name']); ?></p>
+                                    <p class="job-company">B&H Employment & Consultancy Client</p>
                                     <div class="job-tags">
                                         <span class="job-tag"><?php echo ucfirst(str_replace('-', ' ', $job['job_type'])); ?></span>
                                         <span class="job-tag"><?php echo ucfirst($job['experience_level']) . ' Level'; ?></span>
@@ -97,9 +108,6 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                                 </div>
                             </div>
                             <div class="job-features">
-                                <div class="job-feature">
-                                    <i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($job['location']); ?>
-                                </div>
                                 <?php if (!empty($job['salary_min']) || !empty($job['salary_max'])): ?>
                                     <div class="job-feature">
                                         <i class="fas fa-dollar-sign"></i>
@@ -130,6 +138,27 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
             </div>
         </div>
     </section>
+    
+    <style>
+        .job-confidentiality-notice {
+            background-color: #f0f7ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .job-confidentiality-notice p {
+            margin: 0;
+            color: #333;
+        }
+        
+        .job-confidentiality-notice i {
+            color: #0066cc;
+            margin-right: 5px;
+        }
+    </style>
+    
     <script src="js/script.js"></script>
     <?php include 'includes/footer.php'; ?>
 </body>

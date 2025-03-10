@@ -9,8 +9,8 @@ $last_name = '';
 $email = '';
 $phone = '';
 $username = '';
-$company_name = '';
-$role = 'job_seeker'; // Default selected role
+// Remove company_name variable since we're removing employer option
+$role = 'job_seeker'; // Hardcode role to job_seeker only
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -22,8 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = sanitizeInput($_POST['username']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
-    $role = sanitizeInput($_POST['role']);
-    $company_name = sanitizeInput($_POST['company_name'] ?? '');
+    $role = 'job_seeker'; // Force role to be job_seeker
     
     // Validate inputs
     if (empty($first_name)) {
@@ -54,10 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($password !== $confirm_password) {
         $errors[] = "Passwords do not match";
-    }
-    
-    if ($role === 'employer' && empty($company_name)) {
-        $errors[] = "Company name is required for employer accounts";
     }
     
     // Check if email already exists
@@ -94,9 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Hash password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             
-            // Insert user into database
-            $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, phone, username, password, role, company_name) 
-                                   VALUES (:first_name, :last_name, :email, :phone, :username, :password, :role, :company_name)");
+            // Insert user into database - Note: company_name is null for job seekers
+            $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, phone, username, password, role) 
+                                   VALUES (:first_name, :last_name, :email, :phone, :username, :password, :role)");
             $stmt->bindParam(':first_name', $first_name);
             $stmt->bindParam(':last_name', $last_name);
             $stmt->bindParam(':email', $email);
@@ -104,14 +99,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':username', $username);
             $stmt->bindParam(':password', $hashed_password);
             $stmt->bindParam(':role', $role);
-            $stmt->bindParam(':company_name', $company_name);
             $stmt->execute();
             
             $success = "Registration successful! You can now <a href='login.php'>login</a>.";
             
             // Reset form fields
-            $first_name = $last_name = $email = $phone = $username = $company_name = '';
-            $role = 'job_seeker';
+            $first_name = $last_name = $email = $phone = $username = '';
         } catch (PDOException $e) {
             error_log("Error registering user: " . $e->getMessage());
             $errors[] = "An error occurred while registering. Please try again.";
@@ -140,72 +133,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Dynamic Favicon -->
     <link rel="icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
     <link rel="shortcut icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
-    <style>
-        .role-selector {
-            display: flex;
-            margin-bottom: 30px;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid #ddd;
-        }
-        
-        .role-option {
-            flex: 1;
-            text-align: center;
-            padding: 15px;
-            cursor: pointer;
-            position: relative;
-            z-index: 2;
-            transition: all 0.3s ease;
-        }
-        
-        .role-option.active {
-            color: white;
-        }
-        
-        .role-option i {
-            display: block;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        
-        .role-option-slider {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 50%;
-            height: 100%;
-            background-color: #0066cc;
-            transition: transform 0.3s ease;
-            z-index: 1;
-        }
-        
-        .role-option-slider.employer {
-            transform: translateX(100%);
-        }
-        
-        .company-fields {
-            display: none;
-            transition: opacity 0.3s ease;
-        }
-        
-        .company-fields.active {
-            display: block;
-            animation: fadeIn 0.5s ease forwards;
-        }
-        
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
 </head>
 <body>
     <?php include 'includes/header.php'; ?>
@@ -213,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="page-title">
         <div class="container">
             <h1>Create an Account</h1>
-            <p>Join our platform to find job opportunities or post job listings</p>
+            <p>Join our platform to find job opportunities</p>
         </div>
     </section>
 
@@ -235,20 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
                 
                 <form action="register.php" method="POST" class="auth-form">
-                    <div class="role-selector">
-                        <div class="role-option-slider <?php echo $role === 'employer' ? 'employer' : 'job_seeker'; ?>"></div>
-                        <label class="role-option <?php echo $role === 'job_seeker' ? 'active' : ''; ?>" for="role_job_seeker">
-                            <i class="fas fa-user"></i>
-                            Job Seeker
-                        </label>
-                        <label class="role-option <?php echo $role === 'employer' ? 'active' : ''; ?>" for="role_employer">
-                            <i class="fas fa-building"></i>
-                            Employer
-                        </label>
-                    </div>
-                    
-                    <input type="radio" id="role_job_seeker" name="role" value="job_seeker" <?php echo $role === 'job_seeker' ? 'checked' : ''; ?> style="display: none;">
-                    <input type="radio" id="role_employer" name="role" value="employer" <?php echo $role === 'employer' ? 'checked' : ''; ?> style="display: none;">
+                    <!-- Hidden input for role - always job_seeker -->
+                    <input type="hidden" name="role" value="job_seeker">
                     
                     <div class="form-row">
                         <div class="form-group half">
@@ -271,13 +186,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="form-group half">
                             <label for="phone">Phone Number (Optional)</label>
                             <input type="tel" id="phone" name="phone" class="form-control" value="<?php echo htmlspecialchars($phone); ?>">
-                        </div>
-                    </div>
-                    
-                    <div class="company-fields <?php echo $role === 'employer' ? 'active' : ''; ?>">
-                        <div class="form-group">
-                            <label for="company_name">Company Name</label>
-                            <input type="text" id="company_name" name="company_name" class="form-control" value="<?php echo htmlspecialchars($company_name); ?>">
                         </div>
                     </div>
                     
@@ -317,40 +225,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php include 'includes/footer.php'; ?>
     
     <script src="js/script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const jobSeekerOption = document.getElementById('role_job_seeker');
-            const employerOption = document.getElementById('role_employer');
-            const roleSlider = document.querySelector('.role-option-slider');
-            const companyFields = document.querySelector('.company-fields');
-            const jobSeekerLabel = document.querySelector('label[for="role_job_seeker"]');
-            const employerLabel = document.querySelector('label[for="role_employer"]');
-            
-            // Toggle role selection
-            jobSeekerLabel.addEventListener('click', function() {
-                jobSeekerOption.checked = true;
-                roleSlider.classList.remove('employer');
-                companyFields.classList.remove('active');
-                
-                jobSeekerLabel.classList.add('active');
-                employerLabel.classList.remove('active');
-                
-                // Make company name not required for job seekers
-                document.getElementById('company_name').required = false;
-            });
-            
-            employerLabel.addEventListener('click', function() {
-                employerOption.checked = true;
-                roleSlider.classList.add('employer');
-                companyFields.classList.add('active');
-                
-                employerLabel.classList.add('active');
-                jobSeekerLabel.classList.remove('active');
-                
-                // Make company name required for employers
-                document.getElementById('company_name').required = true;
-            });
-        });
-    </script>
 </body>
 </html>
