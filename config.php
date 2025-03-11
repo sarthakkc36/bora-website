@@ -160,6 +160,16 @@ function getAppointmentStatusLabel($status) {
 
 // Function to send emails
 function sendEmail($to, $subject, $message) {
+    // Check if we're in a development environment
+    if ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_ADDR'] === '127.0.0.1') {
+        // Log the email instead of sending it
+        error_log("Email would be sent to: $to");
+        error_log("Subject: $subject");
+        error_log("Message: $message");
+        return true; // Return true to simulate successful sending
+    }
+    
+    // Regular email sending code for production
     $headers = "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
     $headers .= 'From: B&H Employment & Consultancy <noreply@bhemployment.com>' . "\r\n";

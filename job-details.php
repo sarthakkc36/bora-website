@@ -74,10 +74,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                     <strong><?php echo count($jobs); ?></strong> jobs found
                 </div>
             </div>
-            
-            <div class="job-confidentiality-notice">
-                <p><i class="fas fa-lock"></i> <strong>Confidential Hiring Process:</strong> To maintain our clients' privacy, company names and locations are only revealed after initial application screening.</p>
-            </div>
+        
             
             <div class="jobs-grid">
                 <?php if (empty($jobs)): ?>

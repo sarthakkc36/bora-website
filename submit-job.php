@@ -63,9 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
             // Always set initial approval status to 'pending'
             $approval_status = 'pending';
             $is_active = 1; // Default to active
-            $user_id = isLoggedIn() ? $_SESSION['user_id'] : null; // Set user_id only if logged in
             
-            // Insert into database - Fixed SQL query with properly bound parameters
+            // Check if user is logged in
+            $user_id = null;
+            if (isLoggedIn()) {
+                $user_id = $_SESSION['user_id'];
+            }
+            
+            // Insert into database with properly bound parameters
             $stmt = $pdo->prepare("INSERT INTO jobs 
                 (title, company_name, location, job_type, experience_level, 
                 salary_min, salary_max, description, requirements, application_instructions, 
@@ -76,26 +81,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
                 :salary_min, :salary_max, :description, :requirements, :application_instructions, 
                 :contact_email, :contact_phone, :user_id, :approval_status, :is_active, 
                 :submitter_name, :submitter_email, :submitter_phone)");
-                                  
-            // Bind parameters 
-            $stmt->bindParam(':title', $title);
-            $stmt->bindParam(':company_name', $company_name);
-            $stmt->bindParam(':location', $location);
-            $stmt->bindParam(':job_type', $job_type);
-            $stmt->bindParam(':experience_level', $experience_level);
-            $stmt->bindParam(':salary_min', $salary_min);
-            $stmt->bindParam(':salary_max', $salary_max);
-            $stmt->bindParam(':description', $description);
-            $stmt->bindParam(':requirements', $requirements);
-            $stmt->bindParam(':application_instructions', $application_instructions);
-            $stmt->bindParam(':contact_email', $contact_email);
-            $stmt->bindParam(':contact_phone', $contact_phone);
-            $stmt->bindParam(':user_id', $user_id);
-            $stmt->bindParam(':approval_status', $approval_status);
-            $stmt->bindParam(':is_active', $is_active);
-            $stmt->bindParam(':submitter_name', $submitter_name);
-            $stmt->bindParam(':submitter_email', $submitter_email);
-            $stmt->bindParam(':submitter_phone', $submitter_phone);
+            
+            // Bind parameters with proper type handling
+            $stmt->bindParam(':title', $title, PDO::PARAM_STR);
+            $stmt->bindParam(':company_name', $company_name, PDO::PARAM_STR);
+            $stmt->bindParam(':location', $location, PDO::PARAM_STR);
+            $stmt->bindParam(':job_type', $job_type, PDO::PARAM_STR);
+            $stmt->bindParam(':experience_level', $experience_level, PDO::PARAM_STR);
+            $stmt->bindParam(':salary_min', $salary_min, PDO::PARAM_INT);
+            $stmt->bindParam(':salary_max', $salary_max, PDO::PARAM_INT);
+            $stmt->bindParam(':description', $description, PDO::PARAM_STR);
+            $stmt->bindParam(':requirements', $requirements, PDO::PARAM_STR);
+            $stmt->bindParam(':application_instructions', $application_instructions, PDO::PARAM_STR);
+            $stmt->bindParam(':contact_email', $contact_email, PDO::PARAM_STR);
+            $stmt->bindParam(':contact_phone', $contact_phone, PDO::PARAM_STR);
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $stmt->bindParam(':approval_status', $approval_status, PDO::PARAM_STR);
+            $stmt->bindParam(':is_active', $is_active, PDO::PARAM_INT);
+            $stmt->bindParam(':submitter_name', $submitter_name, PDO::PARAM_STR);
+            $stmt->bindParam(':submitter_email', $submitter_email, PDO::PARAM_STR);
+            $stmt->bindParam(':submitter_phone', $submitter_phone, PDO::PARAM_STR);
             
             // Execute the query
             $stmt->execute();
@@ -126,6 +131,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
                 $admin_message .= "<p><strong>Company:</strong> " . htmlspecialchars($company_name) . "</p>";
                 $admin_message .= "<p><strong>Location:</strong> " . htmlspecialchars($location) . "</p>";
                 $admin_message .= "<p><strong>Submitted By:</strong> " . htmlspecialchars($submitter_name) . " (" . htmlspecialchars($submitter_email) . ")</p>";
+                
+                if (!isLoggedIn()) {
+                    $admin_message .= "<p><strong>Note:</strong> This was submitted by a guest user (not logged in).</p>";
+                }
+                
                 $admin_message .= "<p><a href='" . $site_url . "admin/edit-job.php?id=" . $job_id . "'>Click here to review the job posting</a></p>";
                 
                 foreach ($admin_emails as $admin_email) {
@@ -161,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_job'])) {
             
         } catch (PDOException $e) {
             error_log("Error submitting job: " . $e->getMessage());
-            $errors[] = "An error occurred while submitting your job posting. Please try again.";
+            $errors[] = "An error occurred while submitting your job posting: " . $e->getMessage();
         }
     }
 }
@@ -303,13 +313,6 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                     </div>
                     
                     <div class="content-body">
-                        <div class="privacy-notice">
-                            <i class="fas fa-lock"></i>
-                            <div>
-                                <h3>Confidential Hiring Process</h3>
-                                <p>Company names and locations are hidden from job seekers to protect client privacy. Job seekers will only see your position details until they pass initial screening.</p>
-                            </div>
-                        </div>
                         
                         <div class="approval-notice">
                             <i class="fas fa-exclamation-circle"></i>
