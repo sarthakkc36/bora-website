@@ -62,60 +62,29 @@ $site_description = $site_settings['site_description'] ?? 'Professional employme
 <body>
 
 <!-- Header -->
+<!-- Header -->
 <header>
     <div class="container">
         <div class="header-content">
             <div class="logo">
                 <a href="<?php echo $base_path; ?>index.php">
-                    <?php if (!empty($site_settings['site_logo']) && file_exists($is_root ? $site_settings['site_logo'] : '../' . $site_settings['site_logo'])): ?>
-                        <img src="<?php echo $base_path . $site_settings['site_logo']; ?>?v=<?php echo time(); ?>" alt="<?php echo htmlspecialchars($site_title); ?> Logo">
-                    <?php else: ?>
-                        <img src="<?php echo $base_path; ?>images/logo.png" alt="<?php echo htmlspecialchars($site_title); ?> Logo">
-                    <?php endif; ?>
+                    <img src="<?php echo $base_path; ?>images/logo.png" alt="B&H Employment Logo">
                 </a>
             </div>
             
-            <div class="mobile-menu-btn" aria-label="Toggle navigation menu">
+            <div class="mobile-menu-btn">
                 <i class="fas fa-bars"></i>
             </div>
             
-            <nav class="main-navigation">
+            <div class="main-navigation">
                 <ul class="nav-menu">
-                    <li>
-                        <a href="<?php echo $base_path; ?>index.php" <?php echo $current_page === 'index.php' ? 'class="active" aria-current="page"' : ''; ?>>
-                            <i class="fas fa-home"></i> <span>Home</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $base_path; ?>jobs.php" <?php echo $current_page === 'jobs.php' ? 'class="active" aria-current="page"' : ''; ?>>
-                            <i class="fas fa-briefcase"></i> <span>Jobs</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $base_path; ?>index.php#services" <?php echo $current_page === 'services.php' ? 'class="active" aria-current="page"' : ''; ?>>
-                            <i class="fas fa-cogs"></i> <span>Services</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $base_path; ?>index.php#about" <?php echo $current_page === 'about.php' ? 'class="active" aria-current="page"' : ''; ?>>
-                            <i class="fas fa-info-circle"></i> <span>About Us</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $base_path; ?>index.php#contact" <?php echo $current_page === 'contact.php' ? 'class="active" aria-current="page"' : ''; ?>>
-                            <i class="fas fa-envelope"></i> <span>Contact</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $base_path; ?>submit-job.php" <?php echo $current_page === 'submit-job.php' ? 'class="active" aria-current="page"' : ''; ?>>
-                            <i class="fas fa-plus-circle"></i> <span>Submit a Job</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $base_path; ?>request-appointment.php" <?php echo $current_page === 'request-appointment.php' ? 'class="active" aria-current="page"' : ''; ?>>
-                            <i class="fas fa-calendar-alt"></i> <span>Request Appointment</span>
-                        </a>
-                    </li>
+                    <li><a href="<?php echo $base_path; ?>index.php"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="<?php echo $base_path; ?>jobs.php"><i class="fas fa-briefcase"></i> Jobs</a></li>
+                    <li><a href="<?php echo $base_path; ?>index.php#services"><i class="fas fa-cogs"></i> Services</a></li>
+                    <li><a href="<?php echo $base_path; ?>index.php#about"><i class="fas fa-info-circle"></i> About Us</a></li>
+                    <li><a href="<?php echo $base_path; ?>index.php#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li><a href="<?php echo $base_path; ?>submit-job.php"><i class="fas fa-plus-circle"></i> Submit a Job</a></li>
+                    <li><a href="<?php echo $base_path; ?>request-appointment.php"><i class="fas fa-calendar-alt"></i> Request Appointment</a></li>
                 </ul>
                 
                 <ul class="auth-menu">
@@ -123,54 +92,33 @@ $site_description = $site_settings['site_description'] ?? 'Professional employme
                         <li class="user-menu">
                             <a href="#" class="user-toggle">
                                 <i class="fas fa-user-circle"></i> 
-                                <span><?php echo isset($_SESSION['user_name']) ? explode(' ', $_SESSION['user_name'])[0] : 'User'; ?></span>
+                                <?php echo isset($_SESSION['user_name']) ? explode(' ', $_SESSION['user_name'])[0] : 'User'; ?>
                                 <i class="fas fa-caret-down"></i>
                             </a>
                             <ul class="user-dropdown">
                                 <?php if (isAdmin()): ?>
-                                    <li>
-                                        <a href="<?php echo $base_path; ?>admin/dashboard.php">
-                                            <i class="fas fa-tachometer-alt"></i> Admin Dashboard
-                                        </a>
-                                    </li>
+                                    <li><a href="<?php echo $base_path; ?>admin/dashboard.php"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a></li>
                                 <?php elseif (isEmployer()): ?>
-                                    <li>
-                                        <a href="<?php echo $base_path; ?>employer/dashboard.php">
-                                            <i class="fas fa-tachometer-alt"></i> Employer Dashboard
-                                        </a>
-                                    </li>
+                                    <li><a href="<?php echo $base_path; ?>employer/dashboard.php"><i class="fas fa-tachometer-alt"></i> Employer Dashboard</a></li>
                                 <?php else: ?>
-                                    <li>
-                                        <a href="<?php echo $base_path; ?>job-seeker/dashboard.php">
-                                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                                        </a>
-                                    </li>
+                                    <li><a href="<?php echo $base_path; ?>job-seeker/dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                                 <?php endif; ?>
-                                
-                                <li>
-                                    <a href="<?php echo $base_path; ?>logout.php">
-                                        <i class="fas fa-sign-out-alt"></i> Logout
-                                    </a>
-                                </li>
+                                <li><a href="<?php echo $base_path; ?>logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                             </ul>
                         </li>
                     <?php else: ?>
-                        <li>
-                            <a href="<?php echo $base_path; ?>login.php" class="login-btn <?php echo $current_page === 'login.php' ? 'active' : ''; ?>">
-                                <i class="fas fa-sign-in-alt"></i> <span>Login</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<?php echo $base_path; ?>register.php" class="highlight-btn <?php echo $current_page === 'register.php' ? 'active' : ''; ?>">
-                                <i class="fas fa-user-plus"></i> <span>Register</span>
-                            </a>
-                        </li>
+                        <li><a href="<?php echo $base_path; ?>login.php" class="login-btn"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li><a href="<?php echo $base_path; ?>register.php" class="highlight-btn"><i class="fas fa-user-plus"></i> Register</a></li>
                     <?php endif; ?>
                 </ul>
-            </nav>
+            </div>
         </div>
     </div>
 </header>
+
+<style>
+<?php include('../css/mobile.css'); ?>
+</style>
 
 <style>
 /* Enhanced Header Styles */
@@ -508,74 +456,7 @@ header {
 .main-navigation.active .auth-menu li:nth-child(2) { animation-delay: 0.5s; }
 </style>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Mobile menu toggle
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const mainNavigation = document.querySelector('.main-navigation');
-    
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', function() {
-            mobileMenuBtn.classList.toggle('active');
-            mainNavigation.classList.toggle('active');
-            document.body.classList.toggle('menu-open');
-            
-            // Accessibility
-            const expanded = mainNavigation.classList.contains('active');
-            mobileMenuBtn.setAttribute('aria-expanded', expanded);
-        });
-    }
-    
-    // User dropdown toggle
-    const userToggle = document.querySelector('.user-toggle');
-    if (userToggle) {
-        userToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            const dropdown = this.nextElementSibling;
-            dropdown.classList.toggle('active');
-            
-            // Accessibility
-            const expanded = dropdown.classList.contains('active');
-            this.setAttribute('aria-expanded', expanded);
-        });
-    }
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (userToggle && !userToggle.contains(e.target)) {
-            const dropdown = document.querySelector('.user-dropdown');
-            if (dropdown && dropdown.classList.contains('active')) {
-                dropdown.classList.remove('active');
-                userToggle.setAttribute('aria-expanded', 'false');
-            }
-        }
-    });
-    
-    // Add scroll effect to header
-    let lastScrollTop = 0;
-    const header = document.querySelector('header');
-    
-    window.addEventListener('scroll', function() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        if (scrollTop > 100) {
-            header.classList.add('scrolled');
-            
-            if (scrollTop > lastScrollTop) {
-                // Scrolling down
-                header.classList.add('hidden');
-            } else {
-                // Scrolling up
-                header.classList.remove('hidden');
-            }
-        } else {
-            header.classList.remove('scrolled', 'hidden');
-        }
-        
-        lastScrollTop = scrollTop;
-    });
-});
-</script>
+<script src="../js/script.js"></script>
 
 <style>
 /* Additional header scroll effect */
@@ -595,4 +476,5 @@ header.hidden {
 body.menu-open {
     overflow: hidden;
 }
+
 </style>

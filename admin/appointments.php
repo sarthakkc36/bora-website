@@ -7,6 +7,10 @@ if (!isLoggedIn() || !isAdmin()) {
     redirect('../login.php');
 }
 
+// Get filter
+$status_filter = isset($_GET['status']) ? sanitizeInput($_GET['status']) : '';
+$selected_date = isset($_GET['date']) ? sanitizeInput($_GET['date']) : date('Y-m-d');
+
 // Handle appointment actions (confirm/reschedule/cancel)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['appointment_id'], $_POST['action'])) {
     $appointment_id = (int)$_POST['appointment_id'];
@@ -150,22 +154,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['appointment_id'], $_P
     redirect('appointments.php');
 }
 
-// Get filter
-// Get filter parameters
-$status_filter = isset($_GET['status']) ? sanitizeInput($_GET['status']) : '';
-
 // Build query based on filters
 $query = "SELECT * FROM appointments";
 $params = [];
+$where_conditions = [];
 
 if (!empty($status_filter)) {
-    $query .= " WHERE status = :status";
+    $where_conditions[] = "status = :status";
     $params[':status'] = $status_filter;
 }
 
-$query .= " ORDER BY created_at DESC";
+// Add date filtering for calendar view
+if (!empty($selected_date)) {
+    $where_conditions[] = "(preferred_date = :selected_date OR admin_scheduled_date = :selected_date)";
+    $params[':selected_date'] = $selected_date;
+}
 
-// Get all appointments
+// Combine where conditions if any
+if (!empty($where_conditions)) {
+    $query .= " WHERE " . implode(" AND ", $where_conditions);
+}
+
+$query .= " ORDER BY COALESCE(admin_scheduled_time, preferred_time) ASC";
+
+// Get all appointments based on filters
 try {
     $stmt = $pdo->prepare($query);
     foreach ($params as $key => $value) {
@@ -178,6 +190,50 @@ try {
     $appointments = [];
 }
 
+// Generate calendar data (next 14 days)
+$calendar_days = [];
+$start_date = new DateTime();
+for ($i = 0; $i < 14; $i++) {
+    $date = clone $start_date;
+    $date->modify("+$i day");
+    
+    // Count appointments for this day
+    $day_count = 0;
+    foreach ($appointments as $appointment) {
+        $appt_date = !empty($appointment['admin_scheduled_date']) ? $appointment['admin_scheduled_date'] : $appointment['preferred_date'];
+        if ($appt_date == $date->format('Y-m-d')) {
+            $day_count++;
+        }
+    }
+    
+    $calendar_days[] = [
+        'date' => $date->format('Y-m-d'),
+        'day' => $date->format('d'),
+        'day_name' => $date->format('D'),
+        'month' => $date->format('M'),
+        'count' => $day_count,
+        'is_today' => $date->format('Y-m-d') == date('Y-m-d'),
+    ];
+}
+
+// Get user details for scheduling modal if appointment_id is provided
+$scheduling_appointment = null;
+if (isset($_GET['schedule']) && !empty($_GET['schedule'])) {
+    $schedule_id = (int)$_GET['schedule'];
+    
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM appointments WHERE id = :appointment_id");
+        $stmt->bindParam(':appointment_id', $schedule_id);
+        $stmt->execute();
+        
+        if ($stmt->rowCount() > 0) {
+            $scheduling_appointment = $stmt->fetch();
+        }
+    } catch (PDOException $e) {
+        error_log("Error fetching appointment for scheduling: " . $e->getMessage());
+    }
+}
+
 // Format date and time
 function formatDate($date) {
     return date('M j, Y', strtotime($date));
@@ -185,6 +241,38 @@ function formatDate($date) {
 
 function formatTime($time) {
     return date('g:i A', strtotime($time));
+}
+
+// Get available time slots for scheduling
+$time_slots = [
+    '09:00:00' => '9:00 AM',
+    '10:00:00' => '10:00 AM',
+    '11:00:00' => '11:00 AM',
+    '12:00:00' => '12:00 PM',
+    '13:00:00' => '1:00 PM',
+    '14:00:00' => '2:00 PM',
+    '15:00:00' => '3:00 PM',
+    '16:00:00' => '4:00 PM',
+    '17:00:00' => '5:00 PM',
+];
+
+// Get booked time slots for the selected date
+$booked_slots = [];
+if (!empty($selected_date)) {
+    try {
+        $stmt = $pdo->prepare("SELECT admin_scheduled_time, preferred_time FROM appointments 
+                              WHERE (admin_scheduled_date = :date OR preferred_date = :date) 
+                              AND status IN ('confirmed', 'rescheduled', 'pending')");
+        $stmt->bindParam(':date', $selected_date);
+        $stmt->execute();
+        
+        while ($slot = $stmt->fetch()) {
+            $booked_time = !empty($slot['admin_scheduled_time']) ? $slot['admin_scheduled_time'] : $slot['preferred_time'];
+            $booked_slots[] = $booked_time;
+        }
+    } catch (PDOException $e) {
+        error_log("Error fetching booked slots: " . $e->getMessage());
+    }
 }
 ?>
 
@@ -196,99 +284,378 @@ function formatTime($time) {
     <title>Manage Appointments - B&H Employment & Consultancy Inc</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../css/styles.css">
-    <style>
-        .filter-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
+    <link rel="stylesheet" href="../css/updated-styles.css">
+<?php
+// Get site settings for favicon
+$favicon_path = '';
+if (isset($site_settings) && !empty($site_settings['favicon'])) {
+    $favicon_path = '/' . ltrim($site_settings['favicon'], '/');
+} else {
+    $favicon_path = '/favicon.ico';
+}
+?>
+<!-- Dynamic Favicon -->
+<link rel="icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
+<link rel="shortcut icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
+<style>
+    /* Calendar Styles */
+    .calendar-section {
+        margin-bottom: 30px;
+    }
+    
+    .calendar-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .calendar-scroll {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        scrollbar-width: thin;
+        scrollbar-color: #0066cc #f0f0f0;
+    }
+    
+    .calendar-scroll::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    .calendar-scroll::-webkit-scrollbar-track {
+        background: #f0f0f0;
+        border-radius: 10px;
+    }
+    
+    .calendar-scroll::-webkit-scrollbar-thumb {
+        background-color: #0066cc;
+        border-radius: 10px;
+    }
+    
+    .calendar-day {
+        min-width: 80px;
+        height: 90px;
+        margin-right: 10px;
+        border-radius: 10px;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid #eee;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-decoration: none;
+        color: #333;
+        position: relative;
+    }
+    
+    .calendar-day:hover {
+        background-color: #f0f7ff;
+        border-color: #0066cc;
+    }
+    
+    .calendar-day.selected {
+        background-color: #0066cc;
+        border-color: #0066cc;
+        color: white;
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
+    }
+    
+    .calendar-day.selected .day-name,
+    .calendar-day.selected .month,
+    .calendar-day.selected .appointment-count {
+        color: white;
+    }
+    
+    .calendar-day.today {
+        border-color: #0066cc;
+        background-color: #f0f7ff;
+    }
+    
+    .day-number {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .day-name {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 2px;
+    }
+    
+    .month {
+        font-size: 12px;
+        color: #999;
+    }
+    
+    .appointment-count {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: #0066cc;
+        color: white;
+        font-size: 12px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    /* Time grid styles */
+    .time-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .time-slot {
+        display: flex;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        transition: all 0.3s ease;
+    }
+    
+    .time-slot:hover {
+        background-color: #f0f7ff;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .time-label {
+        width: 80px;
+        font-weight: 600;
+        color: #0066cc;
+    }
+    
+    .appointment-slot {
+        flex: 1;
+        min-height: 40px;
+        border-radius: 6px;
+        padding: 10px;
+    }
+    
+    .appointment-slot.confirmed {
+        background-color: #d4edda;
+        border-left: 3px solid #28a745;
+    }
+    
+    .appointment-slot.pending {
+        background-color: #fff3cd;
+        border-left: 3px solid #ffc107;
+    }
+    
+    .appointment-slot.rescheduled {
+        background-color: #cce5ff;
+        border-left: 3px solid #0066cc;
+    }
+    
+    .appointment-slot.cancelled {
+        background-color: #f8d7da;
+        border-left: 3px solid #dc3545;
+    }
+    
+    .appointment-slot .client-name {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .appointment-slot .appointment-purpose {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    
+    .appointment-slot .status-pill {
+        display: inline-block;
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-right: 5px;
+    }
+    
+    .status-pill.confirmed {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .status-pill.pending {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .status-pill.rescheduled {
+        background-color: #0066cc;
+        color: white;
+    }
+    
+    .status-pill.cancelled {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .appointment-slot .slot-actions {
+        margin-top: 5px;
+        display: flex;
+        gap: 5px;
+    }
+    
+    .slot-actions .action-btn {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .empty-time-slot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-style: italic;
+        height: 100%;
+    }
+    
+    /* Filter tabs */
+    .filter-tabs {
+        display: flex;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+    
+    .filter-tab {
+        padding: 8px 16px;
+        margin-right: 8px;
+        background-color: #f5f5f5;
+        border-radius: 20px;
+        text-decoration: none;
+        color: #666;
+        transition: all 0.3s ease;
+    }
+    
+    .filter-tab:hover {
+        background-color: #e0e0e0;
+        color: #333;
+    }
+    
+    .filter-tab.active {
+        background-color: #0066cc;
+        color: white;
+    }
+    
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.5);
+    }
+    
+    .modal-content {
+        background-color: #fefefe;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 50%;
+        max-width: 600px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        animation: modalFadeIn 0.3s;
+    }
+    
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
         }
-        
-        .filter-tab {
-            padding: 8px 16px;
-            margin-right: 8px;
-            background-color: #f5f5f5;
-            border-radius: 20px;
-            text-decoration: none;
-            color: #666;
-            transition: all 0.3s ease;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
-        
-        .filter-tab:hover {
-            background-color: #e0e0e0;
-            color: #333;
-        }
-        
-        .filter-tab.active {
-            background-color: #0066cc;
-            color: white;
-        }
-        
-        .appointment-status.pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-        
-        .appointment-status.confirmed {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .appointment-status.rescheduled {
-            background-color: #cce5ff;
-            color: #004085;
-        }
-        
-        .appointment-status.cancelled {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
-        }
-        
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 50%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            animation: modalFadeIn 0.3s;
-        }
-        
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .close-modal {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .close-modal:hover {
-            color: #333;
-        }
-    </style>
+    }
+    
+    .close-modal {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    
+    .close-modal:hover {
+        color: #333;
+    }
+    
+    /* Time slots for scheduling */
+    .scheduling-time-slots {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .scheduling-time-slot {
+        padding: 10px;
+        text-align: center;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .scheduling-time-slot:hover {
+        background-color: #f0f7ff;
+        border-color: #0066cc;
+    }
+    
+    .scheduling-time-slot.selected {
+        background-color: #0066cc;
+        color: white;
+        border-color: #0066cc;
+    }
+    
+    .scheduling-time-slot.unavailable {
+        background-color: #f5f5f5;
+        color: #aaa;
+        cursor: not-allowed;
+        border-color: #ddd;
+    }
+    
+    .scheduling-time-slot.unavailable:hover {
+        background-color: #f5f5f5;
+        border-color: #ddd;
+    }
+    
+    /* Current date display */
+    .current-date-display {
+        background-color: #f0f7ff;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-left: 3px solid #0066cc;
+        display: flex;
+        align-items: center;
+    }
+    
+    .current-date-display i {
+        font-size: 24px;
+        color: #0066cc;
+        margin-right: 15px;
+    }
+    
+    .current-date-display h3 {
+        margin: 0;
+        font-size: 18px;
+    }
+</style>
 </head>
 <body>
     <?php include '../includes/header.php'; ?>
@@ -318,93 +685,117 @@ function formatTime($time) {
                         <a href="appointments.php?status=cancelled" class="filter-tab <?php echo $status_filter === 'cancelled' ? 'active' : ''; ?>">Cancelled</a>
                     </div>
                     
+                    <div class="calendar-section">
+                        <div class="calendar-nav">
+                            <h3><i class="fas fa-calendar-alt"></i> Appointment Calendar</h3>
+                        </div>
+                        
+                        <div class="calendar-scroll">
+                            <?php foreach ($calendar_days as $day): ?>
+                                <a href="?date=<?php echo $day['date']; ?><?php echo !empty($status_filter) ? '&status=' . $status_filter : ''; ?>" 
+                                   class="calendar-day <?php echo ($day['date'] === $selected_date) ? 'selected' : ''; ?> <?php echo $day['is_today'] ? 'today' : ''; ?>">
+                                    <span class="day-name"><?php echo $day['day_name']; ?></span>
+                                    <span class="day-number"><?php echo $day['day']; ?></span>
+                                    <span class="month"><?php echo $day['month']; ?></span>
+                                    <?php if ($day['count'] > 0): ?>
+                                        <span class="appointment-count"><?php echo $day['count']; ?></span>
+                                    <?php endif; ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    
                     <div class="content-box">
                         <div class="content-header">
                             <h2><i class="fas fa-calendar-check"></i> Appointments</h2>
                         </div>
                         
                         <div class="content-body">
+                            <div class="current-date-display">
+                                <i class="fas fa-calendar-day"></i>
+                                <h3>Appointments for <?php echo date('l, F j, Y', strtotime($selected_date)); ?></h3>
+                            </div>
+                            
                             <?php if (empty($appointments)): ?>
                                 <div class="empty-state">
                                     <i class="fas fa-calendar-check"></i>
-                                    <p>No appointments found for the selected filter.</p>
+                                    <p>No appointments found for the selected date and filters.</p>
                                 </div>
                             <?php else: ?>
-                                <div class="table-responsive">
-                                    <table class="data-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Purpose</th>
-                                                <th>Preferred Date/Time</th>
-                                                <th>Scheduled Date/Time</th>
-                                                <th>Status</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach ($appointments as $appointment): ?>
-                                                <tr>
-                                                    <td>
-                                                        <?php echo htmlspecialchars($appointment['name']); ?>
-                                                        <br>
-                                                        <small><?php echo htmlspecialchars($appointment['email']); ?></small>
-                                                        <?php if (!empty($appointment['phone'])): ?>
-                                                            <br>
-                                                            <small><?php echo htmlspecialchars($appointment['phone']); ?></small>
-                                                        <?php endif; ?>
-                                                    </td>
-                                                    <td><?php echo htmlspecialchars($appointment['purpose']); ?></td>
-                                                    <td>
-                                                        <?php echo formatDate($appointment['preferred_date']); ?>
-                                                        <br>
-                                                        <small><?php echo formatTime($appointment['preferred_time']); ?></small>
-                                                    </td>
-                                                    <td>
-                                                        <?php if (!empty($appointment['admin_scheduled_date']) && !empty($appointment['admin_scheduled_time'])): ?>
-                                                            <?php echo formatDate($appointment['admin_scheduled_date']); ?>
-                                                            <br>
-                                                            <small><?php echo formatTime($appointment['admin_scheduled_time']); ?></small>
-                                                        <?php else: ?>
-                                                            <span class="text-muted">Not scheduled</span>
-                                                        <?php endif; ?>
-                                                    </td>
-                                                    <td>
-                                                        <span class="appointment-status <?php echo $appointment['status']; ?>">
-                                                            <?php echo ucfirst($appointment['status']); ?>
-                                                        </span>
-                                                    </td>
-                                                    <td class="actions">
-                                                        <a href="#" class="action-btn view" title="View Details" onclick="viewAppointmentDetails(<?php echo $appointment['id']; ?>)">
-                                                            <i class="fas fa-eye"></i>
-                                                        </a>
-                                                        
-                                                        <?php if ($appointment['status'] === 'pending'): ?>
-                                                            <a href="#" class="action-btn activate" title="Confirm Appointment" onclick="showConfirmModal(<?php echo $appointment['id']; ?>)">
-                                                                <i class="fas fa-check-circle"></i>
-                                                            </a>
-                                                            
-                                                            <a href="#" class="action-btn edit" title="Reschedule Appointment" onclick="showRescheduleModal(<?php echo $appointment['id']; ?>)">
-                                                                <i class="fas fa-calendar-alt"></i>
-                                                            </a>
-                                                            
-                                                            <a href="#" class="action-btn deactivate" title="Cancel Appointment" onclick="showCancelModal(<?php echo $appointment['id']; ?>)">
-                                                                <i class="fas fa-times-circle"></i>
-                                                            </a>
-                                                        <?php endif; ?>
-                                                        
-                                                        <form method="POST" class="action-form" onsubmit="return confirm('Are you sure you want to delete this appointment? This action cannot be undone.');">
-                                                            <input type="hidden" name="appointment_id" value="<?php echo $appointment['id']; ?>">
-                                                            <input type="hidden" name="action" value="delete">
-                                                            <button type="submit" class="action-btn delete" title="Delete">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        </tbody>
-                                    </table>
+                                <div class="time-grid">
+                                    <?php 
+                                    // Sort appointments by time
+                                    $appointments_by_time = [];
+                                    foreach ($time_slots as $time_slot => $display_time) {
+                                        $appointments_by_time[$time_slot] = [];
+                                        
+                                        // Find appointments for this time slot
+                                        foreach ($appointments as $appointment) {
+                                            $appointment_time = !empty($appointment['admin_scheduled_time']) 
+                                                ? $appointment['admin_scheduled_time'] 
+                                                : $appointment['preferred_time'];
+                                                
+                                            if ($appointment_time == $time_slot) {
+                                                $appointments_by_time[$time_slot][] = $appointment;
+                                            }
+                                        }
+                                    }
+                                    
+                                    // Display time slots
+                                    foreach ($time_slots as $time_slot => $display_time):
+                                    ?>
+                                        <div class="time-slot">
+                                            <div class="time-label"><?php echo $display_time; ?></div>
+                                            <div class="appointment-container" style="flex: 1;">
+                                                <?php if (empty($appointments_by_time[$time_slot])): ?>
+                                                    <div class="empty-time-slot">
+                                                        <span>No appointments scheduled</span>
+                                                    </div>
+                                                <?php else: ?>
+                                                    <?php foreach ($appointments_by_time[$time_slot] as $appointment): ?>
+                                                        <div class="appointment-slot <?php echo $appointment['status']; ?>">
+                                                            <div class="client-name"><?php echo htmlspecialchars($appointment['name']); ?></div>
+                                                            <div class="appointment-purpose"><?php echo htmlspecialchars($appointment['purpose']); ?></div>
+                                                            <div class="appointment-meta">
+                                                                <span class="status-pill <?php echo $appointment['status']; ?>"><?php echo ucfirst($appointment['status']); ?></span>
+                                                                <span><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($appointment['email']); ?></span>
+                                                                <?php if (!empty($appointment['phone'])): ?>
+                                                                    <span><i class="fas fa-phone"></i> <?php echo htmlspecialchars($appointment['phone']); ?></span>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                            <div class="slot-actions">
+                                                                <a href="#" class="action-btn view" title="View Details" onclick="viewAppointmentDetails(<?php echo $appointment['id']; ?>)">
+                                                                    <i class="fas fa-eye"></i>
+                                                                </a>
+                                                                
+                                                                <?php if ($appointment['status'] === 'pending'): ?>
+                                                                    <a href="appointments.php?schedule=<?php echo $appointment['id']; ?>&date=<?php echo $selected_date; ?>" class="action-btn activate" title="Confirm Appointment">
+                                                                        <i class="fas fa-check-circle"></i>
+                                                                    </a>
+                                                                    
+                                                                    <a href="#" class="action-btn edit" title="Reschedule Appointment" onclick="showRescheduleModal(<?php echo $appointment['id']; ?>)">
+                                                                        <i class="fas fa-calendar-alt"></i>
+                                                                    </a>
+                                                                    
+                                                                    <a href="#" class="action-btn deactivate" title="Cancel Appointment" onclick="showCancelModal(<?php echo $appointment['id']; ?>)">
+                                                                        <i class="fas fa-times-circle"></i>
+                                                                    </a>
+                                                                <?php endif; ?>
+                                                                
+                                                                <form method="POST" class="action-form" onsubmit="return confirm('Are you sure you want to delete this appointment? This action cannot be undone.');">
+                                                                    <input type="hidden" name="appointment_id" value="<?php echo $appointment['id']; ?>">
+                                                                    <input type="hidden" name="action" value="delete">
+                                                                    <button type="submit" class="action-btn delete" title="Delete">
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -440,7 +831,12 @@ function formatTime($time) {
                     
                     <div class="form-group half">
                         <label for="confirmTime">Appointment Time</label>
-                        <input type="time" id="confirmTime" name="admin_scheduled_time" class="form-control" required>
+                        <select id="confirmTime" name="admin_scheduled_time" class="form-control" required>
+                            <option value="">Select Time</option>
+                            <?php foreach ($time_slots as $slot => $display): ?>
+                                <option value="<?php echo $slot; ?>"><?php echo $display; ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
                 
@@ -474,7 +870,12 @@ function formatTime($time) {
                     
                     <div class="form-group half">
                         <label for="rescheduleTime">New Time</label>
-                        <input type="time" id="rescheduleTime" name="admin_scheduled_time" class="form-control" required>
+                        <select id="rescheduleTime" name="admin_scheduled_time" class="form-control" required>
+                            <option value="">Select Time</option>
+                            <?php foreach ($time_slots as $slot => $display): ?>
+                                <option value="<?php echo $slot; ?>"><?php echo $display; ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
                 
@@ -589,7 +990,26 @@ function formatTime($time) {
                 event.target.style.display = 'none';
             }
         }
+        
+        // Scroll to the selected date in the calendar
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectedDay = document.querySelector('.calendar-day.selected');
+            if (selectedDay) {
+                const scrollContainer = document.querySelector('.calendar-scroll');
+                scrollContainer.scrollLeft = selectedDay.offsetLeft - scrollContainer.offsetWidth / 2 + selectedDay.offsetWidth / 2;
+            }
+        });
     </script>
+    
+    <?php if ($scheduling_appointment): ?>
+    <script>
+        // Automatically open the confirm modal for scheduling
+        document.addEventListener('DOMContentLoaded', function() {
+            showConfirmModal(<?php echo $scheduling_appointment['id']; ?>);
+        });
+    </script>
+    <?php endif; ?>
+
     <script src="../js/script.js"></script>
 </body>
 </html>

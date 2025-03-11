@@ -70,10 +70,6 @@ $social_instagram = $site_settings['social_instagram'] ?? '#';
 </footer>
 
 <script>
-    // Mobile menu toggle
-    document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-        document.querySelector('.nav-menu').classList.toggle('active');
-    });
     
     // User dropdown toggle
     const userToggle = document.querySelector('.user-toggle');

@@ -2993,3 +2993,32 @@ input[type="file"]:focus {
     border-color: #0066cc;
     box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
 }
+/* Make sure auth-menu is visible in mobile menu */
+@media (max-width: 992px) {
+    .auth-menu {
+        display: block !important;
+        width: 100%;
+        margin-left: 0;
+        border-top: 1px solid #eee;
+        margin-top: 15px;
+        padding-top: 15px;
+    }
+
+    .auth-menu li {
+        display: block !important;
+        width: 100%;
+        margin: 8px 0;
+    }
+
+    .login-btn, .highlight-btn {
+        display: flex !important;
+        width: 100%;
+        padding: 12px 15px;
+        margin: 5px 0;
+    }
+    
+    /* Fix for main navigation container */
+    .main-navigation.active {
+        display: block !important;
+    }
+}
