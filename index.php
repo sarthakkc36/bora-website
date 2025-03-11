@@ -441,36 +441,12 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
 
 <style>
 .eye-catching-appointment {
-    padding: 35px 0;
+    padding: 50px 0;
     background: linear-gradient(135deg, #0066cc, #40BFBF);
     margin: 40px 0;
     position: relative;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
-}
-
-.eye-catching-appointment:before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    z-index: 1;
-}
-
-.eye-catching-appointment:after {
-    content: '';
-    position: absolute;
-    bottom: -80px;
-    left: -80px;
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-    z-index: 1;
 }
 
 .appointment-cta {
@@ -479,8 +455,6 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     align-items: center;
     flex-wrap: wrap;
     gap: 20px;
-    position: relative;
-    z-index: 2;
 }
 
 .cta-content {
@@ -488,7 +462,6 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     align-items: center;
     gap: 20px;
     flex: 2;
-    min-width: 250px;
 }
 
 .cta-icon {
@@ -499,12 +472,10 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    border: 3px solid rgba(255, 255, 255, 0.3);
 }
 
 .cta-icon i {
-    font-size: 28px;
+    font-size: 30px;
     color: white;
 }
 
@@ -515,71 +486,26 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
 .cta-text h2 {
     margin-bottom: 5px;
     font-size: 24px;
-    font-weight: 600;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .cta-text p {
     margin: 0;
     opacity: 0.9;
-    font-size: 16px;
 }
 
 .cta-btn {
-    flex: 0 0 auto;
-    display: inline-block;
     background-color: white;
     color: #0066cc;
-    padding: 14px 30px;
+    padding: 12px 25px;
     border-radius: 30px;
     text-decoration: none;
-    font-weight: 700;
-    font-size: 16px;
-    text-align: center;
+    font-weight: 600;
     transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-}
-
-.cta-btn:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    transition: left 0.7s ease;
-    z-index: -1;
 }
 
 .cta-btn:hover {
+    background-color: #f0f0f0;
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    color: #0052a3;
-}
-
-.cta-btn:hover:before {
-    left: 100%;
-}
-
-/* Pulse animation */
-.pulse-btn {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-    }
 }
 
 @media (max-width: 768px) {
@@ -590,12 +516,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     
     .cta-content {
         flex-direction: column;
-        margin-bottom: 15px;
-    }
-    
-    .cta-btn {
-        width: 100%;
-        max-width: 250px;
+        margin-bottom: 20px;
     }
 }
 </style>
