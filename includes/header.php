@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config.php';
+$additional_styles = '/../css/styles.css';
 
 // Get current page to highlight active nav link
 $current_page = basename($_SERVER['PHP_SELF']);
@@ -36,8 +37,7 @@ $site_description = $site_settings['site_description'] ?? 'Professional employme
     <title><?php echo htmlspecialchars($site_title); ?></title>
     <meta name="description" content="<?php echo htmlspecialchars($site_description); ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="<?php echo $base_path; ?>css/styles.css">
-    <link rel="stylesheet" href="<?php echo $base_path; ?>css/updated-styles.css">
+    <link rel="stylesheet" href="<?php echo $base_path; ?>../css/styles.css">
     
     <!-- Dynamic Favicon -->
     <?php
@@ -58,6 +58,37 @@ $site_description = $site_settings['site_description'] ?? 'Professional employme
     <meta name="theme-color" content="#0066cc">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Mobile Optimizations -->
+    <link rel="stylesheet" href="<?php echo $base_path; ?>css/mobile/mobile-main.css">
+    <script src="<?php echo $base_path; ?>js/mobile/mobile-menu.js" defer></script>
+
+    <?php
+    // Load page-specific mobile optimizations
+    $current_page = basename($_SERVER['PHP_SELF']);
+
+    // Job listings pages
+    if ($current_page == 'jobs.php' || $current_page == 'job-details.php') {
+        echo '<link rel="stylesheet" href="' . $base_path . 'css/mobile/mobile-job-listing.css">';
+        echo '<script src="' . $base_path . 'js/mobile/mobile-job-interactions.js" defer></script>';
+    }
+
+    // Dashboard pages
+    if (strpos($current_page, 'dashboard.php') !== false || strpos($_SERVER['PHP_SELF'], '/job-seeker/') !== false) {
+        echo '<link rel="stylesheet" href="' . $base_path . 'css/mobile/mobile-dashboard.css">';
+        echo '<script src="' . $base_path . 'js/mobile/mobile-dashboard.js" defer></script>';
+    }
+
+    // Admin pages
+    if (strpos($_SERVER['PHP_SELF'], '/admin/') !== false) {
+        echo '<link rel="stylesheet" href="' . $base_path . 'css/mobile/mobile-admin-dashboard.css">';
+    }
+
+    // Appointment booking page
+    if ($current_page == 'request-appointment.php') {
+        echo '<link rel="stylesheet" href="' . $base_path . 'css/mobile/mobile-appointment-booking.css">';
+        echo '<script src="' . $base_path . 'js/mobile/mobile-appointment.js" defer></script>';
+    }
+    ?>
 </head>
 <body>
 
@@ -115,10 +146,6 @@ $site_description = $site_settings['site_description'] ?? 'Professional employme
         </div>
     </div>
 </header>
-
-<style>
-<?php include('../css/mobile.css'); ?>
-</style>
 
 <style>
 /* Enhanced Header Styles */
