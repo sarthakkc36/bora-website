@@ -233,8 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     refresh.classList.remove('ready');
                 }
-                
-                e.preventDefault();
+            
             }
         });
         
