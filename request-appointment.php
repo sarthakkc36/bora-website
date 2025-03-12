@@ -156,10 +156,33 @@ for ($i = 0; $i < 14; $i++) {
     ];
 }
 
+// Get current date info for the weekly calendar
+$current_date = new DateTime($selected_date);
+$week_start = clone $current_date;
+$week_start->modify(-(($week_start->format('N') - 1) % 7) . ' days'); // Get to Sunday
+$week_dates = [];
+$weekday_names = [];
+
+for ($i = 0; $i < 7; $i++) {
+    $day = clone $week_start;
+    $day->modify("+$i days");
+    $week_dates[] = [
+        'day' => $day->format('d'),
+        'date' => $day->format('Y-m-d'),
+        'is_selected' => ($day->format('Y-m-d') == $selected_date)
+    ];
+    $weekday_names[] = $day->format('D');
+}
+
 // Format time for display
 function formatTimeDisplay($time_key, $time_value) {
     return $time_value;
 }
+
+// Get current month and year
+$current_month_year = date('M Y', strtotime($selected_date));
+$current_day_name = date('D', strtotime($selected_date));
+$current_day = date('d', strtotime($selected_date));
 ?>
 
 <!DOCTYPE html>
@@ -168,7 +191,7 @@ function formatTimeDisplay($time_key, $time_value) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request an Appointment - B&H Employment & Consultancy Inc</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
 <?php
 // Get site settings for favicon
@@ -183,20 +206,33 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
 <link rel="icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
 <link rel="shortcut icon" href="<?php echo $favicon_path; ?>?v=<?php echo time(); ?>" type="image/<?php echo pathinfo($favicon_path, PATHINFO_EXTENSION) === 'ico' ? 'x-icon' : pathinfo($favicon_path, PATHINFO_EXTENSION); ?>">
 <style>
+    :root {
+        --primary-color: #40BFBF;
+        --light-blue: #e6f7ff;
+        --red: #FF6B6B;
+        --orange: #FFA26B;
+        --purple: #D183FF;
+        --pink: #FF9EB7;
+        --blue: #6BC5FF;
+        --dark-text: #333;
+        --light-text: #666;
+        --border-color: #e0e0e0;
+    }
+    
     /* Main container styles */
     .appointment-container {
-        max-width: auto;
+        max-width: 800px;
         margin: 0 auto;
-        padding: 40px 20px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        overflow: hidden;
     }
     
     .appointment-grid {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 0;
     }
     
     .appointment-success {
@@ -219,73 +255,130 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
         color: #333;
     }
 
-    /* Calendar styles */
-    .calendar-title {
-        font-size: 24px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 20px;
-    }
-    
-    .calendar-days {
+    /* Header styles */
+    .app-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 16px;
         display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        gap: 10px;
-        padding-bottom: 20px;
-        margin-bottom: 30px;
-    }
-    
-    .calendar-day {
-        min-width: 70px;
-        border-radius: 8px;
-        padding: 15px 5px;
-        text-align: center;
-        cursor: pointer;
-        border: 1px solid #e0e0e0;
-        text-decoration: none;
-        color: #333;
-        transition: all 0.2s ease;
-        display: flex;
-        flex-direction: column;
+        justify-content: space-between;
         align-items: center;
     }
     
-    .calendar-day:hover {
-        border-color: #0066cc;
-        background-color: #f0f7ff;
+    .header-title {
+        font-size: 18px;
+        font-weight: 500;
     }
     
-    .calendar-day.selected {
-        background-color: #0066cc;
-        border-color: #0066cc;
-        color: white;
-        box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+    /* Calendar Header */
+    .calendar-header {
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border-color);
     }
     
-    .calendar-day.selected .day-name,
-    .calendar-day.selected .month {
-        color: white;
+    .month-display {
+        font-size: 16px;
+        color: var(--light-text);
     }
     
-    .day-number {
-        font-size: 22px;
-        font-weight: 700;
-        margin: 5px 0;
+    .day-navigation {
+        display: flex;
+        align-items: center;
+        gap: 15px;
     }
     
-    .day-name {
+    .nav-arrows {
+        display: flex;
+        gap: 10px;
+        font-size: 16px;
+        color: var(--primary-color);
+    }
+    
+    .nav-arrows i {
+        cursor: pointer;
+    }
+    
+    .current-day {
+        font-size: 16px;
+        font-weight: 500;
+    }
+    
+    .today-btn {
+        background-color: #f5f5f5;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 15px;
+        color: var(--primary-color);
+        font-weight: 500;
         font-size: 14px;
-        color: #555;
-        margin-bottom: 2px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
     }
     
-    .month {
-        font-size: 12px;
-        color: #777;
+    .today-btn:hover {
+        background-color: #e0e0e0;
+    }
+    
+    /* Week Calendar */
+    .week-calendar {
+        padding: 15px;
+    }
+    
+    .weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    
+    .weekday {
+        font-weight: 500;
+        font-size: 14px;
+        color: var(--light-text);
+    }
+    
+    .dates {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .date {
+        font-size: 18px;
+        padding: 8px 0;
+        position: relative;
+        cursor: pointer;
+        text-decoration: none;
+        color: var(--dark-text);
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    
+    .date:hover {
+        background-color: #f0f0f0;
+    }
+    
+    .date.selected {
+        color: white;
+        font-weight: bold;
+        background-color: var(--primary-color);
     }
     
     /* Time slots styles */
+    .time-slots-container {
+        padding: 20px;
+    }
+    
     .time-slots-title {
         font-size: 18px;
         font-weight: 600;
@@ -313,17 +406,18 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
         cursor: pointer;
         transition: all 0.2s ease;
         font-weight: 500;
+        background-color: white;
     }
     
     .time-slot:hover {
-        border-color: #0066cc;
-        background-color: #f0f7ff;
+        border-color: var(--primary-color);
+        background-color: var(--light-blue);
     }
     
     .time-slot.selected {
-        background-color: #0066cc;
+        background-color: var(--primary-color);
         color: white;
-        border-color: #0066cc;
+        border-color: var(--primary-color);
         box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
     }
     
@@ -341,13 +435,12 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     
     /* Form styles */
     .appointment-form {
-        margin-top: 30px;
-        border-top: 1px solid #e0e0e0;
-        padding-top: 30px;
+        padding: 20px;
+        border-top: 1px solid #eee;
     }
     
     .form-title {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: 600;
         color: #333;
         margin-bottom: 20px;
@@ -358,7 +451,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
         background-color: #f8f9fa;
         border-radius: 8px;
         margin-bottom: 25px;
-        border-left: 3px solid #0066cc;
+        border-left: 3px solid var(--primary-color);
     }
     
     .selected-datetime p {
@@ -367,7 +460,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     }
     
     .selected-datetime .datetime-label {
-        color: #0066cc;
+        color: var(--primary-color);
         font-weight: 600;
     }
     
@@ -401,12 +494,12 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     
     .form-control:focus {
         outline: none;
-        border-color: #0066cc;
-        box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(64, 191, 191, 0.1);
     }
     
     .submit-btn {
-        background-color: #0066cc;
+        background-color: var(--primary-color);
         color: white;
         border: none;
         padding: 12px 25px;
@@ -419,7 +512,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     }
     
     .submit-btn:hover {
-        background-color: #0052a3;
+        background-color: #35a3a3;
     }
     
     .submit-btn:disabled {
@@ -468,13 +561,25 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     }
     
     @media (max-width: 480px) {
-        .calendar-day {
-            min-width: 60px;
-            padding: 10px 5px;
+        .date {
+            font-size: 16px;
+            width: 30px;
+            height: 30px;
         }
         
-        .day-number {
-            font-size: 18px;
+        .weekday {
+            font-size: 12px;
+        }
+        
+        .calendar-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .day-navigation {
+            width: 100%;
+            justify-content: space-between;
         }
     }
 </style>
@@ -491,153 +596,201 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
 
     <section class="appointment-section">
         <div class="container">
-            <div class="appointment-container">
-                <?php if (!empty($errors)): ?>
-                    <div class="alert alert-danger">
-                        <ul>
-                            <?php foreach ($errors as $error): ?>
-                                <li><?php echo $error; ?></li>
-                            <?php endforeach; ?>
-                        </ul>
+            <?php if (!empty($errors)): ?>
+                <div class="alert alert-danger">
+                    <ul>
+                        <?php foreach ($errors as $error): ?>
+                            <li><?php echo $error; ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+            
+            <?php if (!empty($success)): ?>
+                <div class="appointment-success">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Appointment Request Submitted!</h3>
+                    <p><?php echo $success; ?></p>
+                    <p>You will receive a confirmation email shortly.</p>
+                    <a href="index.php" class="submit-btn" style="display: inline-block; margin-top: 20px;">Return to Home</a>
+                </div>
+            <?php else: ?>
+                <div class="appointment-container">
+                    <!-- Header -->
+                    <div class="app-header">
+                        <div class="header-title">Schedule an Appointment</div>
                     </div>
-                <?php endif; ?>
-                
-                <?php if (!empty($success)): ?>
-                    <div class="appointment-success">
-                        <i class="fas fa-check-circle"></i>
-                        <h3>Appointment Request Submitted!</h3>
-                        <p><?php echo $success; ?></p>
-                        <p>You will receive a confirmation email shortly.</p>
-                        <a href="index.php" class="submit-btn" style="display: inline-block; margin-top: 20px;">Return to Home</a>
-                    </div>
-                <?php else: ?>
-                    <div class="appointment-grid">
-                        <div>
-                            <h2 class="calendar-title">Select Date & Time</h2>
-                            
-                            <!-- Calendar days -->
-                            <div class="calendar-days">
-                                <?php foreach ($calendar_days as $day): ?>
-                                    <a href="?date=<?php echo $day['date']; ?>" class="calendar-day <?php echo ($day['date'] === $selected_date) ? 'selected' : ''; ?>">
-                                        <span class="day-name"><?php echo $day['day_name']; ?></span>
-                                        <span class="day-number"><?php echo $day['day']; ?></span>
-                                        <span class="month"><?php echo $day['month']; ?></span>
-                                    </a>
-                                <?php endforeach; ?>
+                    
+                    <!-- Calendar Header -->
+                    <div class="calendar-header">
+                        <div class="month-display"><?php echo $current_month_year; ?></div>
+                        <div class="day-navigation">
+                            <div class="nav-arrows">
+                                <i class="fas fa-chevron-left" id="prev-day"></i>
+                                <span class="current-day"><?php echo $current_day_name . ' ' . $current_day; ?></span>
+                                <i class="fas fa-chevron-right" id="next-day"></i>
                             </div>
-                            
-                            <!-- Time slots -->
-                            <h3 class="time-slots-title">Available Time Slots</h3>
-                            <p class="time-slots-instruction">Select a time for your appointment on <?php echo date('l, F j, Y', strtotime($selected_date)); ?></p>
-                            
-                            <div class="time-slots-grid">
-                                <?php foreach ($available_times as $time_key => $time_value): ?>
-                                    <?php 
-                                        $is_unavailable = in_array($time_key, $booked_slots);
-                                        $slot_class = $is_unavailable ? 'unavailable' : '';
-                                    ?>
-                                    <div class="time-slot <?php echo $slot_class; ?>" data-time="<?php echo $time_key; ?>">
-                                        <?php echo formatTimeDisplay($time_key, $time_value); ?>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                            
-                            <!-- Booking form -->
-                            <div class="appointment-form">
-                                <h2 class="form-title">Complete Your Booking</h2>
-                                
-                                <div class="selected-datetime">
-                                    <p><i class="fas fa-calendar-alt"></i> <strong>Date:</strong> <span class="datetime-label"><?php echo date('l, F j, Y', strtotime($selected_date)); ?></span></p>
-                                    <p><i class="fas fa-clock"></i> <strong>Time:</strong> <span class="datetime-label" id="selected-time-display">Please select a time slot</span></p>
-                                </div>
-                                
-                                <form action="request-appointment.php?date=<?php echo $selected_date; ?>" method="POST" id="appointment-form">
-                                    <input type="hidden" id="preferred_date" name="preferred_date" value="<?php echo $selected_date; ?>">
-                                    <input type="hidden" id="preferred_time" name="preferred_time" value="">
-                                    
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="name">Your Name</label>
-                                            <input type="text" id="name" name="name" class="form-control" value="<?php echo isset($name) ? htmlspecialchars($name) : (isLoggedIn() ? htmlspecialchars($_SESSION['user_name']) : ''); ?>" required>
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="email">Your Email</label>
-                                            <input type="email" id="email" name="email" class="form-control" value="<?php echo isset($email) ? htmlspecialchars($email) : (isLoggedIn() ? htmlspecialchars($_SESSION['user_email']) : ''); ?>" required>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="phone">Your Phone Number</label>
-                                            <input type="tel" id="phone" name="phone" class="form-control" value="<?php echo isset($phone) ? htmlspecialchars($phone) : ''; ?>">
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="purpose">Purpose of Appointment</label>
-                                            <select id="purpose" name="purpose" class="form-control" required>
-                                                <option value="">Select Purpose</option>
-                                                <option value="Job Assistance" <?php echo isset($purpose) && $purpose === 'Job Assistance' ? 'selected' : ''; ?>>Job Search Assistance</option>
-                                                <option value="Resume Review" <?php echo isset($purpose) && $purpose === 'Resume Review' ? 'selected' : ''; ?>>Resume Review</option>
-                                                <option value="Career Counseling" <?php echo isset($purpose) && $purpose === 'Career Counseling' ? 'selected' : ''; ?>>Career Counseling</option>
-                                                <option value="Recruitment Services" <?php echo isset($purpose) && $purpose === 'Recruitment Services' ? 'selected' : ''; ?>>Recruitment Services</option>
-                                                <option value="Other" <?php echo isset($purpose) && $purpose === 'Other' ? 'selected' : ''; ?>>Other</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="message">Additional Message (Optional)</label>
-                                        <textarea id="message" name="message" class="form-control" rows="4"><?php echo isset($message) ? htmlspecialchars($message) : ''; ?></textarea>
-                                    </div>
-                                    
-                                    <button type="submit" name="submit_appointment" class="submit-btn" id="submit-btn" disabled>Book Appointment</button>
-                                </form>
-                            </div>
+                            <a href="?date=<?php echo date('Y-m-d'); ?>" class="today-btn">Today</a>
                         </div>
                     </div>
-                <?php endif; ?>
-            </div>
+                    
+                    <!-- Week Calendar -->
+                    <div class="week-calendar">
+                        <div class="weekdays">
+                            <?php foreach ($weekday_names as $weekday): ?>
+                                <div class="weekday"><?php echo substr($weekday, 0, 1); ?></div>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="dates">
+                            <?php foreach ($week_dates as $date): ?>
+                                <a href="?date=<?php echo $date['date']; ?>" class="date <?php echo $date['is_selected'] ? 'selected' : ''; ?>">
+                                    <?php echo $date['day']; ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Time Slots -->
+                    <div class="time-slots-container">
+                        <h3 class="time-slots-title">Available Time Slots</h3>
+                        <p class="time-slots-instruction">Select a time for your appointment on <?php echo date('l, F j, Y', strtotime($selected_date)); ?></p>
+                        
+                        <div class="time-slots-grid">
+                            <?php foreach ($available_times as $time_key => $time_value): ?>
+                                <?php 
+                                    $is_unavailable = in_array($time_key, $booked_slots);
+                                    $slot_class = $is_unavailable ? 'unavailable' : '';
+                                ?>
+                                <div class="time-slot <?php echo $slot_class; ?>" data-time="<?php echo $time_key; ?>">
+                                    <?php echo formatTimeDisplay($time_key, $time_value); ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Booking Form -->
+                    <div class="appointment-form">
+                        <h2 class="form-title">Complete Your Booking</h2>
+                        
+                        <div class="selected-datetime">
+                            <p><i class="fas fa-calendar-alt"></i> <strong>Date:</strong> <span class="datetime-label"><?php echo date('l, F j, Y', strtotime($selected_date)); ?></span></p>
+                            <p><i class="fas fa-clock"></i> <strong>Time:</strong> <span class="datetime-label" id="selected-time-display">Please select a time slot</span></p>
+                        </div>
+                        
+                        <form action="request-appointment.php?date=<?php echo $selected_date; ?>" method="POST" id="appointment-form">
+                            <input type="hidden" id="preferred_date" name="preferred_date" value="<?php echo $selected_date; ?>">
+                            <input type="hidden" id="preferred_time" name="preferred_time" value="">
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="name">Your Name</label>
+                                    <input type="text" id="name" name="name" class="form-control" value="<?php echo isset($name) ? htmlspecialchars($name) : (isLoggedIn() ? htmlspecialchars($_SESSION['user_name']) : ''); ?>" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email">Your Email</label>
+                                    <input type="email" id="email" name="email" class="form-control" value="<?php echo isset($email) ? htmlspecialchars($email) : (isLoggedIn() ? htmlspecialchars($_SESSION['user_email']) : ''); ?>" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="phone">Your Phone Number</label>
+                                    <input type="tel" id="phone" name="phone" class="form-control" value="<?php echo isset($phone) ? htmlspecialchars($phone) : ''; ?>">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="purpose">Purpose of Appointment</label>
+                                    <select id="purpose" name="purpose" class="form-control" required>
+                                        <option value="">Select Purpose</option>
+                                        <option value="Job Assistance" <?php echo isset($purpose) && $purpose === 'Job Assistance' ? 'selected' : ''; ?>>Job Search Assistance</option>
+                                        <option value="Resume Review" <?php echo isset($purpose) && $purpose === 'Resume Review' ? 'selected' : ''; ?>>Resume Review</option>
+                                        <option value="Career Counseling" <?php echo isset($purpose) && $purpose === 'Career Counseling' ? 'selected' : ''; ?>>Career Counseling</option>
+                                        <option value="Recruitment Services" <?php echo isset($purpose) && $purpose === 'Recruitment Services' ? 'selected' : ''; ?>>Recruitment Services</option>
+                                        <option value="Other" <?php echo isset($purpose) && $purpose === 'Other' ? 'selected' : ''; ?>>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message">Additional Message (Optional)</label>
+                                <textarea id="message" name="message" class="form-control" rows="4"><?php echo isset($message) ? htmlspecialchars($message) : ''; ?></textarea>
+                            </div>
+                            
+                            <button type="submit" name="submit_appointment" class="submit-btn" id="submit-btn" disabled>Book Appointment</button>
+                        </form>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </section>
 
     <?php include 'includes/footer.php'; ?>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const timeSlots = document.querySelectorAll('.time-slot:not(.unavailable)');
-            const selectedTimeDisplay = document.getElementById('selected-time-display');
-            const preferredTimeInput = document.getElementById('preferred_time');
-            const submitButton = document.getElementById('submit-btn');
+    document.addEventListener('DOMContentLoaded', function() {
+        const timeSlots = document.querySelectorAll('.time-slot:not(.unavailable)');
+        const selectedTimeDisplay = document.getElementById('selected-time-display');
+        const preferredTimeInput = document.getElementById('preferred_time');
+        const submitButton = document.getElementById('submit-btn');
+        
+        // Handle time slot selection
+        timeSlots.forEach(slot => {
+            slot.addEventListener('click', function() {
+                // Remove selection from all slots
+                timeSlots.forEach(s => s.classList.remove('selected'));
+                
+                // Add selection to clicked slot
+                this.classList.add('selected');
+                
+                // Update displayed time and form value
+                const time = this.getAttribute('data-time');
+                selectedTimeDisplay.textContent = this.textContent.trim();
+                preferredTimeInput.value = time;
+                
+                // Enable submit button
+                submitButton.removeAttribute('disabled');
+            });
+        });
+        
+        // Handle date navigation
+        const prevDayButton = document.getElementById('prev-day');
+        const nextDayButton = document.getElementById('next-day');
+        
+        if (prevDayButton && nextDayButton) {
+            // Get current date
+            const currentDate = new Date('<?php echo $selected_date; ?>');
             
-            // Handle time slot selection
-            timeSlots.forEach(slot => {
-                slot.addEventListener('click', function() {
-                    // Remove selection from all slots
-                    timeSlots.forEach(s => s.classList.remove('selected'));
-                    
-                    // Add selection to clicked slot
-                    this.classList.add('selected');
-                    
-                    // Update displayed time and form value
-                    const time = this.getAttribute('data-time');
-                    selectedTimeDisplay.textContent = this.textContent.trim();
-                    preferredTimeInput.value = time;
-                    
-                    // Enable submit button
-                    submitButton.removeAttribute('disabled');
-                });
+            prevDayButton.addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() - 1);
+                window.location.href = '?date=' + formatDate(currentDate);
             });
             
-            // Scroll to the selected date in the calendar
-            const selectedDay = document.querySelector('.calendar-day.selected');
-            if (selectedDay) {
-                const scrollContainer = document.querySelector('.calendar-days');
-                scrollContainer.scrollLeft = selectedDay.offsetLeft - scrollContainer.offsetWidth / 2 + selectedDay.offsetWidth / 2;
+            nextDayButton.addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() + 1);
+                window.location.href = '?date=' + formatDate(currentDate);
+            });
+            
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
             }
-        });
-    </script>
+        }
+        
+        // If there's a pre-selected time in URL params, select it
+        const urlParams = new URLSearchParams(window.location.search);
+        const timeParam = urlParams.get('time');
+        if (timeParam) {
+            const timeSlot = document.querySelector(`.time-slot[data-time="${timeParam}"]`);
+            if (timeSlot && !timeSlot.classList.contains('unavailable')) {
+                timeSlot.click();
+            }
+        }
+    });
+</script>
     
-    <script src="js/script.js"></script>
+<script src="js/script.js"></script>
 </body>
 </html>

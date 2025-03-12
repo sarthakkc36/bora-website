@@ -378,6 +378,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
                 </div>
                 <div class="cta-container">
                     <a href="#services" class="hero-cta-btn secondary">Our Services</a>
+                    <a href="request-appointment.php" class="hero-cta-btn secondary">Book an Appointment</a>
                 </div>
             </div>
         </div>
