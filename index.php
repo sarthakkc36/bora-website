@@ -231,136 +231,8 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     }
 }
 
-/* Media Queries */
-@media (max-width: 1200px) {
-    .main-image {
-        width: 85%;
-    }
-    
-    .secondary-image {
-        width: 65%;
-        transform: translateY(60px) translateX(20%) rotateY(-5deg);
-    }
-}
 
-@media (max-width: 992px) {
-    .hero-image-only {
-        height: auto;
-        padding: 120px 0 150px;
-    }
-    
-    .main-image {
-        width: 90%;
-        transform: translateY(0) rotateY(0);
-    }
-    
-    .secondary-image {
-        position: relative;
-        width: 80%;
-        margin: 0 auto;
-        display: block;
-        transform: translateY(-40px) rotateY(0);
-        left: 0;
-        right: 0;
-    }
-    
-    .image-container:hover .main-image,
-    .image-container:hover .secondary-image {
-        transform: translateY(0) rotateY(0);
-    }
-    
-    .floating-badge {
-        padding: 10px;
-    }
-    
-    .jobs-badge {
-        top: 20px;
-        left: 5%;
-    }
-    
-    .services-badge {
-        bottom: 80px;
-        right: 5%;
-    }
-    
-    .cta-container {
-        position: relative;
-        bottom: -50px;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-    }
-    
-    .hero-cta-btn {
-        padding: 14px 30px;
-        font-size: 16px;
-        width: 200px;
-        text-align: center;
-    }
-}
-
-@media (max-width: 768px) {
-    .hero-image-only {
-        padding: 100px 0 170px;
-    }
-    
-    .main-image {
-        width: 95%;
-        border-width: 5px;
-    }
-    
-    .secondary-image {
-        width: 85%;
-        border-width: 5px;
-        transform: translateY(-30px) rotateY(0);
-    }
-    
-    .badge-number {
-        font-size: 20px;
-    }
-    
-    .badge-text {
-        font-size: 12px;
-    }
-    
-    .floating-badge i {
-        font-size: 20px;
-    }
-}
-
-@media (max-width: 576px) {
-    .hero-image-only {
-        padding: 80px 0 150px;
-    }
-    
-    .main-image, .secondary-image {
-        border-width: 4px;
-    }
-    
-    .secondary-image {
-        transform: translateY(-20px) rotateY(0);
-    }
-    
-    .floating-badge {
-        padding: 8px;
-    }
-    
-    .jobs-badge {
-        top: 10px;
-        left: 5%;
-    }
-    
-    .services-badge {
-        bottom: 50px;
-        right: 5%;
-    }
-    
-    .hero-cta-btn {
-        padding: 12px 25px;
-        font-size: 15px;
-        width: 180px;
-    }
-}</style>
+</style>
     <!-- Hero Section with Image -->
     <section class="hero-image-only">
     <div class="hero-background"></div>
@@ -509,17 +381,6 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     transform: translateY(-3px);
 }
 
-@media (max-width: 768px) {
-    .appointment-cta {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .cta-content {
-        flex-direction: column;
-        margin-bottom: 20px;
-    }
-}
 </style>
     <!-- Contact Form Section -->
 <!-- Contact Form Section -->
@@ -650,32 +511,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     <?php include 'includes/footer.php'; ?>
 <script>// Mobile menu toggle
 document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', function() {
-            document.querySelector('.nav-menu').classList.toggle('active');
-        });
-    }
-    
-    // User dropdown toggle
-    const userToggle = document.querySelector('.user-toggle');
-    if (userToggle) {
-        userToggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            this.nextElementSibling.classList.toggle('active');
-        });
-    }
-    
-    // Close the dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (userToggle && !userToggle.contains(e.target)) {
-            const dropdown = document.querySelector('.user-dropdown');
-            if (dropdown && dropdown.classList.contains('active')) {
-                dropdown.classList.remove('active');
-            }
-        }
-    });
-    
+
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
