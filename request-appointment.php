@@ -543,45 +543,7 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
         margin: 10px 0 0 20px;
         padding: 0;
     }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .form-row {
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .form-group {
-            min-width: 100%;
-        }
-        
-        .time-slots-grid {
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .date {
-            font-size: 16px;
-            width: 30px;
-            height: 30px;
-        }
-        
-        .weekday {
-            font-size: 12px;
-        }
-        
-        .calendar-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        
-        .day-navigation {
-            width: 100%;
-            justify-content: space-between;
-        }
-    }
+
 </style>
 </head>
 <body>

@@ -639,28 +639,6 @@ if (isset($site_settings) && !empty($site_settings['favicon'])) {
     .btn-primary i, .btn-secondary i {
         margin-right: 5px;
     }
-    
-    @media (max-width: 768px) {
-        .filter-row {
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .application-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        
-        .application-meta {
-            width: 100%;
-            margin-top: 10px;
-        }
-        
-        .application-actions {
-            align-self: flex-end;
-            margin-top: -30px;
-        }
-    }
     </style>
 </body>
 </html>

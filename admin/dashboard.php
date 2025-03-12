@@ -172,25 +172,6 @@ function formatTime($time) {
             text-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-
-        /* For smaller screens */
-        @media (max-width: 768px) {
-            .dashboard-quick-actions {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            }
-            
-            .quick-action {
-                padding: 20px 15px;
-            }
-            
-            .quick-action i {
-                font-size: 28px;
-            }
-            
-            .quick-action span {
-                font-size: 14px;
-            }
-        }
         
         .dashboard-note {
             background-color: #fff8e6;
